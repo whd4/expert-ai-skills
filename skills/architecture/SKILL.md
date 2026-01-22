@@ -43,6 +43,38 @@ allowed-tools: Read, Glob, Grep
 
 ---
 
+## 📐 System Design Template (Staff Level)
+
+**Don't start with boxes. Start with math and requirements.**
+
+1. **Requirements & Constraints**
+    - Functional: "User clips video", "System generates subtitles"
+    - Non-Functional: "Wait time < 20s", "99.9% Availability", "Budget < $500/mo"
+2. **Back-of-Envelope Math (Capacity)**
+    - *Formula:* $QPS = DailyActiveUsers \times ActionsPerUser / 86400$
+    - *Formula:* $Storage = WritesPerDay \times SizePerWrite \times RetentionDays$
+    - *Example:* 10k users, 2GB videos = 20TB storage? -> S3 Cold Storage needed.
+3. **High-Level Design (The "Blob" Phase)**
+    - Client -> API Gateway -> Service -> DB.
+    - Validate against constraints (Will single DB handle calc QPS? No -> Read Replica).
+4. **Detailed Design (The "Hard Parts")**
+    - "How exactly do we handle the video processing failure?" (Dead Letter Queue + Retry)
+    - "How do we handle 1 million users?" (Sharding vs Partitioning)
+
+## ⚖️ Decision Matrix (Trade-off Guide)
+
+| Style | Good For | Bad For | Complexities |
+|-------|----------|---------|--------------|
+| **Monolith** | Speed, Simplicity, small/med teams | Independent scaling, Large teams | Tight coupling |
+| **Microservices** | Independent scaling, Polyglot, 100+ devs | Complexity, Latency, Data consistency | Distrib. Tracing, Eventual Consistency |
+| **Serverless** | Spiky traffic, Low ops, Event-driven | Long-running tasks, Cold starts | Vendor lock-in, Debugging |
+
+## 📊 Capacity Planning Cheatsheet
+
+- **QPS to Servers:** $Servers = TargetQPS / (SingleCoreQPS \times Cores \times UtilizationFactor)$
+- **Bandwidth:** $Mbps = TotalBytesPerSec * 8 / 1,000,000$
+- **Database:** Read-heavy? Cache/Replica. Write-heavy? Sharding/Queue-buffering.
+
 ## Validation Checklist
 
 Before finalizing architecture:

@@ -19,11 +19,24 @@ Random fixes waste time and create new bugs. Quick patches mask underlying issue
 NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 ```
 
+## 🚨 Emergency Checklist (Senior Engineer)
+
+**Production/High-Severity Incident? Read this first.**
+
+1. **Stop the Bleeding**: Can we rollback? Toggle a feature flag? Restart? (Mitigate *then* debug).
+2. **Snapshot State**: Capture logs, heap dumps, db state *before* restarting/fixing.
+3. **Communication**: Who needs to know? (Status page, stakeholders). Don't debug in a silo.
+4. **Bisect**: If a deploy caused it, bisect commits immediately.
+5. **Hypothesis Log**: Write down what you've checked. "I think it's DB" -> Checked DB -> "It's not DB". Prevent circular debugging.
+
+---
+
 If you haven't completed Phase 1, you cannot propose fixes.
 
 ## When to Use
 
 Use for ANY technical issue:
+
 - Test failures
 - Bugs in production
 - Unexpected behavior
@@ -32,6 +45,7 @@ Use for ANY technical issue:
 - Integration issues
 
 **Use this ESPECIALLY when:**
+
 - Under time pressure (emergencies make guessing tempting)
 - "Just one quick fix" seems obvious
 - You've already tried multiple fixes
@@ -39,6 +53,7 @@ Use for ANY technical issue:
 - You don't fully understand the issue
 
 **Don't skip when:**
+
 - Issue seems simple (simple bugs have root causes too)
 - You're in a hurry (rushing guarantees rework)
 - Manager wants it fixed NOW (systematic is faster than thrashing)
@@ -57,23 +72,25 @@ You MUST complete each phase before proceeding to the next.
    - Read stack traces completely
    - Note line numbers, file paths, error codes
 
-2. **Reproduce Consistently**
-   - Can you trigger it reliably?
-   - What are the exact steps?
-   - Does it happen every time?
-   - If not reproducible → gather more data, don't guess
+2. **Reproduce Consistently (Script It!)**
+   - **Senior Pattern:** Don't rely on "clicking around".
+   - Create a `repro.py`, `repro.sh`, or `repro.js` script.
+   - Script should: Setup state -> Trigger bug -> Assert failure.
+   - *Why?* Allows rapid iteration of fixes and proves the fix works definitively.
+   - If not reproducible locally → Iterate on logging in staging until you trap it.
 
-3. **Check Recent Changes**
-   - What changed that could cause this?
-   - Git diff, recent commits
-   - New dependencies, config changes
-   - Environmental differences
+3. **Check Recent Changes (Bisect)**
+   - **Senior Pattern:** `git bisect` is your best friend.
+   - If it worked yesterday and fails today, the answer IS in the diff.
+   - Don't guess which file; let the binary search find it.
+   - Check infrastructure-as-code diffs too, not just app code.
 
 4. **Gather Evidence in Multi-Component Systems**
 
    **WHEN system has multiple components (CI → build → signing, API → service → database):**
 
    **BEFORE proposing fixes, add diagnostic instrumentation:**
+
    ```
    For EACH component boundary:
      - Log what data enters component
@@ -87,6 +104,7 @@ You MUST complete each phase before proceeding to the next.
    ```
 
    **Example (multi-layer system):**
+
    ```bash
    # Layer 1: Workflow
    echo "=== Secrets available in workflow: ==="
@@ -215,6 +233,7 @@ You MUST complete each phase before proceeding to the next.
 ## Red Flags - STOP and Follow Process
 
 If you catch yourself thinking:
+
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "Add multiple changes, run tests"
@@ -234,6 +253,7 @@ If you catch yourself thinking:
 ## your human partner's Signals You're Doing It Wrong
 
 **Watch for these redirections:**
+
 - "Is that not happening?" - You assumed without verifying
 - "Will it show us...?" - You should have added evidence gathering
 - "Stop guessing" - You're proposing fixes without understanding
@@ -284,12 +304,14 @@ These techniques are part of systematic debugging and available in this director
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
 
 **Related skills:**
+
 - **superpowers:test-driven-development** - For creating failing test case (Phase 4, Step 1)
 - **superpowers:verification-before-completion** - Verify fix worked before claiming success
 
 ## Real-World Impact
 
 From debugging sessions:
+
 - Systematic approach: 15-30 minutes to fix
 - Random fixes approach: 2-3 hours of thrashing
 - First-time fix rate: 95% vs 40%

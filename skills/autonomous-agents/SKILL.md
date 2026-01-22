@@ -46,22 +46,73 @@ Self-evaluation and iterative improvement
 
 ### ❌ Unbounded Autonomy
 
+**Why bad**: "Go fix the codebase" -> Agent deletes everything.
+**Instead**: Scope to "Fix lint errors in THIS file".
+
 ### ❌ Trusting Agent Outputs
 
+**Why bad**: LLMs hallucinate success. "I fixed the bug" (Code is still broken).
+**Instead**: Always verify with a tool. Run the linter/test. If it fails, reject the agent's claim.
+
 ### ❌ General-Purpose Autonomy
+
+**Why bad**: "AGI" style agents get stuck in infinite loops.
+**Instead**: Build specialized agents. A "Refactoring Agent" is different from a "Research Agent".
 
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
 |-------|----------|----------|
-| Issue | critical | ## Reduce step count |
-| Issue | critical | ## Set hard cost limits |
-| Issue | critical | ## Test at scale before production |
-| Issue | high | ## Validate against ground truth |
-| Issue | high | ## Build robust API clients |
-| Issue | high | ## Least privilege principle |
-| Issue | medium | ## Track context usage |
-| Issue | medium | ## Structured logging |
+| Issue | Severity | Solution |
+|-------|----------|----------|
+| **Infinite Loops** | Critical | Max iteration limits (e.g., 10 steps max). |
+| **Cost Spikes** | Critical | Hard budget limit per run (e.g., $1.00). |
+| **Hallucinated Tools** | High | Strict tool schemas + validation. |
+| **Context Context** | High | Summarize history after N steps. |
+| **Credential Leak** | Critical | Regex scan output for secrets before executing. |
+
+## 🛡️ Production Patterns
+
+### Self-Healing Loop (The "Try-Reflect-Retry" Pattern)
+
+**Don't just crash. Recover.**
+
+```python
+for attempt in range(3):
+    try:
+        # 1. Plan & Act
+        action = agent.decide(task)
+        result = tools.execute(action)
+        
+        # 2. Verify
+        if not verify_success(result):
+            raise AgentError("Verification failed")
+            
+        break # Success!
+        
+    except Exception as e:
+        # 3. Reflect
+        print(f"Attempt {attempt} failed: {e}")
+        # Feed error back into context so agent knows NOT to do that again
+        agent.memory.add(f"Error: {e}. Try a different approach.")
+```
+
+### Cost Guardrails
+
+**Kill switch for runaway agents.**
+
+```python
+class BudgetKeeper:
+    def __init__(self, max_cost=2.00):
+        self.total_cost = 0.0
+        self.max_cost = max_cost
+
+    def check(self, usage):
+        cost = calculate_cost(usage) # Token math
+        self.total_cost += cost
+        if self.total_cost > self.max_cost:
+            raise BudgetExceededError(f"Spent ${self.total_cost}, limit ${self.max_cost}")
+```
 
 ## Related Skills
 

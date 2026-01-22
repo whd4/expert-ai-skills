@@ -16,12 +16,15 @@ Write the test first. Watch it fail. Write minimal code to pass.
 ## When to Use
 
 **Always:**
+
 - New features
 - Bug fixes
 - Refactoring
 - Behavior changes
+- **Integration/API endpoints (Yes, these too!)**
 
 **Exceptions (ask your human partner):**
+
 - Throwaway prototypes
 - Generated code
 - Configuration files
@@ -37,6 +40,7 @@ NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 Write code before the test? Delete it. Start over.
 
 **No exceptions:**
+
 - Don't keep it as "reference"
 - Don't "adapt" it while writing tests
 - Don't look at it
@@ -87,6 +91,7 @@ test('retries failed operations 3 times', async () => {
   expect(result).toBe('success');
   expect(attempts).toBe(3);
 });
+
 ```
 Clear name, tests real behavior, one thing
 </Good>
@@ -102,10 +107,12 @@ test('retry works', async () => {
   expect(mock).toHaveBeenCalledTimes(3);
 });
 ```
+
 Vague name, tests mock not code
 </Bad>
 
 **Requirements:**
+
 - One behavior
 - Clear name
 - Real code (no mocks unless unavoidable)
@@ -119,6 +126,7 @@ npm test path/to/test.test.ts
 ```
 
 Confirm:
+
 - Test fails (not errors)
 - Failure message is expected
 - Fails because feature missing (not typos)
@@ -174,6 +182,7 @@ npm test path/to/test.test.ts
 ```
 
 Confirm:
+
 - Test passes
 - Other tests still pass
 - Output pristine (no errors, warnings)
@@ -185,6 +194,7 @@ Confirm:
 ### REFACTOR - Clean Up
 
 After green only:
+
 - Remove duplication
 - Improve names
 - Extract helpers
@@ -208,6 +218,7 @@ Next failing test for next feature.
 **"I'll write tests after to verify it works"**
 
 Tests written after code pass immediately. Passing immediately proves nothing:
+
 - Might test wrong thing
 - Might test implementation, not behavior
 - Might miss edge cases you forgot
@@ -218,6 +229,7 @@ Test-first forces you to see the test fail, proving it actually tests something.
 **"I already manually tested all the edge cases"**
 
 Manual testing is ad-hoc. You think you tested everything but:
+
 - No record of what you tested
 - Can't re-run when code changes
 - Easy to forget cases under pressure
@@ -228,6 +240,7 @@ Automated tests are systematic. They run the same way every time.
 **"Deleting X hours of work is wasteful"**
 
 Sunk cost fallacy. The time is already gone. Your choice now:
+
 - Delete and rewrite with TDD (X more hours, high confidence)
 - Keep it and add tests after (30 min, low confidence, likely bugs)
 
@@ -236,6 +249,7 @@ The "waste" is keeping code you can't trust. Working code without real tests is 
 **"TDD is dogmatic, being pragmatic means adapting"**
 
 TDD IS pragmatic:
+
 - Finds bugs before commit (faster than debugging after)
 - Prevents regressions (tests catch breaks immediately)
 - Documents behavior (tests show how to use code)
@@ -292,6 +306,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 **Bug:** Empty email accepted
 
 **RED**
+
 ```typescript
 test('rejects empty email', async () => {
   const result = await submitForm({ email: '' });
@@ -300,12 +315,14 @@ test('rejects empty email', async () => {
 ```
 
 **Verify RED**
+
 ```bash
 $ npm test
 FAIL: expected 'Email required', got undefined
 ```
 
 **GREEN**
+
 ```typescript
 function submitForm(data: FormData) {
   if (!data.email?.trim()) {
@@ -316,6 +333,7 @@ function submitForm(data: FormData) {
 ```
 
 **Verify GREEN**
+
 ```bash
 $ npm test
 PASS
@@ -357,9 +375,45 @@ Never fix bugs without a test.
 ## Testing Anti-Patterns
 
 When adding mocks or test utilities, read @testing-anti-patterns.md to avoid common pitfalls:
+
 - Testing mock behavior instead of real behavior
 - Adding test-only methods to production classes
 - Mocking without understanding dependencies
+
+## Advanced TDD: Legacy Code (The "I tried, but it's a mess" Defense)
+
+**Problem:** You can't write a test because the code is a 500-line global soup.
+
+**Senior Pattern: The Sprout Method**
+
+1. **Don't** try to test the soup.
+2. Create a **new, separate function/class** for your new logic.
+3. TDD *that* new component completely in isolation.
+4. Call your new, tested component from the legacy soup.
+
+**Senior Pattern: The Wrap Method**
+
+1. Rename `oldFunction()` to `oldFunctionImpl()`.
+2. Create `oldFunction()` that calls `newLogic()` + `oldFunctionImpl()`.
+3. TDD `newLogic()` in isolation.
+
+## Advanced TDD: Integration Boundaries
+
+**"But I can't mock the database!"**
+
+**Senior Pattern:**
+
+1. Don't mock the database driver; that tests nothing.
+2. Spin up a real (Dockerized) DB or use an in-memory variant (SQLite).
+3. TDD the **Interface** against the real adapter.
+    - Test: `save(x) -> retrieve(id) == x`
+4. For external APIs: Use [VCR/Replay](https://github.com/vcr/vcr) patterns to record real traffic once and replay it.
+
+## Polyglot TDD Patterns
+
+- **Python:** `pytest`. Use fixtures for setup, not `setUp()`.
+- **Go:** Table-Driven Tests are the TDD standard.
+- **Rust:** TDD documentation examples (`/// ```rust`).
 
 ## Final Rule
 

@@ -54,7 +54,8 @@ What are you building?
 | **ORM** | Choose your own | Django ORM | Choose your own |
 | **Learning curve** | Low | Medium | Low |
 
-### Selection Questions to Ask:
+### Selection Questions to Ask
+
 1. Is this API-only or full-stack?
 2. Need admin interface?
 3. Team familiar with async?
@@ -405,6 +406,62 @@ Common fixtures:
 
 ---
 
+## 5. Data Engineering Patterns (Expert)
+
+### The "Big Data on Small RAM" Stack
+
+| Tool | Best For | Why? |
+|------|----------|------|
+| **Polars** | Dataframes < 100GB | Rust-based, multithreaded, lazy evaluation. 10x faster than Pandas. |
+| **DuckDB** | SQL on Files | Query 100GB CSV/Parquet files without loading them into RAM. |
+| **Pandas** | Legacy / Small Data | deeply integrated ecosystem, plotting. |
+
+### Generator Pipelines (Streaming)
+
+**Process 100GB logs on 1GB RAM.**
+
+❌ **Don't search memory:**
+
+```python
+logs = open("huge.log").readlines() # Crashes RAM
+lines = [l for l in logs if "ERROR" in l]
+```
+
+✅ **Do search streams:**
+
+```python
+def log_stream(filename):
+    with open(filename) as f:
+        yield from f # Loads 1 line at a time
+
+# Pipeline
+lines = log_stream("huge.log")
+errors = (l for l in lines if "ERROR" in l) # Generator expression
+for err in errors:
+    process(err) # Memory usage: Constant ~500KB
+```
+
+### Data Validation (Pydantic)
+
+**Validate your CSVs before they poison your DB.**
+
+```python
+class RowSchema(BaseModel):
+    id: int
+    email: EmailStr
+    age: PositiveInt
+
+def load_csv(path):
+    for row in csv.DictReader(open(path)):
+        try:
+            valid_row = RowSchema(**row)
+            save_to_db(valid_row)
+        except ValidationError as e:
+            log_bad_data(row, e)
+```
+
+---
+
 ## 10. Decision Checklist
 
 Before implementing:
@@ -421,7 +478,8 @@ Before implementing:
 
 ## 11. Anti-Patterns to Avoid
 
-### ❌ DON'T:
+### ❌ DON'T
+
 - Default to Django for simple APIs (FastAPI may be better)
 - Use sync libraries in async code
 - Skip type hints for public APIs
@@ -429,7 +487,8 @@ Before implementing:
 - Ignore N+1 queries
 - Mix async and sync carelessly
 
-### ✅ DO:
+### ✅ DO
+
 - Choose framework based on context
 - Ask about async requirements
 - Use Pydantic for validation

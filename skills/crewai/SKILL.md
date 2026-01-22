@@ -195,6 +195,36 @@ result = crew.kickoff()
 print(crew.plan)
 ```
 
+## 🛠️ Advanced Tooling (Expert)
+
+### Custom Tools
+
+Don't rely on pre-built tools. Wrap your internal APIs.
+
+```python
+from crewai_tools import BaseTool
+
+class InternalDatabaseTool(BaseTool):
+    name: str = "Query Internal DB"
+    description: str = "Execute SQL query against production DB. Use strictly for read operations."
+
+    def _run(self, query: str) -> str:
+        # Implementation
+        return db.execute(query)
+
+# Assign to specific agent
+analyst = Agent(
+    role="Analyst",
+    tools=[InternalDatabaseTool()] # Only analyst gets this!
+)
+```
+
+### Agent vs Task Tools
+
+* **Agent Tools:** General tools the agent always has (e.g., `Search`).
+- **Task Tools:** Specific tools just for one job (e.g., `FileWrite` only for the "Save Report" task).
+- **Why?** Reduces hallucination. If the agent doesn't need it, don't give it to them.
+
 ## Anti-Patterns
 
 ### ❌ Vague Agent Roles
@@ -204,6 +234,7 @@ Overlapping responsibilities.
 Poor task delegation.
 
 **Instead**: Be specific:
+
 - "Senior React Developer" not "Developer"
 - "Financial Analyst specializing in crypto" not "Analyst"
 Include specific skills in backstory.
@@ -217,9 +248,10 @@ Hard to chain tasks.
 **Instead**: Always specify expected_output:
 expected_output: |
   A JSON object with:
-  - summary: string (100 words max)
-  - key_points: list of strings
-  - confidence: float 0-1
+
+- summary: string (100 words max)
+- key_points: list of strings
+- confidence: float 0-1
 
 ### ❌ Too Many Agents
 

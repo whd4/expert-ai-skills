@@ -9,12 +9,14 @@ allowed-tools: Read, Glob, Grep
 ## Quick Review Checklist
 
 ### Correctness
+
 - [ ] Code does what it's supposed to do
 - [ ] Edge cases handled
 - [ ] Error handling in place
 - [ ] No obvious bugs
 
 ### Security
+
 - [ ] Input validated and sanitized
 - [ ] No SQL/NoSQL injection vulnerabilities
 - [ ] No XSS or CSRF vulnerabilities
@@ -23,35 +25,57 @@ allowed-tools: Read, Glob, Grep
 - [ ] **AI-Specific:** Outputs are sanitized before being used in critical sinks
 
 ### Performance
+
 - [ ] No N+1 queries
 - [ ] No unnecessary loops
 - [ ] Appropriate caching
 - [ ] Bundle size impact considered
 
 ### Code Quality
+
 - [ ] Clear naming
 - [ ] DRY - no duplicate code
 - [ ] SOLID principles followed
 - [ ] Appropriate abstraction level
 
 ### Testing
+
 - [ ] Unit tests for new code
 - [ ] Edge cases tested
 - [ ] Tests readable and maintainable
 
 ### Documentation
+
 - [ ] Complex logic commented
 - [ ] Public APIs documented
 - [ ] README updated if needed
 
+## 🏗️ Architectural Review (Senior/Staff Level)
+
+**Look beyond the lines of code. Look at the system.**
+
+- [ ] **Failure Domains:** If this service dies, what else dies? (Cascading failures?)
+- [ ] **Scalability:** Will this work with 10x data? 100x? (Unbounded lists, memory leaks)
+- [ ] **Idempotency:** What happens if the message queue delivers this event twice?
+- [ ] **Observability:** How will we know it's broken in production? (Logs, Metrics, Traces)
+- [ ] **Migration Path:** How does this deploy? (Database locks, API versioning)
+
+## 🔄 Operational Review
+
+- [ ] **Feature Flags:** Is this behind a flag? Can we turn it off without a deploy?
+- [ ] **Config:** Are secrets separated from config? Defaults sane?
+- [ ] **Rollback:** Is this change backwards compatible? Can we revert safely?
+
 ## AI & LLM Review Patterns (2025)
 
 ### Logic & Hallucinations
+
 - [ ] **Chain of Thought:** Does the logic follow a verifiable path?
 - [ ] **Edge Cases:** Did the AI account for empty states, timeouts, and partial failures?
 - [ ] **External State:** Is the code making safe assumptions about file systems or networks?
 
 ### Prompt Engineering Review
+
 ```markdown
 // ❌ Vague prompt in code
 const response = await ai.generate(userInput);

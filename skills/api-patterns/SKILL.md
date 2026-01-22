@@ -30,6 +30,34 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 | `documentation.md` | OpenAPI/Swagger best practices | Documentation |
 | `security-testing.md` | OWASP API Top 10, auth/authz testing | Security audits |
 
+## 🧠 Decision Matrix (Expert)
+
+| Style | Best For | Pros | Cons |
+|-------|----------|------|------|
+| **REST** | Public APIs, Simple CRUD | Caching, Universal support | Over-fetching, multiple round-trips |
+| **GraphQL** | Complex Frontends, Mobile Apps | Single request, Flexible data | Complexity, N+1 queries, Harder caching |
+| **tRPC** | TypeScript Monorepos (Next.js) | End-to-end type safety, Speed | Tight coupling (Frontend+Backend) |
+| **gRPC** | Microservices (Internal) | High performance (Protobuf), Streaming | Browser support is weak (requires proxy) |
+
+## 🛡️ Robustness Patterns
+
+### Idempotency
+
+**Problem:** User clicks "Pay" twice. You charge them twice.
+**Solution:** Client sends `Idempotency-Key: <uuid>`.
+
+1. Server checks Redis: `GET idempotency:<uuid>`.
+2. If exists: Return cached 200 OK immediately.
+3. If new: Process charge, save result to Redis, return 200 OK.
+
+### Rate Limiting (Algorithms)
+
+| Algorithm | How it works | Pros | Cons |
+|-----------|--------------|------|------|
+| **Fixed Window** | "100 reqs per hour" (resets at :00) | Simple | Stampede at window reset |
+| **Sliding Window** | Smoothed over time | Fairer | More Redis memory needed |
+| **Token Bucket** | "Bucket of coins", refill at rate X | Allows bursts (good for users) | Complex implementation |
+
 ---
 
 ## 🔗 Related Skills
@@ -59,6 +87,7 @@ Before designing an API:
 ## ❌ Anti-Patterns
 
 **DON'T:**
+
 - Default to REST for everything
 - Use verbs in REST endpoints (/getUsers)
 - Return inconsistent response formats
@@ -66,6 +95,7 @@ Before designing an API:
 - Skip rate limiting
 
 **DO:**
+
 - Choose API style based on context
 - Ask about client requirements
 - Document thoroughly
@@ -78,4 +108,3 @@ Before designing an API:
 | Script | Purpose | Command |
 |--------|---------|---------|
 | `scripts/api_validator.py` | API endpoint validation | `python scripts/api_validator.py <project_path>` |
-

@@ -64,6 +64,46 @@ Combine semantic and keyword search
 - Weight tuning based on query type
 ```
 
+## Advanced Retrieval Patterns (Expert)
+
+### 1. Query Routing & Decomposition
+
+Don't use one tool for everything.
+
+- **Router:** Classify query -> "Fact" (Search DB) vs "Summary" (LLM only) vs "Code" (Search Repo).
+- **Decomposition:** Break "Compare X and Y" into "Get X", "Get Y", "Compare".
+
+### 2. Hypothethical Document Embeddings (HyDE)
+
+Embeddings map *answers* close to *answers*, not *questions* to *answers*.
+
+- **Step 1:** Ask LLM to hallucinate a fake answer to the user query.
+- **Step 2:** Embed that fake answer.
+- **Step 3:** Retrieve real documents close to the fake answer.
+
+### 3. Recursive Retrieval (Parent-Child)
+
+- **Index:** Small chunks (sentences) for accurate matching.
+- **Retrieve:** The parent chunk (paragraph/page) for context.
+- **Result:** High precision match + High context generation.
+
+## 📏 Evaluation (RAGAS Framework)
+
+**Don't guess. Measure.**
+
+| Metric | Measures | High Means... |
+|--------|----------|---------------|
+| **Faithfulness** | Does answer come *only* from context? | No hallucinations. |
+| **Answer Relevance** | Does answer address the query? | User is happy. |
+| **Context Precision** | Did we retrieve relevant chunks? | High signal-to-noise. |
+| **Context Recall** | Did we retrieve *all* needed chunks? | No missing info. |
+
+## 🏭 Production RAG (War Stories)
+
+- **Caching:** Cache specific queries and "Head" queries (top 20%). Semantically cache similar queries.
+- **Indexing:** HNSW (Fast, RAM heavy) vs IVF (Slower, Disk/SSD friendly). Use HNSW for <10M vectors.
+- **Reranking:** Vector search is "fuzzy". Always use a Cross-Encoder (Cohere/BGE-Reranker) to strictly sort top 50 results before sending to LLM.
+
 ## Anti-Patterns
 
 ### ❌ Fixed Chunk Size

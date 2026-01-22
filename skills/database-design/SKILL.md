@@ -21,6 +21,37 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 | `optimization.md` | N+1, EXPLAIN ANALYZE | Query optimization |
 | `migrations.md` | Safe migrations, serverless DBs | Schema changes |
 
+## ⚡ Indexing Strategy (Cheatsheet)
+
+**Default to B-Tree. Know when to switch.**
+
+| Index Type | Use Case | Example |
+|------------|----------|---------|
+| **B-Tree** | Equality (`=`), Range (`<`, `>`), Sorting (`ORDER BY`) | `WHERE age > 21` |
+| **Hash** | Exact equality ONLY (Faster than B-Tree, but limited) | `WHERE uuid = '...'` |
+| **GIN** | JSONB, Full Text Search, Arrays | `WHERE data @> '{"tag": "urgent"}'` |
+| **GiST** | Geo-spatial, Nearest Neighbor | `WHERE location <@ box` |
+
+**Composite Index Rule:** Order matters! `(last_name, first_name)` helps `WHERE last_name='Bond'`, but DOES NOT help `WHERE first_name='James'`. (**Leftmost Prefix Rule**)
+
+## ⚖️ Scaling: Partitioning vs Sharding
+
+| Strategy | What is it? | Complexity | When to use? |
+|----------|-------------|------------|--------------|
+| **Partitioning** | Splitting one table into chunks on the **SAME** server. | Medium | Table > 100GB. Need to delete old data fast (`DROP PARTITION`). |
+| **Sharding** | Splitting data across **DIFFERENT** servers. | Extreme | Write QPS > Single Node limit. Massive scale (Petabytes). |
+
+## 🔌 Connection Pooling (Serverless)
+
+**Serverless Apps + Postgres = Disaster.**
+Lambda scales to 1,000 instances -> 1,000 DB connections -> DB Crashes.
+
+**Solution:** Use **PgBouncer** (or AWS RDS Proxy / Supabase Pooler).
+
+- Function connects to Proxy (TCP).
+- Proxy holds small pool of persistent connections to DB.
+- **Transactional Mode:** Connection matches to DB only for duration of transaction. Best for serverless.
+
 ---
 
 ## ⚠️ Core Principle

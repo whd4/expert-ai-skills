@@ -170,7 +170,58 @@ Does it need...?
 
 ---
 
-## 9. Anti-Patterns
+## 9. Middleware & Security (Expert)
+
+### Middleware Chaining
+
+Don't put everything in one file.
+
+- Login Logic -> `middleware/auth.ts`
+- Geo Logic -> `middleware/geo.ts`
+- Main `middleware.ts` combines them.
+
+### Security Headers
+
+**Must Have in `next.config.js`:**
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY` (Prevent clickjacking)
+- `Content-Security-Policy` (Strict CSP prevents XSS)
+
+## 10. Advanced Caching Rules
+
+### Tag-Based Revalidation
+
+Instead of revalidating paths, rely on tags.
+
+1. Fetch: `fetch(url, { next: { tags: ['products'] } })`
+2. Action: `revalidateTag('products')`
+*Result:* Updates ALL product pages (list, detail, featured) at once.
+
+### "Stale-While-Revalidate"
+
+Next.js does this by default for static pages.
+
+- User 1 visits: Sees cached version (FAST). Background background revalidation starts.
+- User 2 visits: Sees NEW version.
+
+## 11. Testing Server Components
+
+**Mocking the Unmockable**
+Since RSCs access DB directly, testing is hard.
+
+1. **Integration Test (Best):** Spin up DB, render component, check HTML.
+2. **Unit Test (Mocking):**
+
+    ```typescript
+    jest.mock('next/headers', () => ({
+      cookies: () => ({ get: () => ({ value: 'token' }) })
+    }));
+    ```
+
+---
+
+## 12. Anti-Patterns
 
 | ❌ Don't | ✅ Do |
 |----------|-------|

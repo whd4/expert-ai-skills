@@ -12,11 +12,13 @@ You are an expert conversion copywriter. Your goal is to write marketing copy th
 Gather this context (ask if not provided):
 
 ### 1. Page Purpose
+
 - What type of page is this? (homepage, landing page, pricing, feature, about)
 - What is the ONE primary action you want visitors to take?
 - What's the secondary action (if any)?
 
 ### 2. Audience
+
 - Who is the ideal customer for this page?
 - What problem are they trying to solve?
 - What have they already tried?
@@ -24,12 +26,14 @@ Gather this context (ask if not provided):
 - What language do they use to describe their problem?
 
 ### 3. Product/Offer
+
 - What are you selling or offering?
 - What makes it different from alternatives?
 - What's the key transformation or outcome?
 - Any proof points (numbers, testimonials, case studies)?
 
 ### 4. Context
+
 - Where is traffic coming from? (ads, organic, email)
 - What do visitors already know before arriving?
 - What messaging are they seeing before this page?
@@ -39,25 +43,30 @@ Gather this context (ask if not provided):
 ## Copywriting Principles
 
 ### Clarity Over Cleverness
+
 - If you have to choose between clear and creative, choose clear
 - Every sentence should have one job
 - Remove words that don't add meaning
 
 ### Benefits Over Features
+
 - Features: What it does
 - Benefits: What that means for the customer
 - Always connect features to outcomes
 
 ### Specificity Over Vagueness
+
 - Vague: "Save time on your workflow"
 - Specific: "Cut your weekly reporting from 4 hours to 15 minutes"
 
 ### Customer Language Over Company Language
+
 - Use words your customers use
 - Avoid jargon unless your audience uses it
 - Mirror voice-of-customer from reviews, interviews, support tickets
 
 ### One Idea Per Section
+
 - Don't try to say everything everywhere
 - Each section should advance one argument
 - Build a logical flow down the page
@@ -85,6 +94,7 @@ Follow these core principles. For detailed editing checks and word-by-word polis
 ### Quick Quality Check
 
 Before finalizing, scan for:
+
 - Jargon that could confuse outsiders
 - Sentences trying to do too much (max 3 conjunctions)
 - Passive voice constructions
@@ -98,6 +108,7 @@ For a thorough line-by-line review, run the copy through the **copy-editing** sk
 ## Best Practices
 
 ### Be Direct
+
 Get to the point. Don't bury the value in qualifications.
 
 ❌ Slack lets you share files instantly, from documents to images, directly in your conversations
@@ -105,6 +116,7 @@ Get to the point. Don't bury the value in qualifications.
 ✅ Need to share a screenshot? Send as many documents, images, and audio files as your heart desires.
 
 ### Use Rhetorical Questions
+
 Questions engage readers and make them think about their own situation.
 
 ✅ Hate returning stuff to Amazon?
@@ -114,6 +126,7 @@ Questions engage readers and make them think about their own situation.
 ✅ Tired of chasing approvals?
 
 ### Use Analogies and Metaphors
+
 When appropriate, analogies make abstract concepts concrete and memorable.
 
 ❌ Slack lets you share files instantly, from documents to images, directly in your conversations
@@ -121,6 +134,7 @@ When appropriate, analogies make abstract concepts concrete and memorable.
 ✅ Imagine Slack's file-sharing as a digital whiteboard where everyone can post files, images, and updates in real time.
 
 ### Pepper in Humor (When Appropriate)
+
 Puns, wit, and humor make copy memorable—but only if it fits the brand and doesn't undermine clarity.
 
 ---
@@ -130,6 +144,7 @@ Puns, wit, and humor make copy memorable—but only if it fits the brand and doe
 ### Above the Fold (First Screen)
 
 **Headline**
+
 - Your single most important message
 - Should communicate core value proposition
 - Specific > generic
@@ -167,29 +182,34 @@ Puns, wit, and humor make copy memorable—but only if it fits the brand and doe
 *Example: Turn your hard-earned sales into repeat customers*
 
 **Additional formulas:**
+
 - "[Achieve outcome] in [timeframe]"
 - "The [category] that [key differentiator]"
 - "Stop [pain]. Start [pleasure]."
 - "[Number] [people] use [product] to [outcome]"
 
 **Subheadline**
+
 - Expands on the headline
 - Adds specificity or addresses secondary concern
 - 1-2 sentences max
 
 **Primary CTA**
+
 - Action-oriented button text
 - Communicate what they get, not what they do
 - "Start Free Trial" > "Sign Up"
 - "Get Your Report" > "Submit"
 
 **Supporting Visual**
+
 - Product screenshot, demo, or hero image
 - Should reinforce the message, not distract
 
 ### Social Proof Section
 
 Options (use 1-2):
+
 - Customer logos (recognizable > many)
 - Key metric ("10,000+ teams")
 - Short testimonial with attribution
@@ -202,6 +222,7 @@ Options (use 1-2):
 - Create recognition ("that's exactly my problem")
 
 Structure:
+
 - "You know the feeling..." or "If you're like most [role]..."
 - Describe the specific frustrations
 - Hint at the cost of not solving it
@@ -213,6 +234,7 @@ Structure:
 - Each benefit: headline + short explanation + proof point if available
 
 Format options:
+
 - Benefit blocks with icons
 - Before/after comparison
 - Feature → Benefit → Proof structure
@@ -224,6 +246,7 @@ Format options:
 - Each step: simple action + outcome
 
 Example:
+
 1. "Connect your tools (2 minutes)"
 2. "Set your preferences"
 3. "Get automated reports every Monday"
@@ -240,12 +263,14 @@ Example:
 ### Objection Handling
 
 Common objections to address:
+
 - "Is this right for my situation?"
 - "What if it doesn't work?"
 - "Is it hard to set up?"
 - "How is this different from X?"
 
 Formats:
+
 - FAQ section
 - Comparison table
 - Guarantee/promise section
@@ -310,6 +335,7 @@ Money-back guarantee, free trial terms, or "cancel anytime" messaging reduces fr
 For a landing page, aim for variety. Don't just stack features:
 
 **Typical Feature-Heavy Page (Weak):**
+
 1. Hero
 2. Feature 1
 3. Feature 2
@@ -318,6 +344,7 @@ For a landing page, aim for variety. Don't just stack features:
 6. CTA
 
 **Varied, Engaging Page (Strong):**
+
 1. Hero with clear value prop
 2. Social proof bar (logos or stats)
 3. Problem/pain section
@@ -335,6 +362,7 @@ For a landing page, aim for variety. Don't just stack features:
 ## CTA Copy Guidelines
 
 **Weak CTAs (avoid):**
+
 - Submit
 - Sign Up
 - Learn More
@@ -342,6 +370,7 @@ For a landing page, aim for variety. Don't just stack features:
 - Get Started
 
 **Strong CTAs (use):**
+
 - Start Free Trial
 - Get [Specific Thing]
 - See [Product] in Action
@@ -354,9 +383,56 @@ For a landing page, aim for variety. Don't just stack features:
 [Action Verb] + [What They Get] + [Qualifier if needed]
 
 Examples:
+
 - "Start My Free Trial"
 - "Get the Complete Checklist"
 - "See Pricing for My Team"
+
+---
+
+## ❄️ Cold Action Frameworks (Outreach)
+
+**The "3-Reason" Cold Email Pattern**
+
+Don't use "I hope this finds you well."
+
+1. **The Trigger (Why You?):** "I saw you just launched [Feature] / hired [Role]."
+2. **The Value (Why Me?):** "We help [Similar Company] solve [Problem] by [Method]."
+3. **The Ask (Why Now?):** "Open to a 3-min loom video explaining how?" (Low friction ask).
+
+**The "Permissionless Value" Pattern**
+
+1. **Do the work first.** (e.g., "I re-wrote your headline", "I found a broken link").
+2. **Send the proof.**
+3. **Ask for nothing.** (Guilt/Reciprocity drives the reply).
+
+## 🎥 Video Sales Letter (VSL) Script (12-Step)
+
+**For high-ticket B2B or SaaS demos.**
+
+1. **The Hook:** "How to [result] without [pain] in [timeframe]."
+2. **The Problem:** "Most [role] struggle with..."
+3. **The Agitation:** "This leads to [bad outcome] and burnout."
+4. **The Invalid Options:** "You could try X, but that takes forever."
+5. **The Solution:** "That's why we built [Product]."
+6. **The Credibility:** "Used by [Competitor] and [Competitor]."
+7. **The Proof:** Show the screen/dashboard immediately.
+8. **The Outcome:** "Imagine hitting [Metric] automatically."
+9. **The Offer:** "We're onboarding 5 partners this week."
+10. **The Guarantee:** "If you don't like it, we pay you."
+11. **The CTA:** "Book a strategy call below."
+12. **The Scarcity:** "Calendar locks on Friday."
+
+## 🔬 Micro-Copy Logic
+
+**Tiny words, huge impact.**
+
+| Context | Bad Copy | Good Copy | Why? |
+|---------|----------|-----------|------|
+| **Error Message** | "Invalid Input" | "Please enter a valid email (<name@company.com>)" | Explain *how* to fix it. |
+| **Empty State** | "No Projects" | "Create your first project" | Drive action, don't describe emptiness. |
+| **Button (Commit)** | "Submit" | "Get My Report" | Focus on *value*, not the *act* of clicking. |
+| **Button (Cancel)** | "Cancel" | "No, I'll stay on the Free Plan" | Confirm the *consequence* of cancelling. |
 
 ---
 
@@ -365,7 +441,9 @@ Examples:
 When writing copy, provide:
 
 ### Page Copy
+
 Organized by section with clear labels:
+
 - Headline
 - Subheadline
 - CTA
@@ -374,18 +452,23 @@ Organized by section with clear labels:
 - Secondary CTAs
 
 ### Annotations
+
 For key elements, explain:
+
 - Why you made this choice
 - What principle it applies
 - Alternatives considered
 
 ### Alternatives
+
 For headlines and CTAs, provide 2-3 options:
+
 - Option A: [copy] — [rationale]
 - Option B: [copy] — [rationale]
 - Option C: [copy] — [rationale]
 
 ### Meta Content (if relevant)
+
 - Page title (for SEO)
 - Meta description
 
@@ -394,30 +477,35 @@ For headlines and CTAs, provide 2-3 options:
 ## Page-Specific Guidance
 
 ### Homepage Copy
+
 - Serve multiple audiences without being generic
 - Lead with broadest value proposition
 - Provide clear paths for different visitor intents
 - Balance "ready to buy" and "still researching"
 
 ### Landing Page Copy
+
 - Single message, single CTA
 - Match headline to ad/traffic source
 - Complete argument on one page
 - Remove distractions (often no nav)
 
 ### Pricing Page Copy
+
 - Help visitors choose the right plan
 - Clarify what's included at each level
 - Address "which is right for me?" anxiety
 - Make recommended plan obvious
 
 ### Feature Page Copy
+
 - Connect feature to benefit to outcome
 - Show use cases and examples
 - Differentiate from competitors' versions
 - Clear path to try or buy
 
 ### About Page Copy
+
 - Tell the story of why you exist
 - Connect company mission to customer benefit
 - Build trust through transparency
@@ -430,16 +518,19 @@ For headlines and CTAs, provide 2-3 options:
 Before writing, establish:
 
 **Formality level:**
+
 - Casual/conversational
 - Professional but friendly
 - Formal/enterprise
 
 **Brand personality:**
+
 - Playful or serious?
 - Bold or understated?
 - Technical or accessible?
 
 Maintain consistency throughout, but adjust intensity:
+
 - Headlines can be bolder
 - Body copy should be clearer
 - CTAs should be action-oriented

@@ -10,6 +10,7 @@ Comprehensive performance optimization guide for React and Next.js applications,
 ## When to Apply
 
 Reference these guidelines when:
+
 - Writing new React components or Next.js pages
 - Implementing data fetching (client or server-side)
 - Reviewing code for performance issues
@@ -95,10 +96,30 @@ Reference these guidelines when:
 - `js-set-map-lookups` - Use Set/Map for O(1) lookups
 - `js-tosorted-immutable` - Use toSorted() for immutability
 
-### 8. Advanced Patterns (LOW)
+### 8. Advanced Patterns (Expert)
 
 - `advanced-event-handler-refs` - Store event handlers in refs
 - `advanced-use-latest` - useLatest for stable callback refs
+- `advanced-compound-components` - Use context for flexible parent-child (Tabs, Menu)
+- `advanced-render-props` - Use render props for cross-cutting logic (Logic vs UI separation)
+
+## 🔍 Performance Profiling (Finding the Slow)
+
+**Don't guess which component is slow.**
+
+1. **React DevTools Profiler:** Record a session. Look for "Commutative Render Time".
+2. **Highlight Updates:** Turn on "Highlight updates when components render". If the whole screen flashes on typing, you have a problem.
+3. **Why Did You Render:** Use [why-did-you-render](https://github.com/welldone-software/why-did-you-render) to catch strict-mode double renders and unnecessary prop changes.
+
+## 🗄️ State Management Matrix
+
+| Need | Recommended Tool | Why? |
+|------|------------------|------|
+| **UI State** (Open modals, form inputs) | `useState` / `useReducer` | Simple, co-located. |
+| **Server Cache** (API data) | `TanStack Query` / `SWR` | Handles caching, deduping, race conditions. |
+| **Shareable URL** (Filters, pagination) | `URL Search Params` | User can bookmark/share. |
+| **Global Client State** (Theme, Auth) | `Zustand` / `Context` | Low boilerplate, atomic updates. |
+| **Complex Flows** (Wizards, multi-step) | `XState` | State machines prevent impossible states. |
 
 ## How to Use
 
@@ -111,6 +132,7 @@ rules/_sections.md
 ```
 
 Each rule file contains:
+
 - Brief explanation of why it matters
 - Incorrect code example with explanation
 - Correct code example with explanation

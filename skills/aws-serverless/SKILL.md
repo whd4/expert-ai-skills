@@ -291,6 +291,52 @@ def handler(event, context):
     return {'batchItemFailures': batch_ite
 ```
 
+```
+
+## ❄️ Cold Start Optimization (Expert)
+
+**Don't let Java/Net perform like a sloth.**
+
+1.  **Power Tuning:** Use [aws-lambda-power-tuning](https://github.com/alexcasalboni/aws-lambda-power-tuning) to find the best memory/cost ratio. Often 1792MB is cheaper/faster than 128MB because of CPU scaling.
+2.  **Provisioned Concurrency:** For critical paths (e.g. Checkout), set `ProvisionedConcurrentExecutions: 5`.
+3.  **Lazy Loading:** Move `boto3` clients *inside* the handler if they are rarely used. Move them *outside* (global scope) if they are always used (connection reuse).
+
+## 📝 Structured Logging (CloudWatch Insights)
+
+**Stop using `print("error")`. Use JSON.**
+
+```python
+# Proper Logger Setup
+import logging
+from pythonjsonlogger import jsonlogger
+
+logger = logging.getLogger()
+logHandler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(requestId)s %(message)s')
+logHandler.setFormatter(formatter)
+logger.addHandler(logHandler)
+logger.setLevel(logging.INFO)
+
+# Usage
+logger.info("Payment processed", extra={"userId": "123", "amount": 50.00})
+```
+
+**Why?** So you can query it:
+`fields @timestamp, userId, amount | filter amount > 100 | sort @timestamp desc`
+
+## 🔐 IAM Least Privilege (Real World)
+
+**Stop using `AmazonDynamoDBFullAccess`.**
+
+```yaml
+# Good: Scoped to specific resource + specific actions
+- Effect: Allow
+  Action:
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+  Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+```
+
 ## Anti-Patterns
 
 ### ❌ Monolithic Lambda

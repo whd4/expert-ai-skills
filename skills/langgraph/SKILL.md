@@ -234,6 +234,48 @@ graph.add_edge("chat", END)
 app = graph.compile()
 ```
 
+## 🧠 Production Patterns (Expert)
+
+### Human-in-the-Loop (Approval)
+
+**Don't let agents deploy code without eyes on it.**
+
+1. **Interrupt:** Tell LangGraph to stop before specific nodes.
+2. **Resume:** User approves/edits state, then resumes.
+
+```python
+# Compile with interrupt
+app = graph.compile(
+    interrupt_before=["deploy_node"] 
+)
+
+# Run until interrupt
+thread = {"configurable": {"thread_id": "1"}}
+app.invoke(inputs, thread)
+
+# Check state (waiting at deploy_node)
+state = app.get_state(thread)
+
+# Resume (Approved)
+app.invoke(None, thread) 
+```
+
+### Checkpoints & Persistence
+
+**Agents that survive server restarts.**
+
+If you verify nothing else, verify this. **In-memory agents are not production agents.**
+
+```python
+from langgraph.checkpoint.postgres import PostgresSaver
+
+# Use DB for state
+with PostgresSaver.from_conn_string("postgresql://...") as checkpointer:
+    app = graph.compile(checkpointer=checkpointer)
+
+# Now you can resume thread_id="123" days later.
+```
+
 ## Anti-Patterns
 
 ### ❌ Infinite Loop Without Exit
@@ -243,6 +285,7 @@ Burns tokens and costs.
 Eventually errors out.
 
 **Instead**: Always have exit conditions:
+
 - Max iterations counter in state
 - Clear END conditions in routing
 - Timeout at application level
