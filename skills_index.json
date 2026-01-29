@@ -666,6 +666,12 @@
     "description": "Generative Engine Optimization for AI search engines (ChatGPT, Claude, Perplexity)."
   },
   {
+    "id": "gemini-moltbot-windows",
+    "path": "skills/gemini-moltbot-windows",
+    "name": "gemini-moltbot-windows",
+    "description": "Special instructions for using Google Gemini 3 to build a Molt.bot desktop application on Windows PC. Covers setup, architecture, bot logic, packaging, and deployment."
+  },
+  {
     "id": "git-pushing",
     "path": "skills/git-pushing",
     "name": "git-pushing",
