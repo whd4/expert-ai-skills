@@ -11,6 +11,7 @@ Examples:
     init_skill.py custom-skill --path /custom/location
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -286,6 +287,15 @@ def main():
 
     skill_name = sys.argv[1]
     path = sys.argv[3]
+
+    # Validate skill name
+    if len(skill_name) > 40:
+        print(f"❌ Error: Skill name must be at most 40 characters (got {len(skill_name)})")
+        sys.exit(1)
+    if not re.fullmatch(r'[a-z0-9]+(-[a-z0-9]+)*', skill_name):
+        print("❌ Error: Skill name must be hyphen-case with lowercase letters, digits, and hyphens only")
+        print("   Examples: 'data-analyzer', 'my-api-helper', 'pdf'")
+        sys.exit(1)
 
     print(f"🚀 Initializing skill: {skill_name}")
     print(f"   Location: {path}")
