@@ -804,6 +804,12 @@
     "description": "Mobile game development principles. Touch input, battery, performance, app stores."
   },
   {
+    "id": "monte-carlo-predictor",
+    "path": "skills/monte-carlo-predictor",
+    "name": "monte-carlo-predictor",
+    "description": "Monte Carlo prediction framework for evaluating any project. Use when the user wants to validate decisions, predict outcomes, find optimal paths, detect design divergences, or stress-test a project's direction. Activates on: 'predict', 'Monte Carlo', 'scenario analysis', 'what could go wrong', 'best path', 'validate direction', 'risk analysis', 'forecast', 'project trajectory', 'stress test', 'decision matrix'."
+  },
+  {
     "id": "moodle-external-api-development",
     "path": "skills/moodle-external-api-development",
     "name": "moodle-external-api-development",
