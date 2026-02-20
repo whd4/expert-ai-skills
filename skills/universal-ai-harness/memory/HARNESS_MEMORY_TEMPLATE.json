@@ -1,0 +1,219 @@
+{
+  "version": "1.0",
+  "created": "",
+  "last_updated": "",
+  "owner": "",
+
+  "semantic_memory": {
+    "domain_knowledge": {
+      "_comment": "Store domain-specific facts here, organized by domain",
+      "_example": {
+        "domain_name": {
+          "fact_id": {
+            "content": "The fact itself",
+            "confidence": 0.95,
+            "source": "Where this came from",
+            "last_validated": "2026-02-20"
+          }
+        }
+      }
+    },
+    "definitions": {
+      "_comment": "Store definitions of terms and concepts"
+    },
+    "preferences": {
+      "_comment": "Store user preferences that should persist",
+      "coding_style": {},
+      "communication_style": {},
+      "tool_preferences": {}
+    }
+  },
+
+  "episodic_memory": {
+    "sessions": [
+      {
+        "_template": {
+          "session_id": "unique-id",
+          "date": "2026-02-20",
+          "summary": "What was accomplished",
+          "key_decisions": [],
+          "artifacts_created": [],
+          "lessons": []
+        }
+      }
+    ],
+    "significant_events": [
+      {
+        "_template": {
+          "event_id": "unique-id",
+          "date": "2026-02-20",
+          "description": "What happened",
+          "impact": "How it affects future work",
+          "related_sessions": []
+        }
+      }
+    ]
+  },
+
+  "procedural_memory": {
+    "workflows": {
+      "_comment": "Store proven workflows that worked",
+      "_example": {
+        "workflow_name": {
+          "steps": [
+            "Step 1",
+            "Step 2"
+          ],
+          "success_rate": 0.85,
+          "times_used": 10,
+          "last_updated": "2026-02-20",
+          "notes": "Any important context"
+        }
+      }
+    },
+    "patterns": {
+      "_comment": "Store code patterns, architectural patterns, etc.",
+      "_example": {
+        "pattern_name": {
+          "description": "What this pattern does",
+          "when_to_use": "Conditions for using this",
+          "template": "The actual pattern or code",
+          "success_rate": 0.90
+        }
+      }
+    },
+    "anti_patterns": {
+      "_comment": "Store approaches that failed — to avoid repeating",
+      "_example": {
+        "anti_pattern_name": {
+          "description": "What was tried",
+          "why_it_failed": "Root cause of failure",
+          "better_approach": "What to do instead",
+          "times_failed": 2
+        }
+      }
+    }
+  },
+
+  "outcome_memory": {
+    "successes": [
+      {
+        "_template": {
+          "task_id": "unique-id",
+          "timestamp": "2026-02-20T12:00:00Z",
+          "task_type": "implementation|decision|research|etc",
+          "summary": "What the task was",
+          "approach": "What approach was used",
+          "confidence_predicted": 0.75,
+          "confidence_actual": 0.80,
+          "key_factors": "Why it succeeded",
+          "reusable_elements": "What can be used again"
+        }
+      }
+    ],
+    "failures": [
+      {
+        "_template": {
+          "task_id": "unique-id",
+          "timestamp": "2026-02-20T12:00:00Z",
+          "task_type": "implementation|decision|research|etc",
+          "summary": "What the task was",
+          "approach": "What approach was tried",
+          "confidence_predicted": 0.70,
+          "failure_mode": "How it failed",
+          "root_cause": "Why it failed",
+          "lessons": "What was learned",
+          "avoid_in_future": "What to not do again"
+        }
+      }
+    ],
+    "pending_validation": [
+      {
+        "_template": {
+          "task_id": "unique-id",
+          "timestamp": "2026-02-20T12:00:00Z",
+          "summary": "What was decided/built",
+          "predicted_outcome": "What we expected",
+          "validation_criteria": "How to know if it worked",
+          "check_by_date": "2026-03-20",
+          "status": "pending|validated_success|validated_failure"
+        }
+      }
+    ]
+  },
+
+  "calibration": {
+    "_comment": "Track confidence accuracy to improve calibration over time",
+    "confidence_accuracy": {
+      "90_plus": {
+        "predictions_made": 0,
+        "actually_correct": 0,
+        "accuracy_rate": null
+      },
+      "70_89": {
+        "predictions_made": 0,
+        "actually_correct": 0,
+        "accuracy_rate": null
+      },
+      "50_69": {
+        "predictions_made": 0,
+        "actually_correct": 0,
+        "accuracy_rate": null
+      },
+      "below_50": {
+        "predictions_made": 0,
+        "actually_correct": 0,
+        "accuracy_rate": null
+      }
+    },
+    "domain_calibration": {
+      "_comment": "Track calibration by domain — some domains may be more/less accurate",
+      "_example": {
+        "domain_name": {
+          "avg_confidence": 0.75,
+          "actual_accuracy": 0.70,
+          "delta": -0.05,
+          "adjustment": "reduce confidence by 5% in this domain"
+        }
+      }
+    }
+  },
+
+  "truth_ledger": {
+    "_comment": "Track claims as RIGHT / WRONG / TO BE DETERMINED",
+    "verified_true": [
+      {
+        "_template": {
+          "claim_id": "unique-id",
+          "claim": "The assertion that was verified",
+          "verified_date": "2026-02-20",
+          "verification_method": "How it was confirmed",
+          "confidence": 0.98
+        }
+      }
+    ],
+    "verified_false": [
+      {
+        "_template": {
+          "claim_id": "unique-id",
+          "claim": "The assertion that was disproven",
+          "verified_date": "2026-02-20",
+          "disproof_method": "How it was disproven",
+          "correct_answer": "What's actually true"
+        }
+      }
+    ],
+    "to_be_determined": [
+      {
+        "_template": {
+          "claim_id": "unique-id",
+          "claim": "The assertion that needs validation",
+          "created_date": "2026-02-20",
+          "current_confidence": 0.60,
+          "validation_plan": "How to verify this",
+          "deadline": "2026-03-01"
+        }
+      }
+    ]
+  }
+}

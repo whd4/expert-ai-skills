@@ -1296,6 +1296,12 @@
     "description": "\"UI/UX design intelligence. 50 styles, 21 palettes, 50 font pairings, 20 charts, 9 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, mobile app, .html, .tsx, .vue, .svelte. Elements: button, modal, navbar, sidebar, card, table, form, chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, flat design. Topics: color palette, accessibility, animation, layout, typography, font pairing, spacing, hover, shadow, gradient. Integrations: shadcn/ui MCP for component search and examples.\""
   },
   {
+    "id": "universal-ai-harness",
+    "path": "skills/universal-ai-harness",
+    "name": "universal-ai-harness",
+    "description": "Universal AI Harness — a meta-framework that wraps any AI model to reduce token waste, ensure spec-driven thinking, maintain persistent memory, and produce calibrated outputs. Combines BMAD spec-driven methodology, Deep Confidence reasoning, Monte Carlo validation, ReAct execution, and continuous learning. Seven layers: INTAKE, MEMORY, SPEC, REASON, VALIDATE, EXECUTE, LEARN. Activates on: 'harness mode', 'spec-driven', 'BMAD', 'think first', 'structured thinking', 'truth-seeking'."
+  },
+  {
     "id": "upstash-qstash",
     "path": "skills/upstash-qstash",
     "name": "upstash-qstash",
