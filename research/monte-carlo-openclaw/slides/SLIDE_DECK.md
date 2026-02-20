@@ -267,8 +267,8 @@ Cisco's assessment: "an absolute nightmare from a security perspective"
 
 # Thank You
 
-**Full research paper:** `paper/RESEARCH_PAPER.md`
-**Simulation code:** `simulation/monte_carlo_openclaw.py`
-**Raw data:** `data/simulation_results.json`
+**Full research paper:** `../paper/RESEARCH_PAPER.md`
+**Simulation code:** `../simulation/monte_carlo_openclaw.py`
+**Raw data:** `../data/simulation_results.json`
 
 *Monte Carlo Prediction Engine v1.0 — February 1, 2026*
