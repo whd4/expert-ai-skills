@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "created": "",
+  "last_updated": "",
+  "owner": "Henry",
+
+  "semantic_memory": {
+    "domain_knowledge": {
+      "_comment": "Domain-specific facts Henry learns about your life"
+    },
+    "definitions": {
+      "_comment": "Terms and concepts specific to your context"
+    },
+    "preferences": {
+      "coding_style": {},
+      "communication_style": {},
+      "tool_preferences": {},
+      "work_preferences": {},
+      "personal_preferences": {}
+    },
+    "user_profile": {
+      "goals": [],
+      "values": [],
+      "constraints": [],
+      "interests": []
+    }
+  },
+
+  "episodic_memory": {
+    "sessions": [],
+    "significant_events": [],
+    "milestones": []
+  },
+
+  "procedural_memory": {
+    "workflows": {
+      "_comment": "Workflows that worked well"
+    },
+    "patterns": {
+      "_comment": "Successful patterns to reuse"
+    },
+    "anti_patterns": {
+      "_comment": "Approaches that failed - avoid repeating"
+    }
+  },
+
+  "outcome_memory": {
+    "successes": [],
+    "failures": [],
+    "pending_validation": []
+  },
+
+  "calibration": {
+    "confidence_accuracy": {
+      "90_plus": { "predictions_made": 0, "actually_correct": 0, "accuracy_rate": null },
+      "70_89": { "predictions_made": 0, "actually_correct": 0, "accuracy_rate": null },
+      "50_69": { "predictions_made": 0, "actually_correct": 0, "accuracy_rate": null },
+      "below_50": { "predictions_made": 0, "actually_correct": 0, "accuracy_rate": null }
+    },
+    "domain_calibration": {}
+  },
+
+  "truth_ledger": {
+    "verified_true": [],
+    "verified_false": [],
+    "to_be_determined": []
+  },
+
+  "guardian_state": {
+    "active_monitors": [],
+    "pending_alerts": [],
+    "alert_history": []
+  },
+
+  "relationships": {
+    "_comment": "People Henry should remember",
+    "contacts": []
+  },
+
+  "projects": {
+    "_comment": "Active and past projects",
+    "active": [],
+    "completed": [],
+    "archived": []
+  },
+
+  "finances": {
+    "_comment": "Financial tracking (if enabled)",
+    "accounts": [],
+    "recurring": [],
+    "goals": []
+  }
+}

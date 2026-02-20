@@ -1,0 +1,187 @@
+# Henry Orchestrator Configuration
+# Copy this to your OpenClaw config directory
+
+name: "Henry"
+version: "1.0.0"
+
+# Identity
+identity:
+  display_name: "Henry"
+  role: "Personal AI Orchestrator"
+  description: "Your digital twin, second brain, and tireless advocate"
+
+# System Prompt
+system_prompt:
+  file: "HENRY.solmd"
+
+# Memory Configuration
+memory:
+  enabled: true
+  persistence: true
+  storage_path: "./memory/"
+
+  # Memory types to track
+  types:
+    semantic: true      # Facts, knowledge, preferences
+    episodic: true      # Session history, events
+    procedural: true    # Workflows, patterns
+    outcome: true       # Successes, failures, learnings
+    truth_ledger: true  # Verified claims tracking
+
+# Guardian Module (Always Watching)
+guardian:
+  enabled: true
+  check_interval: "hourly"
+
+  monitors:
+    - name: "financial_opportunities"
+      enabled: true
+      alert_threshold: "medium"
+
+    - name: "financial_threats"
+      enabled: true
+      alert_threshold: "low"  # Alert on any threat
+
+    - name: "health_signals"
+      enabled: true
+      alert_threshold: "medium"
+
+    - name: "relationship_maintenance"
+      enabled: true
+      alert_threshold: "medium"
+
+    - name: "career_opportunities"
+      enabled: true
+      alert_threshold: "high"
+
+    - name: "market_intelligence"
+      enabled: true
+      alert_threshold: "high"
+
+# Reasoner Module (Think Before Acting)
+reasoner:
+  enabled: true
+
+  # ATLAS decomposition for complex tasks
+  atlas:
+    enabled: true
+    trigger: "complex_task"
+
+  # Monte Carlo scenarios
+  monte_carlo:
+    enabled: true
+    scenarios: 5
+    default_probabilities:
+      best_case: 0.10
+      optimistic: 0.25
+      base_case: 0.35
+      pessimistic: 0.20
+      worst_case: 0.10
+
+  # Confidence scoring
+  confidence:
+    enabled: true
+    min_threshold: 0.50  # Below this, seek more info
+    calibration_tracking: true
+
+# Dispatcher Module (Sub-Agents)
+dispatcher:
+  enabled: true
+  max_parallel_agents: 5
+
+  agent_types:
+    - research
+    - build
+    - monitor
+    - analyze
+    - communicate
+    - negotiate
+
+  # Agent communication
+  communication:
+    message_bus: true
+    broadcast_discoveries: true
+    real_time_updates: true
+
+# Persistence Protocol (Never Give Up)
+persistence:
+  enabled: true
+
+  phases:
+    - name: "direct"
+      max_attempts: 1
+
+    - name: "alternative"
+      min_approaches: 3
+
+    - name: "decompose"
+      enabled: true
+
+    - name: "external"
+      search_enabled: true
+
+    - name: "reframe"
+      enabled: true
+
+  # Only report exhausted after all phases fail
+  require_all_phases: true
+
+# Parallel Exploration (MCTS-style)
+parallel_exploration:
+  enabled: true
+
+  pruning:
+    enabled: true
+    confidence_threshold: 0.50  # Prune below this
+
+  resource_allocation:
+    boost_threshold: 0.70       # Allocate more above this
+
+# Communication Style
+style:
+  concise: true
+  actionable: true
+  honest_confidence: true
+  proactive_alerts: true
+  structured_output: true
+
+# Daily Rhythms
+routines:
+  morning_brief:
+    enabled: true
+    auto_trigger: false  # Set to true for automatic
+    time: "07:00"
+
+  evening_log:
+    enabled: true
+    auto_trigger: false
+    time: "21:00"
+
+  weekly_review:
+    enabled: true
+    day: "sunday"
+    time: "18:00"
+
+# Integrations (configure as needed)
+integrations:
+  calendar:
+    enabled: false
+    provider: ""  # google, outlook, etc.
+
+  email:
+    enabled: false
+    provider: ""
+
+  tasks:
+    enabled: false
+    provider: ""  # todoist, notion, etc.
+
+  finance:
+    enabled: false
+    provider: ""
+
+# Logging
+logging:
+  level: "info"
+  save_sessions: true
+  save_decisions: true
