@@ -516,6 +516,12 @@
     "description": "Database design principles and decision-making. Schema design, indexing strategy, ORM selection, serverless databases."
   },
   {
+    "id": "deep-confidence",
+    "path": "skills/deep-confidence",
+    "name": "deep-confidence",
+    "description": "Deep Confidence Harness — a thinking, planning, and execution framework that forces structured reasoning before acting. Combines Monte Carlo scenario analysis, calibrated confidence, multi-perspective debate (MAD), and ATLAS decomposition. Use before any complex decision, build, or task. Activates on: 'deep confidence', 'think before you act', 'plan first', 'Atlas mode', 'reason through this', 'think this through', 'best approach', 'reason carefully', 'plan and execute'."
+  },
+  {
     "id": "deployment-procedures",
     "path": "skills/deployment-procedures",
     "name": "deployment-procedures",
@@ -868,6 +874,12 @@
     "path": "skills/onboarding-cro",
     "name": "onboarding-cro",
     "description": "When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions \"onboarding flow,\" \"activation rate,\" \"user activation,\" \"first-run experience,\" \"empty states,\" \"onboarding checklist,\" \"aha moment,\" or \"new user experience.\" For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence."
+  },
+  {
+    "id": "openclaw-henry",
+    "path": "skills/openclaw-henry",
+    "name": "openclaw-henry",
+    "description": "OpenClaw personal AI assistant configuration for life organization and income generation. Use when setting up, configuring, or instructing an OpenClaw agent named Henry to manage daily life, finances, tasks, calendar, and money-making activities. Activates on: 'Henry', 'OpenClaw Henry', 'organize my life', 'make money with AI', 'set up Henry', 'Henry config'."
   },
   {
     "id": "page-cro",
