@@ -924,6 +924,12 @@
     "description": "Performance profiling principles. Measurement, analysis, and optimization techniques."
   },
   {
+    "id": "personal-ai-orchestrator",
+    "path": "skills/personal-ai-orchestrator",
+    "name": "personal-ai-orchestrator",
+    "description": "Your personal AI operating system — a digital twin that advocates for your interests 24/7. Orchestrates sub-agents, maintains persistent memory, forecasts opportunities, guards against threats, and never gives up on finding answers. Uses parallel exploration with pruning (MCTS-style). Activates on: 'orchestrator', 'my AI', 'digital twin', 'spin up agent', 'find me', 'watch for'."
+  },
+  {
     "id": "personal-tool-builder",
     "path": "skills/personal-tool-builder",
     "name": "personal-tool-builder",
