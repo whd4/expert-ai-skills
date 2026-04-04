@@ -36,6 +36,7 @@ find_openclaw() {
 
     # Try to find it, but validate matches look like config dirs
     # Use null-delimited find to safely handle paths with spaces
+    # Search for both openclaw and open-claw (hyphenated) variants
     local found_valid=""
     while IFS= read -r -d '' candidate; do
         # Validate: must contain config files OR be empty (fresh install)
@@ -46,7 +47,7 @@ find_openclaw() {
             found_valid="$candidate"
             break
         fi
-    done < <(find "$HOME" -maxdepth 4 -type d -iname "*openclaw*" -print0 2>/dev/null)
+    done < <(find "$HOME" -maxdepth 4 -type d \( -iname "*openclaw*" -o -iname "*open-claw*" \) -print0 2>/dev/null)
 
     if [ -n "$found_valid" ]; then
         echo "$found_valid"
