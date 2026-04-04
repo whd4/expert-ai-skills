@@ -26,8 +26,11 @@ find_openclaw() {
 
     for loc in "${locations[@]}"; do
         if [ -d "$loc" ]; then
-            echo "$loc"
-            return 0
+            # Check if directory is writable before selecting
+            if [ -w "$loc" ]; then
+                echo "$loc"
+                return 0
+            fi
         fi
     done
 

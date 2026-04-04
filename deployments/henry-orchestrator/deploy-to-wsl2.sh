@@ -131,7 +131,13 @@ else
         info "  2. Create default: ./deploy-to-wsl2.sh ~/.openclaw"
         echo ""
         read -p "    Enter OpenClaw path (or press Enter for ~/.openclaw): " USER_PATH
-        OPENCLAW_DIR="${USER_PATH:-$HOME/.openclaw}"
+        # Expand tilde in user input (~ is not expanded when read into a variable)
+        USER_PATH="${USER_PATH:-~/.openclaw}"
+        # Use eval to expand ~ but be careful - only expand leading tilde
+        if [[ "$USER_PATH" == "~"* ]]; then
+            USER_PATH="${USER_PATH/#\~/$HOME}"
+        fi
+        OPENCLAW_DIR="$USER_PATH"
     fi
 fi
 
