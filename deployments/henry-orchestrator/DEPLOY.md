@@ -6,6 +6,10 @@
 henry-orchestrator/
 ├── HENRY.solmd              # Main system prompt (THE CORE FILE)
 ├── config.yaml              # Configuration options
+├── FIX-AND-DEPLOY.bat       # ONE-CLICK: Fix WSL2 + Deploy Henry (Windows)
+├── fix-wsl2.ps1             # Fix blank WSL2 Ubuntu terminal
+├── deploy-to-wsl2.sh        # Deploy Henry to OpenClaw (runs in WSL2)
+├── install.sh               # Generic Linux installer
 ├── memory/
 │   └── henry_memory.json    # Persistent memory template
 └── protocols/
@@ -14,6 +18,66 @@ henry-orchestrator/
     ├── sub-agent-dispatch.md    # How to spawn agents
     ├── parallel-exploration.md  # MCTS-style parallel search
     └── agent-communication.md   # Agent-to-agent messaging
+```
+
+---
+
+## WSL2 Deployment (Recommended)
+
+If you're running OpenClaw on WSL2 Ubuntu (Windows), use the one-click method:
+
+### One-Click Method
+
+1. Download this entire `henry-orchestrator` folder to your Windows machine
+2. Right-click **`FIX-AND-DEPLOY.bat`** → **Run as Administrator**
+3. Done. It fixes your terminal AND deploys Henry.
+
+### What the One-Click Does
+
+| Step | Script | What Happens |
+|------|--------|-------------|
+| 1 | `fix-wsl2.ps1` | Shuts down WSL2, backs up your shell config, resets to Ubuntu defaults, restarts |
+| 2 | (wait) | WSL2 initializes with working prompt |
+| 3 | `deploy-to-wsl2.sh` | Finds OpenClaw, copies Henry files, tests gateway connection |
+| 4 | (browser) | Opens `http://localhost:18789/agents` |
+
+### Manual WSL2 Method
+
+If you prefer to run each step yourself:
+
+**Step 1: Fix blank terminal** (run in Windows PowerShell as Admin)
+```powershell
+powershell -ExecutionPolicy Bypass -File fix-wsl2.ps1
+```
+
+**Step 2: Deploy Henry** (run in WSL2 Ubuntu terminal after fix)
+```bash
+chmod +x deploy-to-wsl2.sh
+./deploy-to-wsl2.sh
+```
+
+### WSL2 Troubleshooting
+
+**Terminal still blank after fix?**
+```powershell
+# In PowerShell — full reset
+wsl --shutdown
+wsl --unregister Ubuntu
+# Then reinstall Ubuntu from Microsoft Store
+```
+
+**Gateway not reachable from WSL2?**
+```bash
+# WSL2 should access Windows localhost automatically
+# If not, try the Windows host IP:
+cat /etc/resolv.conf | grep nameserver | awk '{print $2}'
+# Use that IP instead of localhost
+```
+
+**OpenClaw not found?**
+```bash
+# Run deploy with explicit path
+./deploy-to-wsl2.sh /path/to/your/openclaw
 ```
 
 ---
