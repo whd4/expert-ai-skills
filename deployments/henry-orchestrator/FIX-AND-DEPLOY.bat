@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableDelayedExpansion
 REM ============================================
 REM  FIX-AND-DEPLOY.bat
 REM  One-click: Fix WSL2 Terminal + Deploy Henry
@@ -66,14 +67,33 @@ echo [+] WSL2 fix complete.
 echo.
 
 REM -------------------------------------------
-REM  Step 2: Wait for WSL2 to be ready
+REM  Step 2: Detect Ubuntu distro name + wait
 REM -------------------------------------------
-echo [*] STEP 2: Waiting for WSL2 to initialize...
+echo [*] STEP 2: Detecting WSL2 Ubuntu distribution...
 echo.
 timeout /t 3 /nobreak >nul
 
+REM Detect the Ubuntu distro name dynamically (could be Ubuntu, Ubuntu-24.04, etc.)
+set "WSL_DISTRO="
+for /f "tokens=*" %%d in ('wsl --list --quiet 2^>nul') do (
+    echo %%d | findstr /i "ubuntu" >nul 2>&1
+    if !errorLevel! equ 0 (
+        if not defined WSL_DISTRO (
+            set "WSL_DISTRO=%%d"
+        )
+    )
+)
+
+REM Fallback to "Ubuntu" if detection failed
+if not defined WSL_DISTRO (
+    echo [!] Could not auto-detect Ubuntu distro name. Trying "Ubuntu"...
+    set "WSL_DISTRO=Ubuntu"
+)
+
+echo [+] Using WSL distro: %WSL_DISTRO%
+
 REM Verify WSL2 is running
-wsl -d Ubuntu -e bash -c "echo 'WSL2 is ready'" 2>nul
+wsl -d %WSL_DISTRO% -e bash -c "echo 'WSL2 is ready'" 2>nul
 if %errorLevel% neq 0 (
     echo [!] WSL2 may not be fully started yet.
     echo     Waiting 5 more seconds...
@@ -96,31 +116,31 @@ set "WSL_SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
 
 REM Try to run the deploy script directly
 REM First check if the repo exists in WSL
-wsl -d Ubuntu -e bash -c "if [ -f '%WSL_SCRIPT_DIR%/deploy-to-wsl2.sh' ]; then echo 'FOUND_LOCAL'; fi" 2>nul | findstr "FOUND_LOCAL" >nul 2>&1
+wsl -d %WSL_DISTRO% -e bash -c "if [ -f '%WSL_SCRIPT_DIR%/deploy-to-wsl2.sh' ]; then echo 'FOUND_LOCAL'; fi" 2>nul | findstr "FOUND_LOCAL" >nul 2>&1
 
 if %errorLevel% equ 0 (
     echo [*] Running deploy from local path...
-    wsl -d Ubuntu -e bash -c "cd '%WSL_SCRIPT_DIR%' && chmod +x deploy-to-wsl2.sh && ./deploy-to-wsl2.sh"
+    wsl -d %WSL_DISTRO% -e bash -c "cd '%WSL_SCRIPT_DIR%' && chmod +x deploy-to-wsl2.sh && ./deploy-to-wsl2.sh"
 ) else (
     echo [*] Local deploy script not found in WSL path.
     echo [*] Copying files directly to WSL2...
 
     REM Create temp directory in WSL and copy files
-    wsl -d Ubuntu -e bash -c "mkdir -p /tmp/henry-deploy/memory /tmp/henry-deploy/protocols"
+    wsl -d %WSL_DISTRO% -e bash -c "mkdir -p /tmp/henry-deploy/memory /tmp/henry-deploy/protocols"
 
     REM Copy each file using wsl
-    wsl -d Ubuntu -e bash -c "cat > /tmp/henry-deploy/HENRY.solmd" < "%SCRIPT_DIR%HENRY.solmd"
-    wsl -d Ubuntu -e bash -c "cat > /tmp/henry-deploy/config.yaml" < "%SCRIPT_DIR%config.yaml"
-    wsl -d Ubuntu -e bash -c "cat > /tmp/henry-deploy/memory/henry_memory.json" < "%SCRIPT_DIR%memory\henry_memory.json"
+    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/HENRY.solmd" < "%SCRIPT_DIR%HENRY.solmd"
+    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/config.yaml" < "%SCRIPT_DIR%config.yaml"
+    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/memory/henry_memory.json" < "%SCRIPT_DIR%memory\henry_memory.json"
 
     REM Copy protocols
     for %%f in ("%SCRIPT_DIR%protocols\*.md") do (
-        wsl -d Ubuntu -e bash -c "cat > /tmp/henry-deploy/protocols/%%~nxf" < "%%f"
+        wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/protocols/%%~nxf" < "%%f"
     )
 
     REM Copy and run the deploy script
-    wsl -d Ubuntu -e bash -c "cat > /tmp/henry-deploy/deploy-to-wsl2.sh" < "%SCRIPT_DIR%deploy-to-wsl2.sh"
-    wsl -d Ubuntu -e bash -c "chmod +x /tmp/henry-deploy/deploy-to-wsl2.sh && cd /tmp/henry-deploy && ./deploy-to-wsl2.sh"
+    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/deploy-to-wsl2.sh" < "%SCRIPT_DIR%deploy-to-wsl2.sh"
+    wsl -d %WSL_DISTRO% -e bash -c "chmod +x /tmp/henry-deploy/deploy-to-wsl2.sh && cd /tmp/henry-deploy && ./deploy-to-wsl2.sh"
 )
 
 echo.

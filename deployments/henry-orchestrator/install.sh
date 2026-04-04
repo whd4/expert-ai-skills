@@ -82,8 +82,13 @@ cp "$SCRIPT_DIR/HENRY.solmd" "$TARGET_DIR/system.solmd" 2>/dev/null || true
 echo "[3/4] Installing configuration..."
 cp "$SCRIPT_DIR/config.yaml" "$TARGET_DIR/"
 
-# Copy memory template
-cp "$SCRIPT_DIR/memory/henry_memory.json" "$TARGET_DIR/memory/"
+# Copy memory template (preserve existing memory on re-install)
+if [ -f "$TARGET_DIR/memory/henry_memory.json" ]; then
+    echo "    Existing memory found — preserving (backup created)"
+    cp "$TARGET_DIR/memory/henry_memory.json" "$TARGET_DIR/memory/henry_memory.json.backup.$(date +%Y%m%d_%H%M%S)"
+else
+    cp "$SCRIPT_DIR/memory/henry_memory.json" "$TARGET_DIR/memory/"
+fi
 
 # Copy protocols
 echo "[4/4] Installing protocols..."
