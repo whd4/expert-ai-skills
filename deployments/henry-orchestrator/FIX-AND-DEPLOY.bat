@@ -49,10 +49,14 @@ echo.
 REM Get the directory this batch file is in
 set "SCRIPT_DIR=%~dp0"
 
+REM Track WSL fix success
+set "WSL_FIX_SUCCESS=1"
+
 REM Run the PowerShell fix script
 powershell -ExecutionPolicy Bypass -File "%SCRIPT_DIR%fix-wsl2.ps1"
 
-if %errorLevel% neq 0 (
+if !errorLevel! neq 0 (
+    set "WSL_FIX_SUCCESS=0"
     echo.
     echo [!] WSL2 fix encountered an error.
     echo     You may need to fix WSL2 manually.
@@ -63,7 +67,11 @@ if %errorLevel% neq 0 (
 )
 
 echo.
-echo [+] WSL2 fix complete.
+if "!WSL_FIX_SUCCESS!"=="1" (
+    echo [+] WSL2 fix complete.
+) else (
+    echo [!] WSL2 fix may not have succeeded.
+)
 echo.
 
 REM -------------------------------------------
@@ -174,22 +182,26 @@ echo ========================================
 echo   Summary
 echo ========================================
 echo.
-echo [+] WSL2 terminal: FIXED
-if "%DEPLOY_SUCCESS%"=="1" (
+if "!WSL_FIX_SUCCESS!"=="1" (
+    echo [+] WSL2 terminal: FIXED
+) else (
+    echo [!] WSL2 terminal: FIX MAY HAVE FAILED - check output above
+)
+if "!DEPLOY_SUCCESS!"=="1" (
     echo [+] Henry: DEPLOYED
 ) else (
     echo [!] Henry: DEPLOYMENT MAY HAVE FAILED - check output above
 )
 echo [+] Web UI: OPENING in browser
 echo.
-if "%DEPLOY_SUCCESS%"=="1" (
+if "!WSL_FIX_SUCCESS!"=="1" if "!DEPLOY_SUCCESS!"=="1" (
     echo You can now:
-    echo   - Use Ubuntu terminal (should have your prompt back^)
+    echo   - Use Ubuntu terminal ^(should have your prompt back^)
     echo   - Use Henry at http://localhost:18789/agents
     echo   - Say: "Henry, what needs my attention today?"
 ) else (
-    echo Deployment may have failed. Please check the error messages above.
-    echo You can try running deploy-to-wsl2.sh manually in WSL2.
+    echo Some steps may have failed. Please check the error messages above.
+    echo You can try running the scripts manually - see DEPLOY.md for instructions.
 )
 echo.
 echo Press any key to close this window.

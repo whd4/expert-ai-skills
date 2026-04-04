@@ -208,3 +208,8 @@ Write-Host ""
 Write-Info "If you had custom settings in .bashrc, your backup is at:"
 Write-Info "  ~/.bashrc.backup.$timestamp"
 Write-Host ""
+
+# Exit with appropriate code so callers can detect success/failure
+if (-not $verifySuccess) {
+    exit 1
+}
