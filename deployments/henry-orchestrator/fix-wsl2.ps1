@@ -164,10 +164,12 @@ echo "PROMPT_TEST=OK"
 
 $verifyResult = wsl -d $detectedDistro -e bash --login -c $verifyCmd 2>&1
 $verifyOutput = ($verifyResult | Out-String).Trim()
+$verifySuccess = $false
 
 if ($verifyOutput -match "PROMPT_TEST=OK") {
     Write-Success "Terminal is working!"
     Write-Info $verifyOutput
+    $verifySuccess = $true
 } else {
     Write-Fail "Terminal may still have issues."
     Write-Info "Output: $verifyOutput"
@@ -181,10 +183,18 @@ Write-Host ""
 # Step 7: Report results
 # -------------------------------------------
 Write-Host "========================================" -ForegroundColor Yellow
-Write-Host "  Fix Complete!" -ForegroundColor Yellow
+if ($verifySuccess) {
+    Write-Host "  Fix Complete!" -ForegroundColor Yellow
+} else {
+    Write-Host "  Fix Attempted" -ForegroundColor Yellow
+}
 Write-Host "========================================" -ForegroundColor Yellow
 Write-Host ""
-Write-Success "Your WSL2 Ubuntu terminal should now work."
+if ($verifySuccess) {
+    Write-Success "Your WSL2 Ubuntu terminal should now work."
+} else {
+    Write-Fail "Terminal fix may not have succeeded. See errors above."
+}
 Write-Host ""
 Write-Info "What was done:"
 Write-Info "  1. WSL2 was shut down and restarted"

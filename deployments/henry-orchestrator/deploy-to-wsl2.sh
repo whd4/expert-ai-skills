@@ -105,21 +105,15 @@ else
         fi
     fi
 
-    # If still not found, check for running process (look for executable path, not flags)
+    # If still not found, check for running process to inform user (but don't use exe path as config)
     if [ -z "$OPENCLAW_DIR" ]; then
         info "Checking running processes..."
-        # Get the executable path from /proc if available, avoiding command-line args
-        # Use proper ERE alternation (| not \|) for pgrep
-        for pid in $(pgrep -i "openclaw|open-claw" 2>/dev/null); do
-            if [ -f "/proc/$pid/exe" ]; then
-                PROC_EXE=$(readlink -f "/proc/$pid/exe" 2>/dev/null)
-                if [ -n "$PROC_EXE" ] && [ -f "$PROC_EXE" ]; then
-                    OPENCLAW_DIR="$(dirname "$PROC_EXE")"
-                    success "Found OpenClaw process running from: $OPENCLAW_DIR"
-                    break
-                fi
-            fi
-        done
+        # Note: We can detect if OpenClaw is running, but the executable path (e.g. /usr/bin)
+        # is NOT the config directory, so we just inform the user rather than auto-selecting
+        if pgrep -i "openclaw|open-claw" >/dev/null 2>&1; then
+            info "OpenClaw process is running, but config directory could not be determined."
+            info "The executable location is not the same as the config directory."
+        fi
     fi
 
     # Last resort: create default location
