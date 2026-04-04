@@ -13,7 +13,15 @@
 #    Right-click PowerShell → Run as Administrator
 #    Then: .\fix-wsl2.ps1
 #
+#  OPTIONS:
+#    -DistroName <name>   Specify WSL distro (default: auto-detect Ubuntu)
+#
 # ============================================
+
+param(
+    [Parameter(Mandatory=$false)]
+    [string]$DistroName
+)
 
 $ErrorActionPreference = "Stop"
 
@@ -64,17 +72,24 @@ try {
 # -------------------------------------------
 Write-Status "Finding Ubuntu distribution..."
 
-$distroName = $null
-$distroLines = wsl --list --quiet 2>&1
-foreach ($line in $distroLines) {
-    $clean = $line.Trim() -replace '\x00', ''
-    if ($clean -match "(?i)ubuntu") {
-        $distroName = $clean
-        break
+# Use provided DistroName parameter if specified
+if ($DistroName) {
+    $detectedDistro = $DistroName
+    Write-Success "Using specified distro: $detectedDistro"
+} else {
+    # Auto-detect Ubuntu distro
+    $detectedDistro = $null
+    $distroLines = wsl --list --quiet 2>&1
+    foreach ($line in $distroLines) {
+        $clean = $line.Trim() -replace '\x00', ''
+        if ($clean -match "(?i)ubuntu") {
+            $detectedDistro = $clean
+            break
+        }
     }
 }
 
-if (-not $distroName) {
+if (-not $detectedDistro) {
     Write-Fail "No Ubuntu distribution found in WSL."
     Write-Info "Available distributions:"
     wsl --list --verbose
@@ -84,7 +99,7 @@ if (-not $distroName) {
     exit 1
 }
 
-Write-Success "Found distribution: $distroName"
+Write-Success "Found distribution: $detectedDistro"
 Write-Host ""
 
 # -------------------------------------------
@@ -113,7 +128,7 @@ if [ -f ~/.bash_profile ]; then cp ~/.bash_profile ~/.bash_profile.backup.$times
 echo 'Backup complete'
 "@
 
-$backupResult = wsl -d $distroName -e bash -c $backupCmd 2>&1
+$backupResult = wsl -d $detectedDistro -e bash -c $backupCmd 2>&1
 Write-Success "Backup complete (files saved with .$timestamp extension)"
 Write-Info ($backupResult | Out-String).Trim()
 Write-Host ""
@@ -130,7 +145,7 @@ if [ -f /etc/skel/.bash_profile ]; then cp /etc/skel/.bash_profile ~/.bash_profi
 echo 'Shell config reset complete'
 "@
 
-$resetResult = wsl -d $distroName -e bash -c $resetCmd 2>&1
+$resetResult = wsl -d $detectedDistro -e bash -c $resetCmd 2>&1
 Write-Success "Shell configuration reset to defaults."
 Write-Info ($resetResult | Out-String).Trim()
 Write-Host ""
@@ -147,7 +162,7 @@ echo "SHELL=\$SHELL"
 echo "PROMPT_TEST=OK"
 "@
 
-$verifyResult = wsl -d $distroName -e bash --login -c $verifyCmd 2>&1
+$verifyResult = wsl -d $detectedDistro -e bash --login -c $verifyCmd 2>&1
 $verifyOutput = ($verifyResult | Out-String).Trim()
 
 if ($verifyOutput -match "PROMPT_TEST=OK") {

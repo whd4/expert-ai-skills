@@ -86,7 +86,8 @@ else
     if [ -z "$OPENCLAW_DIR" ]; then
         info "Not found in common locations. Searching home directory..."
         # Find candidates but validate they look like OpenClaw config dirs
-        for CANDIDATE in $(find "$HOME" -maxdepth 4 -type d \( -iname "*openclaw*" -o -iname "*open-claw*" \) 2>/dev/null); do
+        # Use null-delimited find to safely handle paths with spaces
+        while IFS= read -r -d '' CANDIDATE; do
             # Validate: must contain config files OR be empty (fresh install)
             # Skip directories that are clearly not config dirs (e.g., git repos, source code)
             if [ -f "$CANDIDATE/config.yaml" ] || [ -f "$CANDIDATE/config.json" ] || \
@@ -96,7 +97,7 @@ else
                 success "Found OpenClaw config at: $CANDIDATE"
                 break
             fi
-        done
+        done < <(find "$HOME" -maxdepth 4 -type d \( -iname "*openclaw*" -o -iname "*open-claw*" \) -print0 2>/dev/null)
 
         # If still not found, don't silently pick a random match
         if [ -z "$OPENCLAW_DIR" ]; then

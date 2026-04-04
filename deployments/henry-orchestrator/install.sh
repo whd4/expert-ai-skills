@@ -32,16 +32,23 @@ find_openclaw() {
     done
 
     # Try to find it, but validate matches look like config dirs
-    for candidate in $(find "$HOME" -maxdepth 4 -type d -iname "*openclaw*" 2>/dev/null); do
+    # Use null-delimited find to safely handle paths with spaces
+    local found_valid=""
+    while IFS= read -r -d '' candidate; do
         # Validate: must contain config files OR be empty (fresh install)
         # Skip directories that are clearly not config dirs (e.g., git repos, source code)
         if [ -f "$candidate/config.yaml" ] || [ -f "$candidate/config.json" ] || \
            [ -f "$candidate/system.solmd" ] || [ -f "$candidate/HENRY.solmd" ] || \
            [ -z "$(ls -A "$candidate" 2>/dev/null)" ]; then
-            echo "$candidate"
-            return 0
+            found_valid="$candidate"
+            break
         fi
-    done
+    done < <(find "$HOME" -maxdepth 4 -type d -iname "*openclaw*" -print0 2>/dev/null)
+
+    if [ -n "$found_valid" ]; then
+        echo "$found_valid"
+        return 0
+    fi
 
     return 1
 }
