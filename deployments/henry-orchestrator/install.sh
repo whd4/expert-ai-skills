@@ -31,12 +31,17 @@ find_openclaw() {
         fi
     done
 
-    # Try to find it
-    local found=$(find "$HOME" -type d -name "*openclaw*" 2>/dev/null | head -1)
-    if [ -n "$found" ]; then
-        echo "$found"
-        return 0
-    fi
+    # Try to find it, but validate matches look like config dirs
+    for candidate in $(find "$HOME" -maxdepth 4 -type d -iname "*openclaw*" 2>/dev/null); do
+        # Validate: must contain config files OR be empty (fresh install)
+        # Skip directories that are clearly not config dirs (e.g., git repos, source code)
+        if [ -f "$candidate/config.yaml" ] || [ -f "$candidate/config.json" ] || \
+           [ -f "$candidate/system.solmd" ] || [ -f "$candidate/HENRY.solmd" ] || \
+           [ -z "$(ls -A "$candidate" 2>/dev/null)" ]; then
+            echo "$candidate"
+            return 0
+        fi
+    done
 
     return 1
 }

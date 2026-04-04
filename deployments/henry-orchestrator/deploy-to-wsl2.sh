@@ -82,14 +82,25 @@ else
         fi
     done
 
-    # If not found in common locations, search home
+    # If not found in common locations, search home (but validate matches)
     if [ -z "$OPENCLAW_DIR" ]; then
         info "Not found in common locations. Searching home directory..."
-        FOUND=$(find "$HOME" -maxdepth 4 -type d -iname "*openclaw*" -o -type d -iname "*open-claw*" 2>/dev/null | head -1)
+        # Find candidates but validate they look like OpenClaw config dirs
+        for CANDIDATE in $(find "$HOME" -maxdepth 4 -type d \( -iname "*openclaw*" -o -iname "*open-claw*" \) 2>/dev/null); do
+            # Validate: must contain config files OR be empty (fresh install)
+            # Skip directories that are clearly not config dirs (e.g., git repos, source code)
+            if [ -f "$CANDIDATE/config.yaml" ] || [ -f "$CANDIDATE/config.json" ] || \
+               [ -f "$CANDIDATE/system.solmd" ] || [ -f "$CANDIDATE/HENRY.solmd" ] || \
+               [ -z "$(ls -A "$CANDIDATE" 2>/dev/null)" ]; then
+                OPENCLAW_DIR="$CANDIDATE"
+                success "Found OpenClaw config at: $CANDIDATE"
+                break
+            fi
+        done
 
-        if [ -n "$FOUND" ]; then
-            OPENCLAW_DIR="$FOUND"
-            success "Found OpenClaw at: $FOUND"
+        # If still not found, don't silently pick a random match
+        if [ -z "$OPENCLAW_DIR" ]; then
+            info "Found directories with 'openclaw' in name, but none appear to be config directories."
         fi
     fi
 
@@ -97,7 +108,8 @@ else
     if [ -z "$OPENCLAW_DIR" ]; then
         info "Checking running processes..."
         # Get the executable path from /proc if available, avoiding command-line args
-        for pid in $(pgrep -i "openclaw\|open-claw" 2>/dev/null); do
+        # Use proper ERE alternation (| not \|) for pgrep
+        for pid in $(pgrep -i "openclaw|open-claw" 2>/dev/null); do
             if [ -f "/proc/$pid/exe" ]; then
                 PROC_EXE=$(readlink -f "/proc/$pid/exe" 2>/dev/null)
                 if [ -n "$PROC_EXE" ] && [ -f "$PROC_EXE" ]; then
