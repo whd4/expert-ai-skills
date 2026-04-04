@@ -76,9 +76,14 @@ else
 
     for path in "${SEARCH_PATHS[@]}"; do
         if [ -d "$path" ]; then
-            OPENCLAW_DIR="$path"
-            success "Found OpenClaw at: $path"
-            break
+            # Check if directory is writable before selecting
+            if [ -w "$path" ]; then
+                OPENCLAW_DIR="$path"
+                success "Found OpenClaw at: $path"
+                break
+            else
+                info "Found $path but it's not writable (skipping)"
+            fi
         fi
     done
 

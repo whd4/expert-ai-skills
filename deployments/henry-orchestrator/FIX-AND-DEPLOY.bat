@@ -142,7 +142,8 @@ wsl -d %WSL_DISTRO% -e bash -c "if [ -f '%WSL_SCRIPT_DIR%/deploy-to-wsl2.sh' ]; 
 
 if !errorLevel! equ 0 (
     echo [*] Running deploy from local path...
-    wsl -d %WSL_DISTRO% -e bash -c "cd '%WSL_SCRIPT_DIR%' && chmod +x deploy-to-wsl2.sh && ./deploy-to-wsl2.sh"
+    REM Use 'bash script' instead of './script' to avoid CRLF line ending issues on Windows-mounted paths
+    wsl -d %WSL_DISTRO% -e bash -c "cd '%WSL_SCRIPT_DIR%' && bash deploy-to-wsl2.sh"
     if !errorLevel! equ 0 set "DEPLOY_SUCCESS=1"
 ) else (
     echo [*] Local deploy script not found in WSL path.
@@ -161,9 +162,9 @@ if !errorLevel! equ 0 (
         wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/protocols/%%~nxf" < "%%f"
     )
 
-    REM Copy and run the deploy script
+    REM Copy and run the deploy script (use 'bash script' to avoid CRLF issues)
     wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/deploy-to-wsl2.sh" < "%SCRIPT_DIR%deploy-to-wsl2.sh"
-    wsl -d %WSL_DISTRO% -e bash -c "chmod +x /tmp/henry-deploy/deploy-to-wsl2.sh && cd /tmp/henry-deploy && ./deploy-to-wsl2.sh"
+    wsl -d %WSL_DISTRO% -e bash -c "cd /tmp/henry-deploy && bash deploy-to-wsl2.sh"
     if !errorLevel! equ 0 set "DEPLOY_SUCCESS=1"
 )
 
