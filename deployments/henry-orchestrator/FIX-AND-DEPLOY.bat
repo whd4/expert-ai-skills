@@ -110,17 +110,32 @@ echo [*] STEP 3: Deploying Henry to OpenClaw...
 echo ----------------------------------------
 echo.
 
-REM Convert Windows path to WSL path for the script directory
-REM Remove trailing backslash and convert
-set "WSL_SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+REM Convert Windows path to WSL/Linux path (C:\foo\bar -> /mnt/c/foo/bar)
+set "WIN_SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+set "DRIVE_LETTER=%WIN_SCRIPT_DIR:~0,1%"
+set "PATH_REST=%WIN_SCRIPT_DIR:~2%"
+set "PATH_REST=%PATH_REST:\=/%"
+for %%a in ("%DRIVE_LETTER%") do set "DRIVE_LOWER=%%~a"
+REM Convert drive letter to lowercase manually
+if "%DRIVE_LETTER%"=="C" set "DRIVE_LOWER=c"
+if "%DRIVE_LETTER%"=="D" set "DRIVE_LOWER=d"
+if "%DRIVE_LETTER%"=="E" set "DRIVE_LOWER=e"
+if "%DRIVE_LETTER%"=="F" set "DRIVE_LOWER=f"
+set "WSL_SCRIPT_DIR=/mnt/%DRIVE_LOWER%%PATH_REST%"
 
-REM Try to run the deploy script directly
-REM First check if the repo exists in WSL
+echo [*] Windows path: %WIN_SCRIPT_DIR%
+echo [*] WSL path: %WSL_SCRIPT_DIR%
+
+REM Track deployment success
+set "DEPLOY_SUCCESS=0"
+
+REM Try to run the deploy script directly from mounted Windows path
 wsl -d %WSL_DISTRO% -e bash -c "if [ -f '%WSL_SCRIPT_DIR%/deploy-to-wsl2.sh' ]; then echo 'FOUND_LOCAL'; fi" 2>nul | findstr "FOUND_LOCAL" >nul 2>&1
 
-if %errorLevel% equ 0 (
+if !errorLevel! equ 0 (
     echo [*] Running deploy from local path...
     wsl -d %WSL_DISTRO% -e bash -c "cd '%WSL_SCRIPT_DIR%' && chmod +x deploy-to-wsl2.sh && ./deploy-to-wsl2.sh"
+    if !errorLevel! equ 0 set "DEPLOY_SUCCESS=1"
 ) else (
     echo [*] Local deploy script not found in WSL path.
     echo [*] Copying files directly to WSL2...
@@ -141,6 +156,7 @@ if %errorLevel% equ 0 (
     REM Copy and run the deploy script
     wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/deploy-to-wsl2.sh" < "%SCRIPT_DIR%deploy-to-wsl2.sh"
     wsl -d %WSL_DISTRO% -e bash -c "chmod +x /tmp/henry-deploy/deploy-to-wsl2.sh && cd /tmp/henry-deploy && ./deploy-to-wsl2.sh"
+    if !errorLevel! equ 0 set "DEPLOY_SUCCESS=1"
 )
 
 echo.
@@ -155,17 +171,26 @@ start http://localhost:18789/agents
 
 echo.
 echo ========================================
-echo   All Done!
+echo   Summary
 echo ========================================
 echo.
 echo [+] WSL2 terminal: FIXED
-echo [+] Henry: DEPLOYED
+if "%DEPLOY_SUCCESS%"=="1" (
+    echo [+] Henry: DEPLOYED
+) else (
+    echo [!] Henry: DEPLOYMENT MAY HAVE FAILED - check output above
+)
 echo [+] Web UI: OPENING in browser
 echo.
-echo You can now:
-echo   - Use Ubuntu terminal (should have your prompt back)
-echo   - Use Henry at http://localhost:18789/agents
-echo   - Say: "Henry, what needs my attention today?"
+if "%DEPLOY_SUCCESS%"=="1" (
+    echo You can now:
+    echo   - Use Ubuntu terminal (should have your prompt back^)
+    echo   - Use Henry at http://localhost:18789/agents
+    echo   - Say: "Henry, what needs my attention today?"
+) else (
+    echo Deployment may have failed. Please check the error messages above.
+    echo You can try running deploy-to-wsl2.sh manually in WSL2.
+)
 echo.
 echo Press any key to close this window.
 pause >nul

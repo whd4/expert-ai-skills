@@ -93,14 +93,20 @@ else
         fi
     fi
 
-    # If still not found, check for running process
+    # If still not found, check for running process (look for executable path, not flags)
     if [ -z "$OPENCLAW_DIR" ]; then
         info "Checking running processes..."
-        PROC_PATH=$(ps aux 2>/dev/null | grep -i "openclaw\|open-claw" | grep -v grep | awk '{print $NF}' | head -1)
-        if [ -n "$PROC_PATH" ]; then
-            OPENCLAW_DIR="$(dirname "$PROC_PATH")"
-            success "Found OpenClaw process running from: $OPENCLAW_DIR"
-        fi
+        # Get the executable path from /proc if available, avoiding command-line args
+        for pid in $(pgrep -i "openclaw\|open-claw" 2>/dev/null); do
+            if [ -f "/proc/$pid/exe" ]; then
+                PROC_EXE=$(readlink -f "/proc/$pid/exe" 2>/dev/null)
+                if [ -n "$PROC_EXE" ] && [ -f "$PROC_EXE" ]; then
+                    OPENCLAW_DIR="$(dirname "$PROC_EXE")"
+                    success "Found OpenClaw process running from: $OPENCLAW_DIR"
+                    break
+                fi
+            fi
+        done
     fi
 
     # Last resort: create default location
