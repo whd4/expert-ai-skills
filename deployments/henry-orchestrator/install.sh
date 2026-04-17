@@ -39,11 +39,12 @@ find_openclaw() {
     # Search for both openclaw and open-claw (hyphenated) variants
     local found_valid=""
     while IFS= read -r -d '' candidate; do
-        # Validate: must contain config files OR be empty (fresh install)
+        # Validate: must be writable, and contain config files OR be empty (fresh install)
         # Skip directories that are clearly not config dirs (e.g., git repos, source code)
-        if [ -f "$candidate/config.yaml" ] || [ -f "$candidate/config.json" ] || \
+        if [ -w "$candidate" ] && \
+           ([ -f "$candidate/config.yaml" ] || [ -f "$candidate/config.json" ] || \
            [ -f "$candidate/system.soul.md" ] || [ -f "$candidate/HENRY.soul.md" ] || \
-           [ -z "$(ls -A "$candidate" 2>/dev/null)" ]; then
+           [ -z "$(ls -A "$candidate" 2>/dev/null)" ]); then
             found_valid="$candidate"
             break
         fi
@@ -94,9 +95,14 @@ cp "$SCRIPT_DIR/HENRY.soul.md" "$TARGET_DIR/"
 # Also copy as system.soul.md in case that's the expected name
 cp "$SCRIPT_DIR/HENRY.soul.md" "$TARGET_DIR/system.soul.md" 2>/dev/null || true
 
-# Copy config
+# Copy config (preserve existing config on re-install)
 echo "[3/4] Installing configuration..."
-cp "$SCRIPT_DIR/config.yaml" "$TARGET_DIR/"
+if [ -f "$TARGET_DIR/config.yaml" ]; then
+    echo "    Existing config.yaml found — preserving (backup created)"
+    cp "$TARGET_DIR/config.yaml" "$TARGET_DIR/config.yaml.backup.$(date +%Y%m%d_%H%M%S)"
+else
+    cp "$SCRIPT_DIR/config.yaml" "$TARGET_DIR/"
+fi
 
 # Copy memory template (preserve existing memory on re-install)
 if [ -f "$TARGET_DIR/memory/henry_memory.json" ]; then
