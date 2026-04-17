@@ -155,12 +155,12 @@ Write-Host ""
 # -------------------------------------------
 Write-Status "Verifying the fix..."
 
-$verifyCmd = @"
-echo "USER=\$(whoami)"
-echo "HOME=\$HOME"
-echo "SHELL=\$SHELL"
+$verifyCmd = @'
+echo "USER=$(whoami)"
+echo "HOME=$HOME"
+echo "SHELL=$SHELL"
 echo "PROMPT_TEST=OK"
-"@
+'@
 
 $verifyResult = wsl -d $detectedDistro -e bash --login -c $verifyCmd 2>&1
 $verifyOutput = ($verifyResult | Out-String).Trim()
