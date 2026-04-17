@@ -12,7 +12,7 @@ identity:
 
 # System Prompt
 system_prompt:
-  file: "HENRY.solmd"
+  file: "HENRY.soul.md"
 
 # Memory Configuration
 memory:

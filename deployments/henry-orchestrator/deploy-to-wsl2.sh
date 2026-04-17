@@ -43,9 +43,9 @@ echo ""
 # -------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ ! -f "$SCRIPT_DIR/HENRY.solmd" ]; then
-    fail "Cannot find HENRY.solmd in $SCRIPT_DIR"
-    info "Make sure this script is in the same directory as HENRY.solmd"
+if [ ! -f "$SCRIPT_DIR/HENRY.soul.md" ]; then
+    fail "Cannot find HENRY.soul.md in $SCRIPT_DIR"
+    info "Make sure this script is in the same directory as HENRY.soul.md"
     exit 1
 fi
 
@@ -96,7 +96,7 @@ else
             # Validate: must contain config files OR be empty (fresh install)
             # Skip directories that are clearly not config dirs (e.g., git repos, source code)
             if [ -f "$CANDIDATE/config.yaml" ] || [ -f "$CANDIDATE/config.json" ] || \
-               [ -f "$CANDIDATE/system.solmd" ] || [ -f "$CANDIDATE/HENRY.solmd" ] || \
+               [ -f "$CANDIDATE/system.soul.md" ] || [ -f "$CANDIDATE/HENRY.soul.md" ] || \
                [ -z "$(ls -A "$CANDIDATE" 2>/dev/null)" ]; then
                 OPENCLAW_DIR="$CANDIDATE"
                 success "Found OpenClaw config at: $CANDIDATE"
@@ -156,10 +156,10 @@ status "Deploying Henry to $OPENCLAW_DIR..."
 echo ""
 
 # Copy main system prompt
-info "Copying HENRY.solmd (main system prompt)..."
-cp "$SCRIPT_DIR/HENRY.solmd" "$OPENCLAW_DIR/HENRY.solmd"
-# Also copy as system.solmd (common default name)
-cp "$SCRIPT_DIR/HENRY.solmd" "$OPENCLAW_DIR/system.solmd"
+info "Copying HENRY.soul.md (main system prompt)..."
+cp "$SCRIPT_DIR/HENRY.soul.md" "$OPENCLAW_DIR/HENRY.soul.md"
+# Also copy as system.soul.md (common default name)
+cp "$SCRIPT_DIR/HENRY.soul.md" "$OPENCLAW_DIR/system.soul.md"
 success "System prompt installed"
 
 # Copy config
@@ -222,15 +222,15 @@ echo ""
 success "Henry is installed at: $OPENCLAW_DIR"
 echo ""
 info "Files deployed:"
-info "  $OPENCLAW_DIR/HENRY.solmd         — System prompt"
-info "  $OPENCLAW_DIR/system.solmd        — System prompt (alt name)"
+info "  $OPENCLAW_DIR/HENRY.soul.md         — System prompt"
+info "  $OPENCLAW_DIR/system.soul.md        — System prompt (alt name)"
 info "  $OPENCLAW_DIR/config.yaml         — Configuration"
 info "  $OPENCLAW_DIR/memory/             — Persistent memory"
 info "  $OPENCLAW_DIR/protocols/          — Operating protocols"
 echo ""
 info "How to use Henry:"
 info "  Web UI:  http://localhost:18789/agents"
-info "  CLI:     openclaw --system-prompt $OPENCLAW_DIR/HENRY.solmd"
+info "  CLI:     openclaw --system-prompt $OPENCLAW_DIR/HENRY.soul.md"
 echo ""
 info "Quick test — say to Henry:"
 info '  "Henry, introduce yourself."'

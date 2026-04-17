@@ -4,7 +4,7 @@
 
 ```
 henry-orchestrator/
-├── HENRY.solmd              # Main system prompt (THE CORE FILE)
+├── HENRY.soul.md              # Main system prompt (THE CORE FILE)
 ├── config.yaml              # Configuration options
 ├── FIX-AND-DEPLOY.bat       # ONE-CLICK: Fix WSL2 + Deploy Henry (Windows)
 ├── fix-wsl2.ps1             # Fix blank WSL2 Ubuntu terminal
@@ -109,16 +109,16 @@ openclaw config --path
 find ~ -type d -name "*openclaw*" 2>/dev/null
 ```
 
-### Step 2: Copy the SOLMD File
+### Step 2: Copy the Soul File
 
-The **HENRY.solmd** file is the main system prompt. This is what transforms OpenClaw into Henry.
+The **HENRY.soul.md** file is the main system prompt. This is what transforms OpenClaw into Henry.
 
 ```bash
 # Replace [OPENCLAW_DIR] with your actual path
-cp HENRY.solmd [OPENCLAW_DIR]/system.solmd
+cp HENRY.soul.md [OPENCLAW_DIR]/system.soul.md
 
 # Or if OpenClaw uses a different naming convention:
-cp HENRY.solmd [OPENCLAW_DIR]/henry.solmd
+cp HENRY.soul.md [OPENCLAW_DIR]/henry.soul.md
 ```
 
 ### Step 3: Update OpenClaw to Use the New Prompt
@@ -128,17 +128,17 @@ Depending on your OpenClaw version, do one of these:
 **Option A: Config file reference**
 ```yaml
 # In openclaw.yaml or config.yaml
-system_prompt: "./henry.solmd"
+system_prompt: "./henry.soul.md"
 ```
 
 **Option B: Environment variable**
 ```bash
-export OPENCLAW_SYSTEM_PROMPT="path/to/HENRY.solmd"
+export OPENCLAW_SYSTEM_PROMPT="path/to/HENRY.soul.md"
 ```
 
 **Option C: Command line**
 ```bash
-openclaw --system-prompt ./HENRY.solmd
+openclaw --system-prompt ./HENRY.soul.md
 ```
 
 ### Step 4: Initialize Memory
@@ -221,16 +221,16 @@ integrations:
 
 ## If OpenClaw Uses a Different Format
 
-### Converting SOLMD to Plain Text
+### Converting Soul File to Plain Text
 
-If your OpenClaw doesn't support `.solmd` format:
+If your OpenClaw doesn't support `.soul.md` format:
 
 ```bash
-# The SOLMD is just markdown - rename it
-cp HENRY.solmd henry_system_prompt.txt
+# The soul file is just markdown - rename it
+cp HENRY.soul.md henry_system_prompt.txt
 
 # Or extract just the content (remove markdown headers if needed)
-sed 's/^# //' HENRY.solmd > henry_prompt.txt
+sed 's/^# //' HENRY.soul.md > henry_prompt.txt
 ```
 
 ### Converting to JSON Format
@@ -251,7 +251,7 @@ If OpenClaw expects JSON:
 }
 ```
 
-Use the content from `HENRY.solmd` as the `system_prompt` value.
+Use the content from `HENRY.soul.md` as the `system_prompt` value.
 
 ---
 
@@ -299,7 +299,7 @@ Henry should: Try multiple approaches before giving up, never return empty-hande
 
 ### Henry isn't responding like the prompt says
 
-1. Verify the SOLMD file is being loaded:
+1. Verify the soul file is being loaded:
    ```bash
    openclaw --verbose  # or --debug
    ```
@@ -360,12 +360,12 @@ monte_carlo:
 
 | File | Purpose | Required |
 |---|---|---|
-| `HENRY.solmd` | Core system prompt | YES |
+| `HENRY.soul.md` | Core system prompt | YES |
 | `config.yaml` | Configuration options | Optional |
 | `memory/henry_memory.json` | Persistent memory template | For memory features |
 | `protocols/*.md` | Detailed protocols | Reference only |
 
-The only required file is **HENRY.solmd**. Everything else enhances functionality.
+The only required file is **HENRY.soul.md**. Everything else enhances functionality.
 
 ---
 

@@ -153,7 +153,7 @@ if !errorLevel! equ 0 (
     wsl -d %WSL_DISTRO% -e bash -c "mkdir -p /tmp/henry-deploy/memory /tmp/henry-deploy/protocols"
 
     REM Copy each file using wsl
-    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/HENRY.solmd" < "%SCRIPT_DIR%HENRY.solmd"
+    wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/HENRY.soul.md" < "%SCRIPT_DIR%HENRY.soul.md"
     wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/config.yaml" < "%SCRIPT_DIR%config.yaml"
     wsl -d %WSL_DISTRO% -e bash -c "cat > /tmp/henry-deploy/memory/henry_memory.json" < "%SCRIPT_DIR%memory\henry_memory.json"
 

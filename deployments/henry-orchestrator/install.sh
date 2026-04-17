@@ -42,7 +42,7 @@ find_openclaw() {
         # Validate: must contain config files OR be empty (fresh install)
         # Skip directories that are clearly not config dirs (e.g., git repos, source code)
         if [ -f "$candidate/config.yaml" ] || [ -f "$candidate/config.json" ] || \
-           [ -f "$candidate/system.solmd" ] || [ -f "$candidate/HENRY.solmd" ] || \
+           [ -f "$candidate/system.soul.md" ] || [ -f "$candidate/HENRY.soul.md" ] || \
            [ -z "$(ls -A "$candidate" 2>/dev/null)" ]; then
             found_valid="$candidate"
             break
@@ -88,11 +88,11 @@ mkdir -p "$TARGET_DIR/memory"
 mkdir -p "$TARGET_DIR/protocols"
 
 # Copy main system prompt
-echo "[2/4] Installing HENRY.solmd..."
-cp "$SCRIPT_DIR/HENRY.solmd" "$TARGET_DIR/"
+echo "[2/4] Installing HENRY.soul.md..."
+cp "$SCRIPT_DIR/HENRY.soul.md" "$TARGET_DIR/"
 
-# Also copy as system.solmd in case that's the expected name
-cp "$SCRIPT_DIR/HENRY.solmd" "$TARGET_DIR/system.solmd" 2>/dev/null || true
+# Also copy as system.soul.md in case that's the expected name
+cp "$SCRIPT_DIR/HENRY.soul.md" "$TARGET_DIR/system.soul.md" 2>/dev/null || true
 
 # Copy config
 echo "[3/4] Installing configuration..."
@@ -123,10 +123,10 @@ echo ""
 echo "Next steps:"
 echo ""
 echo "1. If OpenClaw uses a config file, point it to:"
-echo "   system_prompt: \"$TARGET_DIR/HENRY.solmd\""
+echo "   system_prompt: \"$TARGET_DIR/HENRY.soul.md\""
 echo ""
 echo "2. Or set environment variable:"
-echo "   export OPENCLAW_SYSTEM_PROMPT=\"$TARGET_DIR/HENRY.solmd\""
+echo "   export OPENCLAW_SYSTEM_PROMPT=\"$TARGET_DIR/HENRY.soul.md\""
 echo ""
 echo "3. Start OpenClaw and test:"
 echo "   > Henry, what needs my attention today?"
