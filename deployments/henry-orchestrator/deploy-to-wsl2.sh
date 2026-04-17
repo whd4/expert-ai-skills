@@ -94,10 +94,12 @@ else
         # Use null-delimited find to safely handle paths with spaces
         while IFS= read -r -d '' CANDIDATE; do
             # Validate: must contain config files OR be empty (fresh install)
+            # Also check writability to avoid selecting read-only mounts
             # Skip directories that are clearly not config dirs (e.g., git repos, source code)
-            if [ -f "$CANDIDATE/config.yaml" ] || [ -f "$CANDIDATE/config.json" ] || \
+            if [ -w "$CANDIDATE" ] && \
+               ([ -f "$CANDIDATE/config.yaml" ] || [ -f "$CANDIDATE/config.json" ] || \
                [ -f "$CANDIDATE/system.soul.md" ] || [ -f "$CANDIDATE/HENRY.soul.md" ] || \
-               [ -z "$(ls -A "$CANDIDATE" 2>/dev/null)" ]; then
+               [ -z "$(ls -A "$CANDIDATE" 2>/dev/null)" ]); then
                 OPENCLAW_DIR="$CANDIDATE"
                 success "Found OpenClaw config at: $CANDIDATE"
                 break
@@ -106,7 +108,7 @@ else
 
         # If still not found, don't silently pick a random match
         if [ -z "$OPENCLAW_DIR" ]; then
-            info "Found directories with 'openclaw' in name, but none appear to be config directories."
+            info "Found directories with 'openclaw' in name, but none appear to be writable config directories."
         fi
     fi
 
@@ -162,10 +164,16 @@ cp "$SCRIPT_DIR/HENRY.soul.md" "$OPENCLAW_DIR/HENRY.soul.md"
 cp "$SCRIPT_DIR/HENRY.soul.md" "$OPENCLAW_DIR/system.soul.md"
 success "System prompt installed"
 
-# Copy config
+# Copy config (preserve existing config on re-install)
 info "Copying config.yaml..."
-cp "$SCRIPT_DIR/config.yaml" "$OPENCLAW_DIR/config.yaml"
-success "Configuration installed"
+if [ -f "$OPENCLAW_DIR/config.yaml" ]; then
+    info "Existing config.yaml found — preserving (backup created)"
+    cp "$OPENCLAW_DIR/config.yaml" "$OPENCLAW_DIR/config.yaml.backup.$(date +%Y%m%d_%H%M%S)"
+    success "Configuration preserved (backup created)"
+else
+    cp "$SCRIPT_DIR/config.yaml" "$OPENCLAW_DIR/config.yaml"
+    success "Configuration installed"
+fi
 
 # Copy memory template
 info "Setting up memory directory..."
