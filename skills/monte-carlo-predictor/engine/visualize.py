@@ -107,15 +107,25 @@ def render_tornado(tornado_entries: list[dict], title: str = "Tornado (variable 
 def render_stats_block(name: str, stats: dict, extra: dict | None = None) -> str:
     """Compact stats summary."""
     lines = [f"  {name}:"]
-    lines.append(
-        f"    mean={stats['mean']:.3g}  median={stats['median']:.3g}  "
-        f"stddev={stats['stddev']:.3g}"
-    )
-    lines.append(
-        f"    P5={stats['p5']:.3g}  P25={stats['p25']:.3g}  "
-        f"P50={stats['p50']:.3g}  P75={stats['p75']:.3g}  P95={stats['p95']:.3g}"
-    )
-    lines.append(f"    range=[{stats['min']:.3g}, {stats['max']:.3g}]")
+    # Handle categorical stats (from string choice variables)
+    if stats.get("type") == "categorical":
+        lines.append(f"    type=categorical  mode={stats['mode']!r}  unique={stats['unique_count']}")
+        counts = stats.get("counts", {})
+        if counts:
+            top_items = sorted(counts.items(), key=lambda x: -x[1])[:5]
+            counts_str = ", ".join(f"{k!r}: {v}" for k, v in top_items)
+            lines.append(f"    counts={{ {counts_str} }}")
+    else:
+        # Numeric stats
+        lines.append(
+            f"    mean={stats['mean']:.3g}  median={stats['median']:.3g}  "
+            f"stddev={stats['stddev']:.3g}"
+        )
+        lines.append(
+            f"    P5={stats['p5']:.3g}  P25={stats['p25']:.3g}  "
+            f"P50={stats['p50']:.3g}  P75={stats['p75']:.3g}  P95={stats['p95']:.3g}"
+        )
+        lines.append(f"    range=[{stats['min']:.3g}, {stats['max']:.3g}]")
     if extra and "probability_true" in extra:
         lines.append(f"    P(true) = {extra['probability_true']*100:.1f}%")
     return "\n".join(lines) + "\n"

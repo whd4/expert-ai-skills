@@ -135,14 +135,16 @@ def pareto_frontier(
             spec_to_run["seed"] = seed
         report = simulate(spec_to_run)
         scores = {}
+        normalized_scores = {}  # For Pareto dominance comparison
         for c in criteria:
             label = c.get("label", c["path"])
             val = _resolve_metric(report, c["path"])
+            scores[label] = val  # Keep original value for output
             # Normalize: always treat as "higher is better" by negating if minimizing
-            scores[label] = val if c.get("maximize", True) else -val
-        results.append({"option": name, "scores": scores, "report": report})
+            normalized_scores[label] = val if c.get("maximize", True) else -val
+        results.append({"option": name, "scores": scores, "_normalized": normalized_scores, "report": report})
 
-    # Compute Pareto dominance
+    # Compute Pareto dominance using normalized scores
     labels = [c.get("label", c["path"]) for c in criteria]
     for r in results:
         r["pareto"] = True
@@ -151,11 +153,15 @@ def pareto_frontier(
             if i == j:
                 continue
             # `other` dominates `r` if other >= r on all criteria and > on at least one
-            all_geq = all(other["scores"][l] >= r["scores"][l] for l in labels)
-            any_gt = any(other["scores"][l] > r["scores"][l] for l in labels)
+            all_geq = all(other["_normalized"][l] >= r["_normalized"][l] for l in labels)
+            any_gt = any(other["_normalized"][l] > r["_normalized"][l] for l in labels)
             if all_geq and any_gt:
                 r["pareto"] = False
                 break
+
+    # Remove internal normalized scores before returning
+    for r in results:
+        del r["_normalized"]
 
     frontier = [r["option"] for r in results if r["pareto"]]
     return {
