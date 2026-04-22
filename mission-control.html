@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Control</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-panel: #0f1525;
+    --bg-card: #131b2e;
+    --border: #1f2a44;
+    --border-bright: #2a3a5c;
+    --text: #e6f0ff;
+    --text-dim: #8a9cc0;
+    --text-faint: #546684;
+    --cyan: #00d4ff;
+    --amber: #ffb020;
+    --red: #ff4d5e;
+    --green: #22cc88;
+    --purple: #a070ff;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; scroll-behavior: smooth; }
+  body { min-height: 100vh; }
+
+  /* HEADER */
+  .top-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,26,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 13px;
+  }
+  .top-bar .title { color: var(--cyan); letter-spacing: 2px; font-weight: 700; }
+  .top-bar .subtitle { color: var(--text-dim); margin-left: 12px; }
+  .top-bar .status { display: flex; gap: 16px; align-items: center; }
+  .status-light { display: inline-flex; align-items: center; gap: 6px; }
+  .status-light .dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+  .status-light.green .dot { background: var(--green); color: var(--green); }
+  .status-light.amber .dot { background: var(--amber); color: var(--amber); }
+  .status-light.red .dot { background: var(--red); color: var(--red); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* SIDE NAV DOTS */
+  .side-nav { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
+    display: flex; flex-direction: column; gap: 12px; }
+  .side-nav a { width: 10px; height: 10px; border-radius: 50%; background: var(--border-bright);
+    display: block; transition: all 0.2s; text-decoration: none; position: relative; }
+  .side-nav a:hover, .side-nav a.active { background: var(--cyan); transform: scale(1.4); }
+  .side-nav a::after { content: attr(data-label); position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%); background: var(--bg-card); color: var(--text); padding: 4px 10px;
+    border-radius: 4px; font-family: var(--mono); font-size: 11px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s; border: 1px solid var(--border-bright); }
+  .side-nav a:hover::after { opacity: 1; }
+
+  /* PANELS */
+  .panel { min-height: 100vh; padding: 48px 80px 80px; max-width: 1400px; margin: 0 auto;
+    display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .panel-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px;
+    border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+  .panel-num { font-family: var(--mono); color: var(--text-faint); font-size: 14px; letter-spacing: 3px; }
+  .panel-title { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; margin-top: 4px; }
+  .panel-title .accent { color: var(--cyan); }
+  .panel-title .warn { color: var(--amber); }
+  .panel-title .alert { color: var(--red); }
+
+  .read-btn { background: var(--bg-card); border: 1px solid var(--border-bright); color: var(--text-dim);
+    padding: 8px 14px; border-radius: 6px; font-family: var(--mono); font-size: 12px; cursor: pointer;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .read-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .read-btn.playing { border-color: var(--green); color: var(--green); }
+  .read-btn .icon { width: 14px; height: 14px; }
+
+  .narrative { font-size: 18px; color: var(--text); max-width: 800px; margin-bottom: 32px; }
+  .narrative strong { color: var(--cyan); font-weight: 600; }
+  .narrative em { color: var(--amber); font-style: normal; }
+  .narrative p + p { margin-top: 16px; }
+
+  /* GAUGES */
+  .gauges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 24px 0; }
+  .gauge { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .gauge .label { font-family: var(--mono); font-size: 11px; color: var(--text-faint);
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .gauge .value { font-family: var(--mono); font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+  .gauge .value.high { color: var(--green); }
+  .gauge .value.mid { color: var(--amber); }
+  .gauge .value.low { color: var(--red); }
+  .gauge .bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .gauge .fill { height: 100%; transition: width 0.6s; }
+  .gauge .fill.high { background: var(--green); box-shadow: 0 0 12px var(--green); }
+  .gauge .fill.mid { background: var(--amber); box-shadow: 0 0 12px var(--amber); }
+  .gauge .fill.low { background: var(--red); box-shadow: 0 0 12px var(--red); }
+  .gauge .note { font-family: var(--mono); font-size: 10px; color: var(--text-faint); margin-top: 8px; }
+
+  .callout { background: var(--bg-card); border-left: 3px solid var(--cyan); padding: 16px 20px;
+    border-radius: 4px; margin: 20px 0; font-size: 16px; }
+  .callout.warn { border-left-color: var(--amber); }
+  .callout.alert { border-left-color: var(--red); }
+
+  @media (max-width: 768px) {
+    .panel { padding: 32px 20px 60px; }
+    .panel-title { font-size: 26px; }
+    .gauges { grid-template-columns: repeat(2, 1fr); }
+    .side-nav { right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <span class="title">MISSION CONTROL</span>
+    <span class="subtitle">solo founder / f500 warm-access / path-to-first-contract</span>
+  </div>
+  <div class="status">
+    <span class="status-light red"><span class="dot"></span>REVENUE: $0</span>
+    <span class="status-light amber"><span class="dot"></span>CUSTOMERS: 0</span>
+    <span class="status-light green"><span class="dot"></span>NETWORK: HIGH</span>
+  </div>
+</div>
+
+<nav class="side-nav">
+  <a href="#p1" data-label="01 STATUS" class="active"></a>
+  <a href="#p2" data-label="02 ADVANTAGE"></a>
+  <a href="#p3" data-label="03 ONE-SHOT"></a>
+  <a href="#p4" data-label="04 MEETING"></a>
+  <a href="#p5" data-label="05 BUILD"></a>
+  <a href="#p6" data-label="06 PILOT"></a>
+  <a href="#p7" data-label="07 COMPOUND"></a>
+  <a href="#p8" data-label="08 TRAPS"></a>
+  <a href="#p9" data-label="09 LABOR"></a>
+  <a href="#p10" data-label="10 ACTION"></a>
+</nav>
+
+<!-- =================== PANEL 1: STATUS =================== -->
+<section class="panel" id="p1">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 01 / 10</div>
+      <h1 class="panel-title">STATUS <span class="alert">// HONEST READ</span></h1>
+    </div>
+    <button class="read-btn" data-target="#p1-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p1-text">
+    <p>This is Mission Control. You asked for the honest read, no fluff. Here it is.</p>
+    <p>You have built a <strong>sophisticated system</strong>. The architecture is sound. Your instincts on composition — orchestrator, super agents, Monte Carlo, DeepConf, calibration — are correct.</p>
+    <p>You have <em>zero customers</em>. You have <em>zero revenue</em>. You have been building in isolation long enough that this is now the single biggest risk to the whole endeavor.</p>
+    <p>But you have one thing most solo founders never have: <strong>warm access to Fortune 500 decision-makers</strong>. That single asset is worth more than the entire system you've built. And you've been underusing it.</p>
+    <p>The plan from here is not "build more." The plan is: <strong>convert one warm contact into one signed pilot</strong>, use that contract to fund the next move, and build the flywheel from there. Everything in this mission control is aimed at that one goal.</p>
+  </div>
+
+  <div class="gauges">
+    <div class="gauge">
+      <div class="label">System Capability</div>
+      <div class="value high">82%</div>
+      <div class="bar"><div class="fill high" style="width: 82%"></div></div>
+      <div class="note">ENGINE_READY / MOSTLY_TESTED</div>
+    </div>
+    <div class="gauge">
+      <div class="label">Customer Signal</div>
+      <div class="value low">0%</div>
+      <div class="bar"><div class="fill low" style="width: 2%"></div></div>
+      <div class="note">NO_PILOTS / NO_FEEDBACK</div>
+    </div>
+    <div class="gauge">
+      <div class="label">Revenue Runway</div>
+      <div class="value low">$0</div>
+      <div class="bar"><div class="fill low" style="width: 2%"></div></div>
+      <div class="note">BURN_ONLY / NO_MRR</div>
+    </div>
+    <div class="gauge">
+      <div class="label">Network Capital</div>
+      <div class="value high">HIGH</div>
+      <div class="bar"><div class="fill high" style="width: 85%"></div></div>
+      <div class="note">F500_WARM_ACCESS / RARE</div>
+    </div>
+  </div>
+
+  <div class="callout alert">
+    <strong style="color: var(--red)">The danger quadrant:</strong> high technical capability + zero customer signal + no revenue. Most solo founders in this quadrant run out of time before they run out of ideas. You avoid this fate by converting network capital into contract revenue. That is the entire game for the next 90 days.
+  </div>
+</section>
+
+<!-- =================== PANEL 2: ASYMMETRIC ADVANTAGE =================== -->
+<style>
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+  .compare-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+  .compare-card.bad { border-left: 4px solid var(--red); }
+  .compare-card.good { border-left: 4px solid var(--green); }
+  .compare-card h3 { font-family: var(--mono); font-size: 13px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 12px; }
+  .compare-card.bad h3 { color: var(--red); }
+  .compare-card.good h3 { color: var(--green); }
+  .compare-card .stat { font-family: var(--mono); font-size: 28px; font-weight: 700; margin: 8px 0; }
+  .compare-card ul { list-style: none; padding: 0; margin-top: 12px; }
+  .compare-card li { padding: 6px 0; font-size: 14px; color: var(--text-dim);
+    border-bottom: 1px dashed var(--border); }
+  .compare-card li:last-child { border-bottom: none; }
+  .compare-card li::before { content: "▸ "; color: var(--text-faint); }
+
+  .chart-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 24px; margin: 20px 0; }
+  .chart-title { font-family: var(--mono); font-size: 12px; letter-spacing: 2px;
+    color: var(--text-faint); text-transform: uppercase; margin-bottom: 12px; }
+  .chart-legend { display: flex; gap: 20px; font-family: var(--mono); font-size: 12px;
+    margin-top: 12px; flex-wrap: wrap; }
+  .chart-legend .swatch { display: inline-block; width: 12px; height: 3px; margin-right: 6px;
+    vertical-align: middle; }
+</style>
+
+<section class="panel" id="p2">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 02 / 10</div>
+      <h1 class="panel-title">THE <span class="accent">ASYMMETRIC</span> ADVANTAGE</h1>
+    </div>
+    <button class="read-btn" data-target="#p2-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p2-text">
+    <p>Most solo founders grind for two years to earn the meeting you already have scheduled. They burn capital on outbound sales. They cold-email three hundred prospects to get one reply. They compete on price because they have no relationship leverage.</p>
+    <p>You are <strong>not in that game</strong>. You have warm Fortune 500 access. That is a different game entirely, with different rules and a different success path.</p>
+    <p>The cold founder's path: two years, two hundred calls, fifty demos, one pilot at ten thousand dollars, if they are lucky. The warm-access path: one meeting, one scoped pilot, fifty to five hundred thousand dollars, and the case study that opens the next ten doors.</p>
+    <p>This advantage <em>evaporates if you waste it</em>. You get one or two chances per contact to look like a serious operator, not a solo experimenter. Everything from Panel 3 onward is about not squandering this asset.</p>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h3>Cold Founder Path</h3>
+      <div class="stat" style="color: var(--red)">24 months</div>
+      <div style="color: var(--text-dim); font-size: 13px;">to first $10k contract</div>
+      <ul>
+        <li>200+ cold outbound calls</li>
+        <li>50+ discovery demos</li>
+        <li>Price undercut to get traction</li>
+        <li>SMB customers, low ACV</li>
+        <li>No reference customer logos</li>
+        <li>Burnout-before-revenue common</li>
+      </ul>
+    </div>
+    <div class="compare-card good">
+      <h3>Your Path (Warm F500)</h3>
+      <div class="stat" style="color: var(--green)">3&ndash;4 months</div>
+      <div style="color: var(--text-dim); font-size: 13px;">to first $50k&ndash;$500k pilot</div>
+      <ul>
+        <li>1 warm intro → 1 executive meeting</li>
+        <li>1 scoped pilot proposal</li>
+        <li>Premium pricing from day one</li>
+        <li>Enterprise logo for case study</li>
+        <li>Referrals within their network</li>
+        <li>Runway + credibility in one move</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">REVENUE TRAJECTORY &mdash; MONTHS 0 TO 12</div>
+    <svg viewBox="0 0 800 260" style="width: 100%; height: auto;">
+      <defs>
+        <linearGradient id="coldGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ff4d5e" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ff4d5e" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="warmGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#22cc88" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#22cc88" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Grid -->
+      <g stroke="#1f2a44" stroke-width="1">
+        <line x1="60" y1="40" x2="60" y2="210"/>
+        <line x1="60" y1="210" x2="760" y2="210"/>
+        <line x1="60" y1="100" x2="760" y2="100" stroke-dasharray="2,4"/>
+        <line x1="60" y1="155" x2="760" y2="155" stroke-dasharray="2,4"/>
+      </g>
+      <!-- Y labels -->
+      <g font-family="ui-monospace,monospace" font-size="10" fill="#546684">
+        <text x="54" y="45" text-anchor="end">$500k</text>
+        <text x="54" y="105" text-anchor="end">$100k</text>
+        <text x="54" y="160" text-anchor="end">$10k</text>
+        <text x="54" y="215" text-anchor="end">$0</text>
+      </g>
+      <!-- X labels -->
+      <g font-family="ui-monospace,monospace" font-size="10" fill="#546684">
+        <text x="60" y="230" text-anchor="middle">M0</text>
+        <text x="235" y="230" text-anchor="middle">M3</text>
+        <text x="410" y="230" text-anchor="middle">M6</text>
+        <text x="585" y="230" text-anchor="middle">M9</text>
+        <text x="760" y="230" text-anchor="middle">M12</text>
+      </g>
+      <!-- Cold path: flat for 9 months, tiny uptick -->
+      <path d="M 60 210 L 760 198 L 760 210 L 60 210 Z" fill="url(#coldGrad)"/>
+      <path d="M 60 210 L 760 198" stroke="#ff4d5e" stroke-width="2.5" fill="none"/>
+      <!-- Warm path: jumps at M3 (pilot signed), climbs -->
+      <path d="M 60 210 L 235 210 L 235 140 L 410 125 L 585 90 L 760 55 L 760 210 L 60 210 Z" fill="url(#warmGrad)"/>
+      <path d="M 60 210 L 235 210 L 235 140 L 410 125 L 585 90 L 760 55" stroke="#22cc88" stroke-width="2.5" fill="none"/>
+      <!-- Annotations -->
+      <circle cx="235" cy="140" r="4" fill="#22cc88"/>
+      <text x="245" y="135" font-family="ui-monospace,monospace" font-size="11" fill="#22cc88">PILOT SIGNED</text>
+      <circle cx="585" cy="90" r="4" fill="#22cc88"/>
+      <text x="595" y="85" font-family="ui-monospace,monospace" font-size="11" fill="#22cc88">2ND CUSTOMER</text>
+    </svg>
+    <div class="chart-legend">
+      <span><span class="swatch" style="background: #ff4d5e"></span>Cold founder trajectory</span>
+      <span><span class="swatch" style="background: #22cc88"></span>Your warm-access trajectory</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>The bet:</strong> you trade two years of grind for three months of focused execution. Odds of the cold path ever hitting $100k ARR as a solo founder are roughly one in twenty. Odds of your path hitting a $50k+ pilot, given a signed warm intro and a disciplined proposal, are roughly one in three. That is a sixfold shift in expected value. Take it.
+  </div>
+</section>
+
+<!-- =================== PANEL 3: ONE-SHOT PROTOCOL =================== -->
+<style>
+  .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+  .rule-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px; position: relative; }
+  .rule-card .num { position: absolute; top: 16px; right: 20px; font-family: var(--mono);
+    font-size: 32px; font-weight: 800; color: var(--border-bright); }
+  .rule-card h4 { font-family: var(--mono); font-size: 13px; color: var(--cyan);
+    letter-spacing: 2px; margin-bottom: 10px; max-width: 80%; }
+  .rule-card p { font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+  .rule-card .bad-good { display: flex; gap: 8px; margin-top: 12px; font-family: var(--mono); font-size: 11px; }
+  .rule-card .bad-good .bad { color: var(--red); }
+  .rule-card .bad-good .good { color: var(--green); }
+</style>
+
+<section class="panel" id="p3">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 03 / 10</div>
+      <h1 class="panel-title">THE <span class="warn">ONE-SHOT</span> PROTOCOL</h1>
+    </div>
+    <button class="read-btn" data-target="#p3-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p3-text">
+    <p>You do not get a second chance with a warm Fortune 500 contact. If the first meeting makes you look like a hobbyist, the door closes permanently, and worse, the contact quietly warns their peer network. The asymmetric advantage turns into an asymmetric liability.</p>
+    <p>So treat this as a <strong>one-shot protocol</strong>. Every rule below exists because violating it has killed previous founders' deals. Follow them all. Skip one and the probability of closing drops by roughly a third, compounding.</p>
+    <p>Read these rules out loud. Internalize them. Before any meeting, walk through them as a pre-flight checklist.</p>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="num">01</div>
+      <h4>SHOW UP NARROW</h4>
+      <p>You are not offering "an AI team that does anything." You are fixing one specific painful workflow that they already complain about.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "universal agent platform"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ "I cut your AR cycle by 40%"</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">02</div>
+      <h4>DO THE HOMEWORK</h4>
+      <p>Before the meeting, know their last earnings call, their stated operational priorities, and the specific division your contact runs. Walk in with numbers, not questions.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "tell me about your pain"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ "your Q3 call flagged X"</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">03</div>
+      <h4>HIDE THE KITCHEN</h4>
+      <p>Do not show them Monte Carlo math, orchestrator diagrams, or agent architecture. They buy outcomes, not machinery. Reveal sophistication only on direct technical question.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "let me explain DeepConf"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ "here is the dollar impact"</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">04</div>
+      <h4>PROPOSAL IN WRITING</h4>
+      <p>Leave the meeting with a one-page proposal. Success metric defined. Timeline defined. Price defined. Kill clause defined. If any of these are fuzzy, the deal will die in legal.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "I'll send details later"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ one page, four fields, printed</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">05</div>
+      <h4>DE-RISK THEIR SIDE</h4>
+      <p>Enterprise buyers do not fear price, they fear regret. Include a kill clause: they can cancel at midpoint for half the fee. Removes the "what if it fails" objection instantly.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "full payment upfront"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ "cancel at W6 for 50%"</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">06</div>
+      <h4>NAME THE METRIC</h4>
+      <p>Define success numerically, in their language. "We will reduce workflow X duration by 30% within 90 days, measured by their own dashboard." If you cannot state it this cleanly, you are not ready.</p>
+      <div class="bad-good">
+        <span class="bad">✗ "improve efficiency"</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ "30% in 90 days, measured"</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">07</div>
+      <h4>ASK WHO ELSE SIGNS</h4>
+      <p>Before leaving the room: "who else needs to say yes for this to go forward?" Champions at F500s do not have solo authority. Identify the other stakeholders early or you die in procurement.</p>
+      <div class="bad-good">
+        <span class="bad">✗ assume contact decides</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ map the signatories</span>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="num">08</div>
+      <h4>BRING ONE DEMO</h4>
+      <p>A live, working demo running on anonymized-but-relevant data. Not slides. Not videos. If the demo breaks live, you get credit for building it real. If you cannot demo, you are not ready.</p>
+      <div class="bad-good">
+        <span class="bad">✗ PowerPoint walkthrough</span>
+      </div>
+      <div class="bad-good">
+        <span class="good">✓ live tool, their data shape</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong style="color: var(--amber)">Pre-flight checklist:</strong> before any F500 meeting, verify all eight rules. If any one of them is weak, postpone the meeting. A postponed meeting is recoverable. A failed meeting with a warm contact is not.
+  </div>
+</section>
+
+<script>
+  // Read-aloud using browser SpeechSynthesis API
+  let currentUtterance = null;
+  let currentBtn = null;
+
+  document.querySelectorAll('.read-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetSel = btn.dataset.target;
+      const el = document.querySelector(targetSel);
+      if (!el) return;
+
+      if (currentUtterance && currentBtn === btn) {
+        speechSynthesis.cancel();
+        btn.classList.remove('playing');
+        btn.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        currentUtterance = null; currentBtn = null;
+        return;
+      }
+
+      speechSynthesis.cancel();
+      document.querySelectorAll('.read-btn').forEach(b => {
+        b.classList.remove('playing');
+        b.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      });
+
+      const text = el.innerText.replace(/\s+/g, ' ').trim();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95; u.pitch = 1.0; u.volume = 1.0;
+      u.onend = () => { btn.classList.remove('playing');
+        btn.querySelector('svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+        currentUtterance = null; currentBtn = null; };
+      btn.classList.add('playing');
+      btn.querySelector('svg').innerHTML = '<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>';
+      currentUtterance = u; currentBtn = btn;
+      speechSynthesis.speak(u);
+    });
+  });
+
+  // Side-nav active state on scroll
+  const panels = document.querySelectorAll('.panel');
+  const navLinks = document.querySelectorAll('.side-nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.4 });
+  panels.forEach(p => observer.observe(p));
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      const active = document.querySelector('.side-nav a.active');
+      if (active && active.nextElementSibling) { active.nextElementSibling.click(); e.preventDefault(); }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      const active = document.querySelector('.side-nav a.active');
+      if (active && active.previousElementSibling) { active.previousElementSibling.click(); e.preventDefault(); }
+    }
+  });
+</script>
+
+</body>
+</html>
