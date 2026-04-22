@@ -1152,6 +1152,94 @@
   </div>
 </section>
 
+<!-- =================== PANEL 10: ACTION =================== -->
+<style>
+  .action-box { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 2px;
+    padding: 32px; margin: 24px 0; }
+  .action-box h2 { font-family: var(--mono); font-size: 14px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 20px; color: var(--text-white); }
+  .action-step { display: grid; grid-template-columns: 48px 1fr; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .action-step:last-child { border-bottom: none; }
+  .step-num { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center; }
+  .step-num.active { color: var(--accent-red); }
+  .step-content h3 { font-size: 18px; font-weight: 700; color: var(--text-white); margin-bottom: 6px; }
+  .step-content p { font-size: 14px; color: var(--text-grey); margin-bottom: 8px; }
+  .step-content .due { font-family: var(--mono); font-size: 12px; color: var(--accent-red); }
+  .step-content input[type="text"] { background: var(--bg-panel); border: 1px solid var(--border);
+    color: var(--text-white); padding: 8px 12px; font-family: var(--mono); font-size: 14px;
+    width: 100%; max-width: 400px; border-radius: 2px; margin-top: 8px; }
+  .step-content input::placeholder { color: var(--text-muted); }
+
+  .final-message { text-align: center; padding: 48px 24px; margin-top: 32px; }
+  .final-message h2 { font-size: 28px; font-weight: 800; margin-bottom: 16px; color: var(--text-white); }
+  .final-message p { font-size: 16px; color: var(--text-grey); max-width: 600px; margin: 0 auto 24px; }
+  .final-message .cta { display: inline-block; background: var(--accent-red); color: var(--text-white);
+    font-family: var(--mono); font-size: 14px; letter-spacing: 1px; padding: 14px 28px;
+    text-decoration: none; font-weight: 700; border-radius: 2px; transition: background 0.15s; }
+  .final-message .cta:hover { background: var(--accent-red-dim); }
+</style>
+
+<section class="panel" id="p10">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 10 / 10</div>
+      <h1 class="panel-title">ACTION <span class="alert">// THIS WEEK</span></h1>
+    </div>
+    <button class="read-btn" data-target="#p10-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p10-text">
+    <p>You have read nine panels of strategy. None of it matters until you do the one thing only you can do: <strong>name the vertical, name the contact, book the meeting</strong>.</p>
+    <p>Not next month. <em>This week.</em></p>
+    <p>Everything in this dashboard — the one-shot protocol, the flight plan, the pilot structure, the labor split — is ready. I am ready. The only missing input is your decision: who are you going to call?</p>
+  </div>
+
+  <div class="action-box">
+    <h2>Your Inputs (Human-Only)</h2>
+    <div class="action-step">
+      <div class="step-num active">01</div>
+      <div class="step-content">
+        <h3>Pick the Vertical</h3>
+        <p>One industry. Financial services, healthcare, logistics, manufacturing, media, retail — pick one. You can expand later, but you start with one.</p>
+        <input type="text" id="vertical-input" placeholder="e.g. Financial services / wealth management">
+        <div class="due">DUE: TODAY</div>
+      </div>
+    </div>
+    <div class="action-step">
+      <div class="step-num active">02</div>
+      <div class="step-content">
+        <h3>Name the Contact</h3>
+        <p>One person at one company. Someone who takes your call. Someone who has budget authority or can introduce you to someone who does.</p>
+        <input type="text" id="contact-input" placeholder="e.g. Sarah Chen, VP Ops at Acme Corp">
+        <div class="due">DUE: TODAY</div>
+      </div>
+    </div>
+    <div class="action-step">
+      <div class="step-num active">03</div>
+      <div class="step-content">
+        <h3>Book the Meeting</h3>
+        <p>Send the text, make the call, write the email. Get 30 minutes on their calendar within the next two weeks. No pitch deck. No demo. Just the meeting.</p>
+        <div class="due">DUE: WITHIN 72 HOURS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Once you have a meeting date:</strong> Tell me the vertical, the company, and the contact's role. I will generate the pre-meeting research brief, the demo scope, and the proposal draft — all before you walk in. That is the handoff. That is how we win.
+  </div>
+
+  <div class="final-message">
+    <h2>The Dashboard Ends Here. The Work Starts Now.</h2>
+    <p>You have warm access that other founders spend years trying to get. You have a system that can deliver. The only variable left is whether you pick up the phone.</p>
+    <p style="color: var(--accent-red); font-weight: 600;">One vertical. One contact. One meeting. This week.</p>
+  </div>
+</section>
+
 <script>
   // Read-aloud using browser SpeechSynthesis API
   let currentUtterance = null;
