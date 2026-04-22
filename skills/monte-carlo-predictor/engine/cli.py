@@ -40,12 +40,24 @@ def _load_spec(path: str) -> dict:
 
 
 def _samples_to_jsonable(samples_dict, max_samples_per_outcome=200):
-    """Serialize outcome samples to JSON-friendly floats (capped to avoid huge payloads)."""
+    """Serialize outcome samples to JSON-friendly form (capped to avoid huge payloads).
+
+    Handles both numeric and categorical (string) samples.
+    """
     try:
         import numpy as np
         is_numpy = True
     except ImportError:
         is_numpy = False
+
+    def _coerce(x):
+        """Convert to JSON-serializable: float for numbers, str for strings."""
+        if isinstance(x, str):
+            return x
+        try:
+            return float(x)
+        except (TypeError, ValueError):
+            return str(x)
 
     out = {}
     for k, v in samples_dict.items():
@@ -54,11 +66,10 @@ def _samples_to_jsonable(samples_dict, max_samples_per_outcome=200):
         else:
             arr = list(v)
         if len(arr) > max_samples_per_outcome:
-            # Evenly-spaced downsample
             step = len(arr) / max_samples_per_outcome
-            arr = [float(arr[int(i * step)]) for i in range(max_samples_per_outcome)]
+            arr = [_coerce(arr[int(i * step)]) for i in range(max_samples_per_outcome)]
         else:
-            arr = [float(x) for x in arr]
+            arr = [_coerce(x) for x in arr]
         out[k] = arr
     return out
 

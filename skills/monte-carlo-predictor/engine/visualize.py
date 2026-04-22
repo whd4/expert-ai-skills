@@ -190,9 +190,12 @@ def save_matplotlib_charts(report: dict, samples: dict, outdir: str) -> list[str
         data = _samples_to_list(outcome_samples)
         if not data:
             continue
+        stats = report["outcomes"][name]["stats"]
+        is_categorical = "mode" in stats and "mean" not in stats
+        if is_categorical:
+            continue
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.hist(data, bins=60, color="#4a90d9", edgecolor="white")
-        stats = report["outcomes"][name]["stats"]
         ax.axvline(stats["mean"], color="red", linestyle="--", label=f"Mean = {stats['mean']:.3g}")
         ax.axvline(stats["p5"], color="orange", linestyle=":", label=f"P5 = {stats['p5']:.3g}")
         ax.axvline(stats["p95"], color="orange", linestyle=":", label=f"P95 = {stats['p95']:.3g}")

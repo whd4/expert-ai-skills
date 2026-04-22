@@ -172,8 +172,8 @@ class Calibrator:
             "reliability_curve": reliability,
             "high_confidence_check": {
                 "count": len(hi_conf),
-                "avg_predicted": round(hi_conf_avg, 3) if hi_conf_avg else None,
-                "actual_hit_rate": round(hi_conf_hit, 3) if hi_conf_hit else None,
+                "avg_predicted": round(hi_conf_avg, 3) if hi_conf_avg is not None else None,
+                "actual_hit_rate": round(hi_conf_hit, 3) if hi_conf_hit is not None else None,
                 "gap": round(hi_conf_hit - hi_conf_avg, 3) if hi_conf_hit is not None else None,
             },
             "interpretation": _interpret(brier, brier_ref, skill_score, n),
