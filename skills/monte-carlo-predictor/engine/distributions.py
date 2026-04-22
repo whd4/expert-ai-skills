@@ -18,7 +18,13 @@ except ImportError:
 
 def _as_array(samples):
     if HAS_NUMPY:
-        return np.asarray(samples, dtype=float)
+        # Check if samples contain strings (from choice distribution)
+        if hasattr(samples, 'dtype') and samples.dtype.kind in ('U', 'S', 'O'):
+            return samples  # Keep as-is for string/object arrays
+        try:
+            return np.asarray(samples, dtype=float)
+        except (ValueError, TypeError):
+            return np.asarray(samples)  # Keep original dtype for non-numeric
     return list(samples)
 
 

@@ -38,18 +38,24 @@ _ALLOWED_NODES = {
 def _fn_sqrt(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.sqrt(np.abs(x))
+    if isinstance(x, list):
+        return [math.sqrt(abs(v)) for v in x]
     return math.sqrt(abs(x))
 
 
 def _fn_log(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.log(np.maximum(x, 1e-300))
+    if isinstance(x, list):
+        return [math.log(max(v, 1e-300)) for v in x]
     return math.log(max(x, 1e-300))
 
 
 def _fn_exp(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.exp(np.minimum(x, 700.0))
+    if isinstance(x, list):
+        return [math.exp(min(v, 700.0)) for v in x]
     return math.exp(min(x, 700.0))
 
 
@@ -76,24 +82,32 @@ def _fn_max(*args):
 def _fn_abs(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.abs(x)
+    if isinstance(x, list):
+        return [abs(v) for v in x]
     return abs(x)
 
 
 def _fn_round(x, ndigits=0):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.round(x, int(ndigits))
+    if isinstance(x, list):
+        return [round(v, int(ndigits)) for v in x]
     return round(x, int(ndigits))
 
 
 def _fn_floor(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.floor(x)
+    if isinstance(x, list):
+        return [math.floor(v) for v in x]
     return math.floor(x)
 
 
 def _fn_ceil(x):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.ceil(x)
+    if isinstance(x, list):
+        return [math.ceil(v) for v in x]
     return math.ceil(x)
 
 

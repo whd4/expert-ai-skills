@@ -52,7 +52,22 @@ def _percentile(samples, pct):
     return float(sorted_s[f] + (sorted_s[c] - sorted_s[f]) * (k - f))
 
 
-def _stats(samples) -> dict[str, float]:
+def _stats(samples) -> dict[str, Any]:
+    # Check if samples are categorical (strings)
+    n = len(samples) if isinstance(samples, list) else samples.size
+    if n > 0:
+        first = samples[0] if isinstance(samples, list) else samples.flat[0]
+        if isinstance(first, str):
+            from collections import Counter
+            counts = Counter(samples if isinstance(samples, list) else samples.tolist())
+            mode = counts.most_common(1)[0][0] if counts else None
+            return {
+                "type": "categorical",
+                "mode": mode,
+                "unique_count": len(counts),
+                "counts": dict(counts),
+            }
+    # Numeric stats
     if HAS_NUMPY:
         arr = np.asarray(samples, dtype=float)
         return {
@@ -242,6 +257,9 @@ def simulate_with_samples(spec: dict[str, Any]) -> tuple[dict[str, Any], dict[st
 
     var_specs = spec.get("variables") or {}
     outcome_specs = spec.get("outcomes") or {}
+
+    if not var_specs:
+        raise ValueError("spec must declare at least one variable")
 
     variables_samples: dict[str, Any] = {}
     for name, dist_spec in var_specs.items():
