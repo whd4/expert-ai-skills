@@ -56,12 +56,20 @@ def _fn_exp(x):
 def _fn_min(*args):
     if HAS_NUMPY and any(isinstance(a, np.ndarray) for a in args):
         return np.minimum.reduce([np.asarray(a) for a in args])
+    if any(isinstance(a, list) for a in args):
+        n = max(len(a) for a in args if isinstance(a, list))
+        arrs = [a if isinstance(a, list) else [a] * n for a in args]
+        return [min(vals) for vals in zip(*arrs)]
     return min(args)
 
 
 def _fn_max(*args):
     if HAS_NUMPY and any(isinstance(a, np.ndarray) for a in args):
         return np.maximum.reduce([np.asarray(a) for a in args])
+    if any(isinstance(a, list) for a in args):
+        n = max(len(a) for a in args if isinstance(a, list))
+        arrs = [a if isinstance(a, list) else [a] * n for a in args]
+        return [max(vals) for vals in zip(*arrs)]
     return max(args)
 
 
@@ -217,17 +225,36 @@ def _eval(node, variables):
             left = right
         return result
     if isinstance(node, ast.BoolOp):
-        values = [_eval(v, variables) for v in node.values]
-        # Convert to floats; chain via element-wise min (and) / max (or)
+        # Lazy evaluation with short-circuit semantics
         if isinstance(node.op, ast.And):
-            out = values[0]
-            for v in values[1:]:
-                out = _fn_min(out, v)
+            out = _eval(node.values[0], variables)
+            for v in node.values[1:]:
+                # Short-circuit: if all zeros, skip remaining
+                if HAS_NUMPY and isinstance(out, np.ndarray):
+                    if not np.any(out):
+                        return out
+                elif isinstance(out, list):
+                    if not any(out):
+                        return out
+                elif not out:
+                    return 0.0
+                next_val = _eval(v, variables)
+                out = _fn_min(out, next_val)
             return out
         if isinstance(node.op, ast.Or):
-            out = values[0]
-            for v in values[1:]:
-                out = _fn_max(out, v)
+            out = _eval(node.values[0], variables)
+            for v in node.values[1:]:
+                # Short-circuit: if all nonzero, skip remaining
+                if HAS_NUMPY and isinstance(out, np.ndarray):
+                    if np.all(out):
+                        return out
+                elif isinstance(out, list):
+                    if all(out):
+                        return out
+                elif out:
+                    return out
+                next_val = _eval(v, variables)
+                out = _fn_max(out, next_val)
             return out
     if isinstance(node, ast.Call):
         fn = _FUNCTIONS[node.func.id]
@@ -239,6 +266,10 @@ def _eval(node, variables):
         orelse = _eval(node.orelse, variables)
         if HAS_NUMPY and isinstance(cond, np.ndarray):
             return np.where(cond != 0, body, orelse)
+        if isinstance(cond, list):
+            body_arr = body if isinstance(body, list) else [body] * len(cond)
+            orelse_arr = orelse if isinstance(orelse, list) else [orelse] * len(cond)
+            return [b if c else o for c, b, o in zip(cond, body_arr, orelse_arr)]
         return body if cond else orelse
     raise ValueError(f"unhandled expression node: {type(node).__name__}")
 
