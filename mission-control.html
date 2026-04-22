@@ -451,6 +451,221 @@
   </div>
 </section>
 
+<!-- =================== PANEL 4: THE MEETING =================== -->
+<style>
+  .timeline { margin: 24px 0; position: relative; }
+  .timeline-bar { height: 44px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 6px; display: flex; overflow: hidden; margin-bottom: 20px; }
+  .timeline-seg { display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--bg);
+    font-weight: 700; position: relative; }
+  .timeline-seg:nth-child(1) { flex: 3; background: var(--cyan); }
+  .timeline-seg:nth-child(2) { flex: 12; background: var(--green); }
+  .timeline-seg:nth-child(3) { flex: 10; background: var(--amber); }
+  .timeline-seg:nth-child(4) { flex: 5; background: var(--purple); }
+
+  .meeting-step { background: var(--bg-card); border: 1px solid var(--border); border-left-width: 4px;
+    border-radius: 6px; padding: 20px; margin-bottom: 16px; display: grid;
+    grid-template-columns: 130px 1fr; gap: 24px; align-items: start; }
+  .meeting-step.s1 { border-left-color: var(--cyan); }
+  .meeting-step.s2 { border-left-color: var(--green); }
+  .meeting-step.s3 { border-left-color: var(--amber); }
+  .meeting-step.s4 { border-left-color: var(--purple); }
+  .meeting-step .when { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
+  .meeting-step .when strong { font-size: 20px; color: var(--text); display: block; margin-bottom: 4px; }
+  .meeting-step h4 { font-size: 16px; margin-bottom: 10px; }
+  .meeting-step h4.cyan { color: var(--cyan); }
+  .meeting-step h4.green { color: var(--green); }
+  .meeting-step h4.amber { color: var(--amber); }
+  .meeting-step h4.purple { color: var(--purple); }
+  .meeting-step p { font-size: 14px; color: var(--text-dim); margin-bottom: 10px; }
+  .meeting-step .script { background: var(--bg); border-left: 2px solid var(--border-bright);
+    padding: 10px 14px; margin-top: 8px; font-family: var(--mono); font-size: 13px;
+    color: var(--text); font-style: italic; border-radius: 0 4px 4px 0; }
+</style>
+
+<section class="panel" id="p4">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 04 / 10</div>
+      <h1 class="panel-title">THE <span class="accent">30-MINUTE</span> MEETING</h1>
+    </div>
+    <button class="read-btn" data-target="#p4-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p4-text">
+    <p>You will get thirty minutes with the executive. Not sixty. Probably not forty-five. Thirty. You must run that meeting with the discipline of a flight plan, because they are measuring you on execution competence, not ideas.</p>
+    <p>The structure below has been tested across countless enterprise pilot sales. It works because it front-loads credibility, demonstrates capability live, and closes with a concrete ask. Deviate from it and you lose the room.</p>
+    <p>Memorize the four segments. Practice each out loud. If you cannot run this sequence from memory, you are not ready to take the meeting.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-bar">
+      <div class="timeline-seg">OPEN&nbsp;3'</div>
+      <div class="timeline-seg">DEMO&nbsp;12'</div>
+      <div class="timeline-seg">PROPOSAL&nbsp;10'</div>
+      <div class="timeline-seg">CLOSE&nbsp;5'</div>
+    </div>
+  </div>
+
+  <div class="meeting-step s1">
+    <div class="when"><strong>0&mdash;3 min</strong>OPEN</div>
+    <div>
+      <h4 class="cyan">EARN THE ROOM IN 180 SECONDS</h4>
+      <p>No small talk. No "tell me about your business." Walk in with a specific observation about their company and a specific pain you can fix. Show you did the homework. This segment decides whether they lean forward or check their phone.</p>
+      <div class="script">"I read your Q3 call. You flagged [specific operational metric] as the bottleneck. I have built an AI system that takes that exact workflow off your team's desk. I want thirty minutes to show you how it works and propose a ninety-day pilot. If it is not compelling in the first fifteen minutes, tell me and I'll stop."</div>
+    </div>
+  </div>
+
+  <div class="meeting-step s2">
+    <div class="when"><strong>3&mdash;15 min</strong>DEMO</div>
+    <div>
+      <h4 class="green">SHOW IT LIVE, ON THEIR DATA SHAPE</h4>
+      <p>Open a browser. Load a working instance of the narrow system. Run a scan on anonymized-but-representative data of the workflow you're targeting. Narrate what the agents are doing in plain English. Show before and after numbers on the dashboard. Twelve minutes max.</p>
+      <div class="script">"What you're watching is a scan of the [workflow] process. The system is pulling in the documents, identifying the steps, flagging the friction points, and generating the revised SOP. It's producing a dollar-impact estimate right now. Here's what it found."</div>
+    </div>
+  </div>
+
+  <div class="meeting-step s3">
+    <div class="when"><strong>15&mdash;25 min</strong>PROPOSAL</div>
+    <div>
+      <h4 class="amber">ONE PAGE, FOUR FIELDS, PRINTED</h4>
+      <p>Slide the one-page proposal across the table. Walk them through the four fields: scope, success metric, timeline, price and kill clause. Do not email it afterward. Printed artifacts in enterprise meetings carry disproportionate weight. Ten minutes of walkthrough, no more.</p>
+      <div class="script">"Ninety-day pilot. Scope: your [specific workflow]. Success metric: 30% reduction in cycle time, measured by your existing dashboard. Price: eighty thousand, half on start, half on hit. Kill clause: you can cancel at week six for a forty-thousand exit fee. If we hit, you convert to annual."</div>
+    </div>
+  </div>
+
+  <div class="meeting-step s4">
+    <div class="when"><strong>25&mdash;30 min</strong>CLOSE</div>
+    <div>
+      <h4 class="purple">MAP THE SIGNATORIES, BOOK THE NEXT STEP</h4>
+      <p>Do not leave without answering two questions: who else has to say yes, and what happens in the next seven days. Champions rarely have unilateral authority at F500 scale. Discover the full signature chain before you leave the room, or die silently in procurement six weeks later.</p>
+      <div class="script">"To make this real, who else needs to say yes? Legal, IT, finance, your boss? I'd like to send them the same one-pager today. And can we book a follow-up for next week so I can answer whatever questions come back from them?"</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>The meeting is not a sales pitch.</strong> It is an <em>operational demonstration</em>. They are evaluating whether you can execute, not whether you can talk. Every minute you spend explaining your vision instead of showing your capability is a minute working against you. Keep it tactical, keep it visible, keep it measurable.
+  </div>
+</section>
+
+<!-- =================== PANEL 5: THE NARROW BUILD =================== -->
+<style>
+  .build-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+  .build-col { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 24px; }
+  .build-col.keep { border-top: 4px solid var(--green); }
+  .build-col.cut { border-top: 4px solid var(--red); }
+  .build-col h3 { font-family: var(--mono); font-size: 14px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 16px; }
+  .build-col.keep h3 { color: var(--green); }
+  .build-col.cut h3 { color: var(--red); }
+  .build-col ul { list-style: none; }
+  .build-col li { padding: 10px 0; font-size: 14px; border-bottom: 1px dashed var(--border);
+    display: flex; gap: 10px; align-items: flex-start; }
+  .build-col li:last-child { border-bottom: none; }
+  .build-col.keep li::before { content: "✓"; color: var(--green); font-weight: 700; }
+  .build-col.cut li::before { content: "✗"; color: var(--red); font-weight: 700; }
+  .build-col li strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .build-col li span { color: var(--text-dim); font-size: 12px; }
+
+  .stack-diagram { background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 24px; margin: 20px 0; }
+  .stack-layer { background: var(--bg); border: 1px solid var(--border-bright);
+    border-radius: 4px; padding: 12px 16px; margin-bottom: 8px; display: flex;
+    justify-content: space-between; align-items: center; }
+  .stack-layer.visible { border-color: var(--green); background: rgba(34,204,136,0.08); }
+  .stack-layer.hidden { border-color: var(--border-bright); opacity: 0.5; }
+  .stack-layer .name { font-family: var(--mono); font-size: 13px; }
+  .stack-layer .tag { font-family: var(--mono); font-size: 10px; padding: 3px 8px;
+    border-radius: 3px; letter-spacing: 1px; }
+  .stack-layer.visible .tag { background: var(--green); color: var(--bg); }
+  .stack-layer.hidden .tag { background: var(--border-bright); color: var(--text-faint); }
+</style>
+
+<section class="panel" id="p5">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 05 / 10</div>
+      <h1 class="panel-title">THE <span class="warn">NARROW</span> BUILD</h1>
+    </div>
+    <button class="read-btn" data-target="#p5-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p5-text">
+    <p>You have been building a platform. That is the wrong thing to build this week. This week you build a <strong>thin vertical slice</strong>: one workflow, one industry, one killer demo. The platform comes later, after you have a signed pilot paying for the platform's development.</p>
+    <p>The temptation is to show up with the full orchestrator, twenty super-agents, Monte Carlo simulations, calibration dashboards. That impresses other engineers. It <em>terrifies</em> executives. They do not want to buy a platform. They want to buy an outcome.</p>
+    <p>The stack below has two layers: what they see, and what runs underneath. Hide the kitchen. Serve the meal.</p>
+  </div>
+
+  <div class="build-grid">
+    <div class="build-col keep">
+      <h3>Build This Week</h3>
+      <ul>
+        <li><div><strong>Business scanner</strong><span>Ingests docs, SOPs, data sample → produces structured readout of current-state workflow</span></div></li>
+        <li><div><strong>One agent team</strong><span>Three to five specialized agents that execute the target workflow end-to-end</span></div></li>
+        <li><div><strong>Before/after quantifier</strong><span>Measures cycle time, errors, cost — spits out concrete dollar impact</span></div></li>
+        <li><div><strong>CEO-readable dashboard</strong><span>Green/yellow/red status, weekly report format, zero technical jargon</span></div></li>
+        <li><div><strong>One-page proposal generator</strong><span>Auto-generates the scope/metric/timeline/price doc from scan results</span></div></li>
+        <li><div><strong>Demo-safe environment</strong><span>Runs on laptop, offline-capable, cannot crash live, has reset button</span></div></li>
+      </ul>
+    </div>
+    <div class="build-col cut">
+      <h3>Cut for Now</h3>
+      <ul>
+        <li><div><strong>Full orchestrator platform</strong><span>The 20-super-agent vision. Comes after pilot 1 is signed, not before.</span></div></li>
+        <li><div><strong>Monte Carlo CEO-facing views</strong><span>The math stays in the kitchen. Show only the outcome number.</span></div></li>
+        <li><div><strong>Multi-vertical support</strong><span>Pick one industry. Hardcode everything. Generalize only when you have 3 pilots.</span></div></li>
+        <li><div><strong>MCP / API / SDK surface</strong><span>Nobody buying a pilot cares how it's integrated. Yet.</span></div></li>
+        <li><div><strong>Calibration dashboards</strong><span>Internal only. Useful for you. Invisible to customer.</span></div></li>
+        <li><div><strong>Fancy UI framework</strong><span>Plain HTML + one dashboard page. Speed over polish this week.</span></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stack-diagram">
+    <div class="chart-title">WHAT THEY SEE &nbsp; vs &nbsp; WHAT RUNS UNDERNEATH</div>
+    <div class="stack-layer visible">
+      <span class="name">Dashboard: "workflow cycle time dropped 34%, $420k annual impact"</span>
+      <span class="tag">VISIBLE</span>
+    </div>
+    <div class="stack-layer visible">
+      <span class="name">Scan readout: "we analyzed 847 process steps across 12 departments"</span>
+      <span class="tag">VISIBLE</span>
+    </div>
+    <div class="stack-layer visible">
+      <span class="name">Proposal page: scope, metric, timeline, price, kill clause</span>
+      <span class="tag">VISIBLE</span>
+    </div>
+    <div class="stack-layer hidden">
+      <span class="name">Agent team: scanner, analyzer, rewriter, monitor, reporter</span>
+      <span class="tag">HIDDEN</span>
+    </div>
+    <div class="stack-layer hidden">
+      <span class="name">Monte Carlo engine + DeepConf spec generation</span>
+      <span class="tag">HIDDEN</span>
+    </div>
+    <div class="stack-layer hidden">
+      <span class="name">Calibration + divergence detection + replan logic</span>
+      <span class="tag">HIDDEN</span>
+    </div>
+    <div class="stack-layer hidden">
+      <span class="name">Orchestrator + joint simulator + telemetry bus</span>
+      <span class="tag">HIDDEN</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong style="color: var(--amber)">The rule:</strong> when the executive asks "how does it work?" your answer is "I can walk through the architecture after we decide this is worth piloting." That line preserves mystique, shows confidence, and keeps the conversation on outcomes. You only open the kitchen when they've already decided to order.
+  </div>
+</section>
+
 <script>
   // Read-aloud using browser SpeechSynthesis API
   let currentUtterance = null;
