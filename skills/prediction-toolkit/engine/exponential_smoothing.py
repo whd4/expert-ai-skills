@@ -72,8 +72,10 @@ def forecast(
     if method == "holt":
         return _holt(data, periods, alpha, beta)
     if method == "holt_winters":
-        if not seasonal_periods:
-            raise ValueError("holt_winters requires seasonal_periods")
+        if not seasonal_periods or seasonal_periods < 1:
+            raise ValueError("holt_winters requires seasonal_periods >= 1")
+        if seasonal_periods > len(data):
+            raise ValueError(f"seasonal_periods ({seasonal_periods}) cannot exceed data length ({len(data)})")
         return _holt_winters(data, periods, seasonal_periods, alpha, beta, gamma)
     raise ValueError(f"unknown method {method!r}")
 

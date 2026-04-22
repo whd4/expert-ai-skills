@@ -66,8 +66,12 @@ def poisson(lam: float, size: int):
         raise ValueError(f"poisson lambda must be non-negative, got {lam}")
     if HAS_NUMPY:
         return np.random.poisson(lam, size).astype(float)
+    # Pure-Python Poisson sampler via inverse transform
     out = []
     for _ in range(size):
+        if lam == 0:
+            out.append(0.0)
+            continue
         L = math.exp(-lam)
         k = 0
         p = 1.0
