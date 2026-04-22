@@ -178,6 +178,10 @@ def render_comparison(result: dict) -> str:
     lines.append(f"  DECISION COMPARISON — objective: {result['objective']} "
                  f"({'maximize' if result['maximize'] else 'minimize'})")
     lines.append("=" * 70)
+    if not result["results"]:
+        lines.append("  No options to compare.")
+        lines.append("=" * 70)
+        return "\n".join(lines) + "\n"
     max_name = max(len(r["option"]) for r in result["results"])
     for rank, r in enumerate(result["results"], 1):
         marker = "🏆" if rank == 1 else f" {rank}"

@@ -140,6 +140,9 @@ def _tornado(variables_samples: dict, outcome_samples, outcome_stats: dict):
     Returns list of dicts sorted by |correlation| descending:
         [{"variable": "x", "correlation": 0.82, "impact": "high"}, ...]
     """
+    # Skip tornado for categorical outcomes (no stddev)
+    if outcome_stats.get("type") == "categorical" or "stddev" not in outcome_stats:
+        return []
     if outcome_stats["stddev"] == 0:
         return []
     items = []
