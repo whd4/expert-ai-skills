@@ -100,6 +100,8 @@ def _fn_ceil(x):
 def _fn_clip(x, lo, hi):
     if HAS_NUMPY and isinstance(x, np.ndarray):
         return np.clip(x, lo, hi)
+    if isinstance(x, list):
+        return [max(lo, min(hi, v)) for v in x]
     return max(lo, min(hi, x))
 
 
@@ -143,6 +145,8 @@ def _eval(node, variables):
         if isinstance(node.op, ast.Not):
             if HAS_NUMPY and isinstance(operand, np.ndarray):
                 return (operand == 0).astype(float)
+            if isinstance(operand, list):
+                return [1.0 if not v else 0.0 for v in operand]
             return 1.0 if not operand else 0.0
     if isinstance(node, ast.BinOp):
         left = _eval(node.left, variables)
@@ -218,8 +222,14 @@ def _eval(node, variables):
             # Chain multiple comparisons via multiplication (AND semantics)
             if result is None:
                 result = cmp_result
-            elif isinstance(result, list) and isinstance(cmp_result, list):
-                result = [a * b for a, b in zip(result, cmp_result)]
+            elif isinstance(result, list) or isinstance(cmp_result, list):
+                # Handle mixed list/scalar cases
+                if isinstance(result, list) and isinstance(cmp_result, list):
+                    result = [a * b for a, b in zip(result, cmp_result)]
+                elif isinstance(result, list):
+                    result = [a * cmp_result for a in result]
+                else:
+                    result = [result * b for b in cmp_result]
             else:
                 result = result * cmp_result
             left = right
