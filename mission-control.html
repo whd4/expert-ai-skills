@@ -666,6 +666,289 @@
   </div>
 </section>
 
+<!-- =================== PANEL 6: THE PILOT =================== -->
+<style>
+  .phase-track { margin: 24px 0; }
+  .phase-grid { display: grid; grid-template-columns: 2fr 3fr 5fr 2fr; gap: 4px; margin-bottom: 4px; }
+  .phase-label { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px;
+    padding: 10px; text-align: center; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 1px; }
+  .phase-label.p1 { border-top: 3px solid var(--cyan); color: var(--cyan); }
+  .phase-label.p2 { border-top: 3px solid var(--green); color: var(--green); }
+  .phase-label.p3 { border-top: 3px solid var(--amber); color: var(--amber); }
+  .phase-label.p4 { border-top: 3px solid var(--purple); color: var(--purple); }
+  .week-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; }
+  .week-cell { background: var(--bg-card); border: 1px solid var(--border); border-radius: 3px;
+    padding: 8px 4px; text-align: center; font-family: var(--mono); font-size: 10px;
+    color: var(--text-faint); }
+  .week-cell.p1 { background: rgba(0,212,255,0.12); border-color: var(--cyan); color: var(--cyan); }
+  .week-cell.p2 { background: rgba(34,204,136,0.12); border-color: var(--green); color: var(--green); }
+  .week-cell.p3 { background: rgba(255,176,32,0.12); border-color: var(--amber); color: var(--amber); }
+  .week-cell.p4 { background: rgba(160,112,255,0.12); border-color: var(--purple); color: var(--purple); }
+
+  .phase-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+  .phase-card { background: var(--bg-card); border: 1px solid var(--border); border-top-width: 4px;
+    border-radius: 6px; padding: 18px; }
+  .phase-card.c1 { border-top-color: var(--cyan); }
+  .phase-card.c2 { border-top-color: var(--green); }
+  .phase-card.c3 { border-top-color: var(--amber); }
+  .phase-card.c4 { border-top-color: var(--purple); }
+  .phase-card h4 { font-family: var(--mono); font-size: 13px; letter-spacing: 2px; margin-bottom: 10px; }
+  .phase-card.c1 h4 { color: var(--cyan); }
+  .phase-card.c2 h4 { color: var(--green); }
+  .phase-card.c3 h4 { color: var(--amber); }
+  .phase-card.c4 h4 { color: var(--purple); }
+  .phase-card .weeks { font-family: var(--mono); font-size: 11px; color: var(--text-faint);
+    margin-bottom: 12px; }
+  .phase-card ul { list-style: none; padding: 0; }
+  .phase-card li { padding: 4px 0; font-size: 13px; color: var(--text-dim); }
+  .phase-card li::before { content: "→ "; color: var(--text-faint); }
+
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+  .price-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px; text-align: center; }
+  .price-card .label { font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+    color: var(--text-faint); margin-bottom: 10px; }
+  .price-card .amount { font-family: var(--mono); font-size: 32px; font-weight: 700;
+    color: var(--cyan); margin-bottom: 6px; }
+  .price-card .when { font-size: 13px; color: var(--text-dim); }
+</style>
+
+<section class="panel" id="p6">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 06 / 10</div>
+      <h1 class="panel-title">THE <span class="accent">90-DAY</span> PILOT</h1>
+    </div>
+    <button class="read-btn" data-target="#p6-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p6-text">
+    <p>Ninety days is the sweet spot for an enterprise pilot. Shorter and they cannot measure real impact. Longer and they cannot get it through procurement without a full contract. You are selling a <strong>defined-scope, measurable, de-risked engagement</strong> that converts to an annual deal if you hit the metric.</p>
+    <p>The structure below is four phases across twelve weeks. Each phase has a specific deliverable. Missed deliverables signal trouble early, so the buyer and you both see drift before it becomes a crisis. This <em>transparency is what earns the annual contract at the end.</em></p>
+    <p>Pricing sits between fifty and one hundred fifty thousand for pilot one. Do not go lower. Underpricing kills your credibility and creates scope creep. Do not go higher. Overpricing kills momentum and pushes you into a longer sales cycle. Fifty to one hundred fifty is the zone.</p>
+  </div>
+
+  <div class="phase-track">
+    <div class="phase-grid">
+      <div class="phase-label p1">DISCOVERY</div>
+      <div class="phase-label p2">BUILD</div>
+      <div class="phase-label p3">OPERATE</div>
+      <div class="phase-label p4">CLOSE</div>
+    </div>
+    <div class="week-grid">
+      <div class="week-cell p1">W1</div>
+      <div class="week-cell p1">W2</div>
+      <div class="week-cell p2">W3</div>
+      <div class="week-cell p2">W4</div>
+      <div class="week-cell p2">W5</div>
+      <div class="week-cell p3">W6</div>
+      <div class="week-cell p3">W7</div>
+      <div class="week-cell p3">W8</div>
+      <div class="week-cell p3">W9</div>
+      <div class="week-cell p3">W10</div>
+      <div class="week-cell p4">W11</div>
+      <div class="week-cell p4">W12</div>
+    </div>
+  </div>
+
+  <div class="phase-cards">
+    <div class="phase-card c1">
+      <h4>DISCOVERY</h4>
+      <div class="weeks">WEEKS 1&ndash;2</div>
+      <ul>
+        <li>Access their systems and SOPs</li>
+        <li>Shadow the workflow in person</li>
+        <li>Quantify the current-state pain</li>
+        <li>Lock the success metric in writing</li>
+        <li>Deliverable: discovery report + signed scope</li>
+      </ul>
+    </div>
+    <div class="phase-card c2">
+      <h4>BUILD</h4>
+      <div class="weeks">WEEKS 3&ndash;5</div>
+      <ul>
+        <li>Configure agent team for this workflow</li>
+        <li>Integrate with their data sources</li>
+        <li>Run parallel against current process</li>
+        <li>Tune on real data, not synthetic</li>
+        <li>Deliverable: system running in shadow mode</li>
+      </ul>
+    </div>
+    <div class="phase-card c3">
+      <h4>OPERATE</h4>
+      <div class="weeks">WEEKS 6&ndash;10</div>
+      <ul>
+        <li>Go live, agents own the workflow</li>
+        <li>Weekly status reports, green/yellow/red</li>
+        <li>Track metric against baseline daily</li>
+        <li>Human-in-the-loop for edge cases</li>
+        <li>Deliverable: measurable impact at week 10</li>
+      </ul>
+    </div>
+    <div class="phase-card c4">
+      <h4>CLOSE</h4>
+      <div class="weeks">WEEKS 11&ndash;12</div>
+      <ul>
+        <li>Final metrics measurement</li>
+        <li>Executive readout presentation</li>
+        <li>Present annual contract proposal</li>
+        <li>Secure case study release permission</li>
+        <li>Deliverable: signed annual or clean exit</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="label">PILOT FIXED FEE</div>
+      <div class="amount">$80k</div>
+      <div class="when">50% kickoff / 50% on success metric</div>
+    </div>
+    <div class="price-card">
+      <div class="label">KILL CLAUSE</div>
+      <div class="amount">$40k</div>
+      <div class="when">Cancel at week 6 for half fee</div>
+    </div>
+    <div class="price-card">
+      <div class="label">ANNUAL CONVERSION</div>
+      <div class="amount">$480k</div>
+      <div class="when">$40k/month if pilot succeeds</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Success metric phrasing template:</strong> "<em>Workflow X cycle time reduced by Y% within 90 days, measured by [their existing dashboard or KPI system]</em>." Specific, time-bound, self-verifying. If their side measures it, you cannot be accused of cooking the numbers. This is the single most important sentence in the whole engagement.
+  </div>
+</section>
+
+<!-- =================== PANEL 7: COMPOUND PATH =================== -->
+<style>
+  .year-row { display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: start;
+    padding: 20px 0; border-bottom: 1px dashed var(--border); }
+  .year-row:last-child { border-bottom: none; }
+  .year-label { font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: 2px;
+    color: var(--cyan); text-align: right; padding-top: 4px; }
+  .year-content { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; align-items: center; }
+  .year-milestones { font-size: 14px; }
+  .year-milestones strong { color: var(--text); display: block; margin-bottom: 4px; }
+  .year-milestones span { color: var(--text-dim); }
+  .year-metric { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px; text-align: center; }
+  .year-metric .label { font-family: var(--mono); font-size: 10px; color: var(--text-faint);
+    letter-spacing: 1px; margin-bottom: 4px; }
+  .year-metric .value { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--green); }
+
+  .flywheel-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 24px; margin: 24px 0; text-align: center; }
+</style>
+
+<section class="panel" id="p7">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 07 / 10</div>
+      <h1 class="panel-title">THE <span class="accent">COMPOUND</span> PATH</h1>
+    </div>
+    <button class="read-btn" data-target="#p7-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p7-text">
+    <p>One pilot is not the goal. One pilot is the <strong>seed</strong>. What makes this worth doing is the flywheel it starts.</p>
+    <p>Every successful pilot produces four assets that compound: a signed case study, a referenceable logo, proprietary workflow data, and a more competent agent team. Each of those assets makes the next pilot easier, cheaper, and higher-priced. Case study earns the next meeting. Logo earns the trust. Data sharpens the agents. Agents shorten the delivery time.</p>
+    <p>This is why you focus on <em>one vertical</em>. Three pilots in three different industries is three disconnected seeds. Three pilots in the same industry is a compounding moat — your agents, your data, and your reputation all aim at the same target and each win strengthens all three.</p>
+  </div>
+
+  <div class="flywheel-wrap">
+    <div class="chart-title">THE COMPOUNDING FLYWHEEL</div>
+    <svg viewBox="0 0 600 340" style="width: 100%; max-width: 600px; height: auto;">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#00d4ff"/>
+        </marker>
+      </defs>
+      <!-- Center -->
+      <circle cx="300" cy="170" r="48" fill="#0a0e1a" stroke="#22cc88" stroke-width="2"/>
+      <text x="300" y="165" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" fill="#22cc88" font-weight="700">PILOT</text>
+      <text x="300" y="180" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11" fill="#22cc88" font-weight="700">WIN</text>
+      <!-- Four nodes -->
+      <g>
+        <circle cx="300" cy="50" r="38" fill="#131b2e" stroke="#00d4ff" stroke-width="1.5"/>
+        <text x="300" y="46" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#00d4ff">CASE</text>
+        <text x="300" y="60" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#00d4ff">STUDY</text>
+      </g>
+      <g>
+        <circle cx="490" cy="170" r="38" fill="#131b2e" stroke="#ffb020" stroke-width="1.5"/>
+        <text x="490" y="166" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#ffb020">F500</text>
+        <text x="490" y="180" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#ffb020">LOGO</text>
+      </g>
+      <g>
+        <circle cx="300" cy="290" r="38" fill="#131b2e" stroke="#a070ff" stroke-width="1.5"/>
+        <text x="300" y="286" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#a070ff">DOMAIN</text>
+        <text x="300" y="300" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#a070ff">DATA</text>
+      </g>
+      <g>
+        <circle cx="110" cy="170" r="38" fill="#131b2e" stroke="#ff4d5e" stroke-width="1.5"/>
+        <text x="110" y="166" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#ff4d5e">SMARTER</text>
+        <text x="110" y="180" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#ff4d5e">AGENTS</text>
+      </g>
+      <!-- Curved arrows -->
+      <path d="M 335 85 Q 425 90 470 140" stroke="#00d4ff" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+      <path d="M 480 205 Q 430 280 335 275" stroke="#ffb020" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+      <path d="M 265 275 Q 160 280 125 210" stroke="#a070ff" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+      <path d="M 135 140 Q 180 90 265 85" stroke="#ff4d5e" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+      <!-- Labels -->
+      <text x="410" y="90" font-family="ui-monospace,monospace" font-size="9" fill="#546684">earns next meeting</text>
+      <text x="400" y="250" font-family="ui-monospace,monospace" font-size="9" fill="#546684">unlocks trust</text>
+      <text x="130" y="260" font-family="ui-monospace,monospace" font-size="9" fill="#546684">trains the stack</text>
+      <text x="150" y="90" font-family="ui-monospace,monospace" font-size="9" fill="#546684">shortens delivery</text>
+    </svg>
+  </div>
+
+  <div class="year-row">
+    <div class="year-label">YEAR 1</div>
+    <div class="year-content">
+      <div class="year-milestones">
+        <strong>Seed &amp; prove</strong>
+        <span>Land pilot #1 (the warm contact). Convert to annual. Use case study to open 2 more pilots in the same vertical. Get 2 annuals.</span>
+      </div>
+      <div class="year-metric"><div class="label">CUSTOMERS</div><div class="value">3</div></div>
+      <div class="year-metric"><div class="label">ARR</div><div class="value">$1.4M</div></div>
+    </div>
+  </div>
+  <div class="year-row">
+    <div class="year-label">YEAR 2</div>
+    <div class="year-content">
+      <div class="year-milestones">
+        <strong>Productize the vertical</strong>
+        <span>Turn the bespoke stack into a repeatable product. Hire one engineer, one AE. Close 7 more in same vertical. Raise prices 30% — case studies justify it.</span>
+      </div>
+      <div class="year-metric"><div class="label">CUSTOMERS</div><div class="value">10</div></div>
+      <div class="year-metric"><div class="label">ARR</div><div class="value">$6M</div></div>
+    </div>
+  </div>
+  <div class="year-row">
+    <div class="year-label">YEAR 3</div>
+    <div class="year-content">
+      <div class="year-milestones">
+        <strong>Expand or entrench</strong>
+        <span>Choose: deepen (more workflows per customer in same vertical) or expand (adjacent vertical using the same playbook). Data moat is now real — each new customer's data strengthens all existing agents.</span>
+      </div>
+      <div class="year-metric"><div class="label">CUSTOMERS</div><div class="value">25+</div></div>
+      <div class="year-metric"><div class="label">ARR</div><div class="value">$15M+</div></div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong style="color: var(--amber)">The projections above are not promises.</strong> They are the path <em>if</em> the flywheel turns. The flywheel turns if and only if pilot one hits its success metric. Everything depends on pilot one. Not the vision deck. Not the Year 3 ARR. Pilot one. Measurable, on time, on the metric.
+  </div>
+</section>
+
 <script>
   // Read-aloud using browser SpeechSynthesis API
   let currentUtterance = null;
