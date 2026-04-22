@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission Control</title>
+<title>Mission Control (Navy/Gold)</title>
 <style>
   :root {
-    --bg-black:       #0A0A0A;
-    --bg-panel:       #141414;
-    --bg-elevated:    #1C1C1C;
-    --border:         #2A2A2A;
-    --text-white:     #F5F5F5;
-    --text-grey:      #9A9A9A;
-    --text-muted:     #5A5A5A;
-    --accent-red:     #DC2626;
-    --accent-red-dim: #7F1D1D;
+    --bg-black:       #0A0E1A;
+    --bg-panel:       #111827;
+    --bg-elevated:    #1E293B;
+    --border:         #334155;
+    --text-white:     #F1F5F9;
+    --text-grey:      #94A3B8;
+    --text-muted:     #64748B;
+    --accent-red:     #D4A64A;
+    --accent-red-dim: #8B6B2E;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
   }
@@ -41,11 +41,11 @@
   .status-light.alert { color: var(--accent-red); }
   .status-light.alert .dot { background: var(--accent-red); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .launch-btn { background: var(--accent-red); color: var(--text-white); padding: 6px 12px;
+  .launch-btn { background: var(--accent-red); color: var(--bg-black); padding: 6px 12px;
     font-family: var(--mono); font-size: 11px; letter-spacing: 1px; font-weight: 700;
     text-decoration: none; border: 1px solid var(--accent-red); border-radius: 2px;
     transition: background 0.15s; display: inline-flex; align-items: center; }
-  .launch-btn:hover { background: var(--accent-red-dim); border-color: var(--accent-red-dim); }
+  .launch-btn:hover { background: var(--accent-red-dim); color: var(--text-white); border-color: var(--accent-red-dim); }
 
   /* SIDE NAV DOTS */
   .side-nav { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); z-index: 50;
@@ -1300,9 +1300,6 @@
   panels.forEach(p => observer.observe(p));
 
   // Henry visualizer launch button
-  // Configure HENRY_URL to point at your local/hosted Henry visualizer.
-  // Examples: "http://localhost:3000", "file:///C:/path/to/henry/index.html",
-  //           or a custom protocol handler like "henry://open"
   const HENRY_URL = localStorage.getItem('henry_url') || 'http://localhost:3000';
   const henryBtn = document.getElementById('henry-launch');
   if (henryBtn) {
