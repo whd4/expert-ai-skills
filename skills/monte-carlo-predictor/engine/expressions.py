@@ -140,6 +140,27 @@ def _eval(node, variables):
         left = _eval(node.left, variables)
         right = _eval(node.right, variables)
         op = node.op
+        # NumPy arrays handle element-wise ops natively
+        if HAS_NUMPY and (isinstance(left, np.ndarray) or isinstance(right, np.ndarray)):
+            if isinstance(op, ast.Add): return left + right
+            if isinstance(op, ast.Sub): return left - right
+            if isinstance(op, ast.Mult): return left * right
+            if isinstance(op, ast.Div): return left / right
+            if isinstance(op, ast.FloorDiv): return left // right
+            if isinstance(op, ast.Mod): return left % right
+            if isinstance(op, ast.Pow): return left ** right
+        # Pure Python fallback: element-wise for lists
+        if isinstance(left, list) or isinstance(right, list):
+            left_arr = left if isinstance(left, list) else [left] * len(right)
+            right_arr = right if isinstance(right, list) else [right] * len(left)
+            if isinstance(op, ast.Add): return [a + b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.Sub): return [a - b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.Mult): return [a * b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.Div): return [a / b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.FloorDiv): return [a // b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.Mod): return [a % b for a, b in zip(left_arr, right_arr)]
+            if isinstance(op, ast.Pow): return [a ** b for a, b in zip(left_arr, right_arr)]
+        # Scalars: direct operation
         if isinstance(op, ast.Add): return left + right
         if isinstance(op, ast.Sub): return left - right
         if isinstance(op, ast.Mult): return left * right
@@ -152,19 +173,47 @@ def _eval(node, variables):
         result = None
         for op, comparator in zip(node.ops, node.comparators):
             right = _eval(comparator, variables)
-            if isinstance(op, ast.Eq): cmp = left == right
-            elif isinstance(op, ast.NotEq): cmp = left != right
-            elif isinstance(op, ast.Lt): cmp = left < right
-            elif isinstance(op, ast.LtE): cmp = left <= right
-            elif isinstance(op, ast.Gt): cmp = left > right
-            elif isinstance(op, ast.GtE): cmp = left >= right
-            else:
-                raise ValueError(f"unsupported comparison: {type(op).__name__}")
-            if HAS_NUMPY and isinstance(cmp, np.ndarray):
+            # NumPy arrays handle comparisons natively
+            if HAS_NUMPY and (isinstance(left, np.ndarray) or isinstance(right, np.ndarray)):
+                if isinstance(op, ast.Eq): cmp = left == right
+                elif isinstance(op, ast.NotEq): cmp = left != right
+                elif isinstance(op, ast.Lt): cmp = left < right
+                elif isinstance(op, ast.LtE): cmp = left <= right
+                elif isinstance(op, ast.Gt): cmp = left > right
+                elif isinstance(op, ast.GtE): cmp = left >= right
+                else:
+                    raise ValueError(f"unsupported comparison: {type(op).__name__}")
                 cmp_result = cmp.astype(float)
+            # Pure Python fallback: element-wise for lists
+            elif isinstance(left, list) or isinstance(right, list):
+                left_arr = left if isinstance(left, list) else [left] * len(right)
+                right_arr = right if isinstance(right, list) else [right] * len(left)
+                if isinstance(op, ast.Eq): cmp_result = [1.0 if a == b else 0.0 for a, b in zip(left_arr, right_arr)]
+                elif isinstance(op, ast.NotEq): cmp_result = [1.0 if a != b else 0.0 for a, b in zip(left_arr, right_arr)]
+                elif isinstance(op, ast.Lt): cmp_result = [1.0 if a < b else 0.0 for a, b in zip(left_arr, right_arr)]
+                elif isinstance(op, ast.LtE): cmp_result = [1.0 if a <= b else 0.0 for a, b in zip(left_arr, right_arr)]
+                elif isinstance(op, ast.Gt): cmp_result = [1.0 if a > b else 0.0 for a, b in zip(left_arr, right_arr)]
+                elif isinstance(op, ast.GtE): cmp_result = [1.0 if a >= b else 0.0 for a, b in zip(left_arr, right_arr)]
+                else:
+                    raise ValueError(f"unsupported comparison: {type(op).__name__}")
             else:
+                # Scalars
+                if isinstance(op, ast.Eq): cmp = left == right
+                elif isinstance(op, ast.NotEq): cmp = left != right
+                elif isinstance(op, ast.Lt): cmp = left < right
+                elif isinstance(op, ast.LtE): cmp = left <= right
+                elif isinstance(op, ast.Gt): cmp = left > right
+                elif isinstance(op, ast.GtE): cmp = left >= right
+                else:
+                    raise ValueError(f"unsupported comparison: {type(op).__name__}")
                 cmp_result = 1.0 if cmp else 0.0
-            result = cmp_result if result is None else result * cmp_result
+            # Chain multiple comparisons via multiplication (AND semantics)
+            if result is None:
+                result = cmp_result
+            elif isinstance(result, list) and isinstance(cmp_result, list):
+                result = [a * b for a, b in zip(result, cmp_result)]
+            else:
+                result = result * cmp_result
             left = right
         return result
     if isinstance(node, ast.BoolOp):

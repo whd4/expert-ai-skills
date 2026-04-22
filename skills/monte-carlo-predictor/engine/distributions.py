@@ -56,6 +56,8 @@ def lognormal(mean: float, stddev: float, size: int):
 
 
 def poisson(lam: float, size: int):
+    if lam < 0:
+        raise ValueError(f"poisson lambda must be non-negative, got {lam}")
     if HAS_NUMPY:
         return np.random.poisson(lam, size).astype(float)
     out = []

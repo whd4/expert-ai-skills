@@ -232,6 +232,8 @@ def simulate_with_samples(spec: dict[str, Any]) -> tuple[dict[str, Any], dict[st
     # Duplicate of simulate() logic with samples returned.
     # Kept as separate function so simulate() stays small and serializable.
     trials = int(spec.get("trials", DEFAULT_TRIALS))
+    if trials <= 0:
+        raise ValueError(f"trials must be positive, got {trials}")
     seed = spec.get("seed")
     if seed is not None:
         random.seed(seed)
