@@ -205,12 +205,14 @@ def _hw_fit(
     fitted = [level + seasons[0]]
     for t in range(1, len(data)):
         season_idx = t % s
+        # Compute fitted value BEFORE updating (one-step-ahead forecast)
+        fitted.append(level + trend + seasons[season_idx])
+        # Now update parameters using observed data[t]
         new_level = alpha * (data[t] - seasons[season_idx]) + (1 - alpha) * (level + trend)
         new_trend = beta * (new_level - level) + (1 - beta) * trend
         new_season = gamma * (data[t] - new_level) + (1 - gamma) * seasons[season_idx]
         seasons[season_idx] = new_season
         level, trend = new_level, new_trend
-        fitted.append(level + trend + seasons[(t + 1) % s])
     residuals = [data[t] - fitted[t] for t in range(len(data))]
     return level, trend, seasons, fitted, residuals
 

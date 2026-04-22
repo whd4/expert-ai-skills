@@ -78,7 +78,7 @@ def bootstrap_ci(
             ci_level: the CI level used
             n_resamples: number of resamples performed
     """
-    if not data:
+    if len(data) == 0:
         raise ValueError("data cannot be empty")
     if not 0.0 < ci < 1.0:
         raise ValueError(f"ci must be in (0, 1), got {ci}")
