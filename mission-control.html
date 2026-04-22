@@ -949,6 +949,211 @@
   </div>
 </section>
 
+<!-- =================== PANEL 8: TRAPS =================== -->
+<style>
+  .trap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 24px 0; }
+  .trap-card { background: var(--bg-card); border: 1px solid var(--border); border-left-width: 4px;
+    border-left-color: var(--red); border-radius: 6px; padding: 18px; position: relative; }
+  .trap-card .severity { position: absolute; top: 14px; right: 16px; font-family: var(--mono);
+    font-size: 10px; padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; font-weight: 700; }
+  .trap-card .severity.fatal { background: var(--red); color: var(--bg); }
+  .trap-card .severity.major { background: var(--amber); color: var(--bg); }
+  .trap-card h4 { color: var(--red); font-size: 15px; margin-bottom: 8px; max-width: 80%;
+    display: flex; align-items: center; gap: 8px; }
+  .trap-card h4::before { content: "⚠"; font-size: 18px; }
+  .trap-card .what { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
+  .trap-card .fix { background: var(--bg); border-left: 2px solid var(--green); padding: 8px 12px;
+    border-radius: 0 4px 4px 0; font-size: 13px; color: var(--text); }
+  .trap-card .fix strong { color: var(--green); font-family: var(--mono); font-size: 11px;
+    letter-spacing: 1px; display: block; margin-bottom: 2px; }
+</style>
+
+<section class="panel" id="p8">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 08 / 10</div>
+      <h1 class="panel-title">THE <span class="alert">TRAPS</span></h1>
+    </div>
+    <button class="read-btn" data-target="#p8-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p8-text">
+    <p>Enterprise deals rarely die from missing a feature. They die from small mistakes compounded across a two-month sales cycle. Each trap below has killed real founders' real deals. Most of them look harmless in the moment and reveal themselves as fatal six weeks later, long after the room has gone cold.</p>
+    <p>Read these like a checklist. Print them. Tape them to your monitor. Before each meeting, every call, every email to the champion: <strong>scan this list</strong> and confirm you are not committing any of them.</p>
+    <p>The fatal ones will kill the deal outright. The major ones will cost you half the value, or delay the close by months. There are no small traps in enterprise sales. There are only traps you notice in time, and traps you don't.</p>
+  </div>
+
+  <div class="trap-grid">
+    <div class="trap-card">
+      <div class="severity fatal">FATAL</div>
+      <h4>Pitching platform, not outcome</h4>
+      <div class="what">You walk in excited about the orchestrator, the 20 agents, the Monte Carlo engine. They hear "I'm buying an engineering project." Deal dies in procurement.</div>
+      <div class="fix"><strong>FIX</strong>Lead with one specific dollar or hour impact. Mention architecture only if directly asked.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity fatal">FATAL</div>
+      <h4>No kill clause in the proposal</h4>
+      <div class="what">Enterprise buyers fear regret more than cost. Without a midpoint exit, legal blocks the deal. You will not understand why — they will quietly kill it.</div>
+      <div class="fix"><strong>FIX</strong>Offer cancel at week 6 for 50%. Turns "what if this fails" into a bounded risk.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity fatal">FATAL</div>
+      <h4>Vague success metric</h4>
+      <div class="what">"Improve efficiency." "Save time." Whatever it is, they measure it differently at the end and you don't get paid or converted. Metric drift = payment drift.</div>
+      <div class="fix"><strong>FIX</strong>Use their existing dashboard. "X% improvement in metric Y as measured by [their system]."</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity fatal">FATAL</div>
+      <h4>Champion without authority</h4>
+      <div class="what">Your warm contact is excited. They don't control the budget. You spend 6 weeks building, they get told "no" by their CFO, and the deal is dead. You never saw it coming.</div>
+      <div class="fix"><strong>FIX</strong>Ask "who else signs?" in first meeting. Get the full signatory chain on page one of the proposal.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity major">MAJOR</div>
+      <h4>Scope creep during pilot</h4>
+      <div class="what">"While you're at it, can you also..." Every addition eats your margin, delays the success metric, and exhausts you before the close. Solo founders burn out here.</div>
+      <div class="fix"><strong>FIX</strong>"Great. Let's put that in the annual contract scope, not the pilot." Protects the 90-day measurement.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity major">MAJOR</div>
+      <h4>Mispricing (either direction)</h4>
+      <div class="what">Below $50k: "this must be amateur." Above $200k for a pilot: "this is a real contract, it needs full procurement." Both kill momentum. Middle is the zone.</div>
+      <div class="fix"><strong>FIX</strong>$50k&ndash;$150k for pilot one. Premium but not procurement-triggering. Full contract at $300k&ndash;$1M/year.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity major">MAJOR</div>
+      <h4>No case study release clause</h4>
+      <div class="what">You hit the metric. They're thrilled. You ask to use them as a case study. Legal says no. Year-two flywheel now has no fuel.</div>
+      <div class="fix"><strong>FIX</strong>Include "mutually agreed case study release" in the pilot contract. Negotiate it upfront, not after.</div>
+    </div>
+    <div class="trap-card">
+      <div class="severity fatal">FATAL</div>
+      <h4>Starting with regulated industries</h4>
+      <div class="what">Finance, healthcare, insurance — highest regulatory drag, longest sales cycles, most terrified buyers. Year-three market for a Series A. Wrong for pilot one.</div>
+      <div class="fix"><strong>FIX</strong>Start in operations, logistics, marketing ops, or supply chain. Low regulatory friction, visible dollar savings.</div>
+    </div>
+  </div>
+
+  <div class="callout alert">
+    <strong style="color: var(--red)">Most dangerous trap:</strong> being so excited about pilot one that you skip the kill clause because "this one is obviously going to work." The buyer will still not sign without it, and now you have to renegotiate from a weaker position. Put the kill clause in the first draft. Every time. No exceptions.
+  </div>
+</section>
+
+<!-- =================== PANEL 9: DIVISION OF LABOR =================== -->
+<style>
+  .labor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+  .labor-col { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+  .labor-col.me { border-top: 4px solid var(--cyan); }
+  .labor-col.you { border-top: 4px solid var(--amber); }
+  .labor-col h3 { font-family: var(--mono); font-size: 14px; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 8px; }
+  .labor-col.me h3 { color: var(--cyan); }
+  .labor-col.you h3 { color: var(--amber); }
+  .labor-col .subtitle { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+  .labor-item { padding: 12px 0; border-bottom: 1px dashed var(--border); display: grid;
+    grid-template-columns: 24px 1fr; gap: 10px; align-items: start; }
+  .labor-item:last-child { border-bottom: none; }
+  .labor-item .check { font-family: var(--mono); font-weight: 700; font-size: 14px; }
+  .labor-col.me .check { color: var(--cyan); }
+  .labor-col.you .check { color: var(--amber); }
+  .labor-item strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 3px; }
+  .labor-item span { color: var(--text-dim); font-size: 12px; }
+
+  .handoff { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 24px; margin: 24px 0; }
+  .handoff-row { display: grid; grid-template-columns: 120px 40px 1fr; gap: 16px;
+    padding: 12px 0; align-items: center; border-bottom: 1px dashed var(--border); }
+  .handoff-row:last-child { border-bottom: none; }
+  .handoff-row .from { font-family: var(--mono); font-size: 11px; color: var(--cyan);
+    text-align: right; letter-spacing: 1px; }
+  .handoff-row .to { color: var(--amber); }
+  .handoff-row .arrow { text-align: center; color: var(--text-faint); font-size: 20px; }
+  .handoff-row .desc { font-size: 13px; color: var(--text-dim); }
+  .handoff-row .desc strong { color: var(--text); }
+</style>
+
+<section class="panel" id="p9">
+  <div class="panel-header">
+    <div>
+      <div class="panel-num">PANEL 09 / 10</div>
+      <h1 class="panel-title">DIVISION <span class="accent">OF LABOR</span></h1>
+    </div>
+    <button class="read-btn" data-target="#p9-text">
+      <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      READ ALOUD
+    </button>
+  </div>
+
+  <div class="narrative" id="p9-text">
+    <p>You cannot do this alone. But you also cannot be the bottleneck for every task. The model below is the division of labor between us — what I build for you at machine speed, and what only you can do because it requires human presence, judgment, and trust.</p>
+    <p>The rule is simple. <strong>If a task can be specified in words and produces an artifact, I build it.</strong> Code, documents, dashboards, decks, proposals, analysis — all mine. <em>If a task requires a person in a room, a voice on a call, or a judgment call about a specific human, it's yours.</em></p>
+    <p>Do not invert this. Do not delegate the meeting to an AI demo. Do not try to write the code yourself when you could be prepping for the meeting. Each of us has a role that only we can play. Stay in yours, and you move three times faster than a traditional founder.</p>
+  </div>
+
+  <div class="labor-grid">
+    <div class="labor-col me">
+      <h3>I Build (Machine Speed)</h3>
+      <div class="subtitle">Artifacts, code, analysis — anything you can specify, I ship</div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>The agent team + narrow build</strong><span>Scanner, analyzer, rewriter, monitor — one workflow, end-to-end</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Demo UI + dashboard</strong><span>Laptop-ready, offline-capable, CEO-readable, crash-proof</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>One-page proposal template</strong><span>Auto-generated from scan results, print-ready</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Pitch deck + one-pager</strong><span>Visual, outcome-focused, no architecture slides</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Weekly status report automation</strong><span>Green/yellow/red + metric trendline, zero manual work</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Pilot success dashboard</strong><span>Measures the metric against baseline continuously</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Pre-meeting research briefs</strong><span>Their earnings calls, pain signals, org chart — before you walk in</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Post-meeting follow-up drafts</strong><span>Emails, redlines, stakeholder memos — your final pass</span></div></div>
+    </div>
+    <div class="labor-col you">
+      <h3>You Do (Human-Only)</h3>
+      <div class="subtitle">Presence, relationship, trust, judgment — the uncopyable work</div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Name the vertical + the contact</strong><span>One industry, one person. Only you know your network.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Book and take the meeting</strong><span>Warm intros, phone calls, in-person. Zero AI involvement.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Run the 30-minute flight plan</strong><span>Open, demo, propose, close. Memorized, practiced, delivered.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Negotiate price, scope, timeline</strong><span>Requires human presence and trade-off judgment.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Build trust with champion + signatories</strong><span>Weekly calls, dinners, personal texts. You are the product's face.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Navigate procurement + legal</strong><span>Redlines, SOW negotiation, MSA reviews — your signature, your risk.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Drive case study + referral</strong><span>Close enough to ask for the testimonial and the intro to their peer.</span></div></div>
+      <div class="labor-item"><span class="check">✓</span><div><strong>Final judgment on every deliverable</strong><span>I ship drafts. You approve, edit, or send back. You own the output.</span></div></div>
+    </div>
+  </div>
+
+  <div class="handoff">
+    <div class="chart-title">CRITICAL HANDOFFS</div>
+    <div class="handoff-row">
+      <div class="from">you → me</div>
+      <div class="arrow">→</div>
+      <div class="desc"><strong>"The vertical is X, the contact is at company Y, their pain is Z."</strong> One sentence, three facts. That unlocks all the build work.</div>
+    </div>
+    <div class="handoff-row">
+      <div class="from">me → you</div>
+      <div class="arrow">→</div>
+      <div class="desc"><strong>Pre-meeting brief + demo + proposal.</strong> You review, rehearse, walk into the meeting with all three polished.</div>
+    </div>
+    <div class="handoff-row">
+      <div class="from">you → me</div>
+      <div class="arrow">→</div>
+      <div class="desc"><strong>Meeting debrief.</strong> What they reacted to, what they pushed back on, who else needs to sign. Feeds the next round of artifacts.</div>
+    </div>
+    <div class="handoff-row">
+      <div class="from">me → you</div>
+      <div class="arrow">→</div>
+      <div class="desc"><strong>Follow-up artifacts + objection handlers.</strong> Everything they asked for, drafted, within hours. You send with a personal note.</div>
+    </div>
+    <div class="handoff-row">
+      <div class="from">you → me</div>
+      <div class="arrow">→</div>
+      <div class="desc"><strong>Signed pilot = green light to build.</strong> Phase 2 of the pilot (real build) begins. Weekly check-ins, you monitor the metric, I iterate the agents.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>The leverage you gain:</strong> a traditional solo founder spends 70% of their time on tasks an AI can do in minutes. You flip that. Spend 70% on the meetings, the calls, the relationships. Outsource the rest to me. That is the reason you can run faster than a well-funded team with worse unit economics.
+  </div>
+</section>
+
 <script>
   // Read-aloud using browser SpeechSynthesis API
   let currentUtterance = null;
