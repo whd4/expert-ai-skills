@@ -92,6 +92,8 @@ def _has_trend(data: Sequence[float]) -> bool:
 
 def _ses(data: list[float], periods: int, alpha: float | None) -> dict:
     """Simple exponential smoothing."""
+    if alpha is not None and (alpha <= 0 or alpha > 1):
+        raise ValueError(f"alpha must be in (0, 1], got {alpha}")
     best_alpha = alpha if alpha is not None else _tune_alpha(data, _ses_fit)
     fitted, residuals = _ses_fit(data, best_alpha)
     level = fitted[-1]
@@ -111,7 +113,7 @@ def _ses(data: list[float], periods: int, alpha: float | None) -> dict:
 def _ses_fit(data: list[float], alpha: float) -> tuple[list[float], list[float]]:
     fitted = [data[0]]
     for t in range(1, len(data)):
-        level = alpha * data[t - 1] + (1 - alpha) * fitted[-1]
+        level = alpha * data[t] + (1 - alpha) * fitted[-1]
         fitted.append(level)
     residuals = [data[t] - fitted[t] for t in range(len(data))]
     return fitted, residuals
