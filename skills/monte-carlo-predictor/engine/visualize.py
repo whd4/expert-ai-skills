@@ -162,7 +162,11 @@ def render_report(report: dict[str, Any], samples: dict[str, Any] | None = None,
         extra = {"probability_true": entry["probability_true"]} if "probability_true" in entry else None
         lines.append(render_stats_block(name, stats, extra))
         if show_histograms and samples and name in samples:
-            lines.append(render_histogram(samples[name], title=f"  Distribution: {name}", width=60, height=6))
+            s = samples[name]
+            is_categorical = "mode" in stats and "mean" not in stats
+            first = next(iter(s), None) if not hasattr(s, "dtype") else (s[0] if len(s) else None)
+            if not is_categorical and not isinstance(first, str):
+                lines.append(render_histogram(s, title=f"  Distribution: {name}", width=60, height=6))
         if entry.get("tornado"):
             lines.append(render_tornado(entry["tornado"], title=f"  Variable impact on {name}"))
 

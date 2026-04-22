@@ -236,11 +236,19 @@ def _main(argv):
     args = p.parse_args(argv)
 
     raw = open(args.spec_file).read()
-    try:
-        import yaml
-        doc = yaml.safe_load(raw)
-    except ImportError:
+    stripped = raw.lstrip()
+    looks_like_json = stripped.startswith("{") or stripped.startswith("[")
+    if looks_like_json:
         doc = json.loads(raw)
+    else:
+        try:
+            import yaml
+        except ImportError:
+            raise ImportError(
+                "YAML spec given but PyYAML not installed. "
+                "Install with: pip install pyyaml  (or convert to JSON)"
+            )
+        doc = yaml.safe_load(raw)
 
     options = doc["options"]
 

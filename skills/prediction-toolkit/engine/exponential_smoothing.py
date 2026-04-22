@@ -225,6 +225,9 @@ def _tune_alpha(data: list[float], fit_fn) -> float:
 
 
 def _tune_holt(data: list[float], alpha: float | None, beta: float | None) -> tuple[float, float]:
+    for name, val in (("alpha", alpha), ("beta", beta)):
+        if val is not None and (val <= 0 or val > 1):
+            raise ValueError(f"{name} must be in (0, 1], got {val}")
     grid = [0.1, 0.2, 0.3, 0.5, 0.7, 0.9]
     a_grid = [alpha] if alpha is not None else grid
     b_grid = [beta] if beta is not None else grid
@@ -241,6 +244,9 @@ def _tune_holt(data: list[float], alpha: float | None, beta: float | None) -> tu
 def _tune_hw(
     data: list[float], s: int, alpha: float | None, beta: float | None, gamma: float | None
 ) -> tuple[float, float, float]:
+    for name, val in (("alpha", alpha), ("beta", beta), ("gamma", gamma)):
+        if val is not None and (val <= 0 or val > 1):
+            raise ValueError(f"{name} must be in (0, 1], got {val}")
     grid = [0.1, 0.3, 0.5, 0.7]
     a_grid = [alpha] if alpha is not None else grid
     b_grid = [beta] if beta is not None else grid
