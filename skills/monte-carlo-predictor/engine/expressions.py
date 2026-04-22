@@ -61,7 +61,8 @@ def _fn_exp(x):
 
 def _fn_min(*args):
     if HAS_NUMPY and any(isinstance(a, np.ndarray) for a in args):
-        return np.minimum.reduce([np.asarray(a) for a in args])
+        from functools import reduce
+        return reduce(np.minimum, args)
     if any(isinstance(a, list) for a in args):
         n = max(len(a) for a in args if isinstance(a, list))
         arrs = [a if isinstance(a, list) else [a] * n for a in args]
@@ -71,7 +72,8 @@ def _fn_min(*args):
 
 def _fn_max(*args):
     if HAS_NUMPY and any(isinstance(a, np.ndarray) for a in args):
-        return np.maximum.reduce([np.asarray(a) for a in args])
+        from functools import reduce
+        return reduce(np.maximum, args)
     if any(isinstance(a, list) for a in args):
         n = max(len(a) for a in args if isinstance(a, list))
         arrs = [a if isinstance(a, list) else [a] * n for a in args]
@@ -249,7 +251,8 @@ def _eval(node, variables):
             left = right
         return result
     if isinstance(node, ast.BoolOp):
-        # Lazy evaluation with short-circuit semantics
+        # Python semantics: `a and b` returns a if a is falsy, else b
+        #                   `a or b` returns a if a is truthy, else b
         if isinstance(node.op, ast.And):
             out = _eval(node.values[0], variables)
             for v in node.values[1:]:
@@ -261,9 +264,20 @@ def _eval(node, variables):
                     if not any(out):
                         return out
                 elif not out:
-                    return 0.0
+                    return out
                 next_val = _eval(v, variables)
-                out = _fn_min(out, next_val)
+                # Python `and`: where out is truthy, use next_val; else keep out
+                if HAS_NUMPY and (isinstance(out, np.ndarray) or isinstance(next_val, np.ndarray)):
+                    out_arr = np.asarray(out)
+                    next_arr = np.asarray(next_val)
+                    out = np.where(out_arr != 0, next_arr, out_arr)
+                elif isinstance(out, list) or isinstance(next_val, list):
+                    n = len(out) if isinstance(out, list) else len(next_val)
+                    out_lst = out if isinstance(out, list) else [out] * n
+                    next_lst = next_val if isinstance(next_val, list) else [next_val] * n
+                    out = [nv if o else o for o, nv in zip(out_lst, next_lst)]
+                else:
+                    out = next_val if out else out
             return out
         if isinstance(node.op, ast.Or):
             out = _eval(node.values[0], variables)
@@ -278,7 +292,18 @@ def _eval(node, variables):
                 elif out:
                     return out
                 next_val = _eval(v, variables)
-                out = _fn_max(out, next_val)
+                # Python `or`: where out is truthy, keep out; else use next_val
+                if HAS_NUMPY and (isinstance(out, np.ndarray) or isinstance(next_val, np.ndarray)):
+                    out_arr = np.asarray(out)
+                    next_arr = np.asarray(next_val)
+                    out = np.where(out_arr != 0, out_arr, next_arr)
+                elif isinstance(out, list) or isinstance(next_val, list):
+                    n = len(out) if isinstance(out, list) else len(next_val)
+                    out_lst = out if isinstance(out, list) else [out] * n
+                    next_lst = next_val if isinstance(next_val, list) else [next_val] * n
+                    out = [o if o else nv for o, nv in zip(out_lst, next_lst)]
+                else:
+                    out = out if out else next_val
             return out
     if isinstance(node, ast.Call):
         fn = _FUNCTIONS[node.func.id]

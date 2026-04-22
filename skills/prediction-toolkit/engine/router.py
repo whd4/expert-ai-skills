@@ -165,11 +165,15 @@ def recommend_method(problem: str | dict[str, Any]) -> dict[str, Any]:
 
 
 def _score_text(text: str) -> dict[str, dict]:
-    """Score each family by keyword match in free text."""
+    """Score each family by keyword match in free text (word boundaries)."""
     lowered = text.lower()
     scores = {}
     for name, fam in FAMILIES.items():
-        matches = [kw for kw in fam["keywords"] if kw in lowered]
+        matches = []
+        for kw in fam["keywords"]:
+            pattern = r"\b" + re.escape(kw) + r"\b"
+            if re.search(pattern, lowered):
+                matches.append(kw)
         # Score = fraction of keywords matched, with a bonus for multi-word matches
         if not fam["keywords"]:
             score = 0.0
