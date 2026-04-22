@@ -14,5 +14,8 @@ Usage:
 """
 from .monte_carlo import simulate, simulate_with_samples
 
+# Note: Calibrator is imported lazily to avoid runtime warnings when
+# running `python -m engine.calibration`. Use `from engine.calibration import Calibrator`.
+
 __all__ = ["simulate", "simulate_with_samples"]
-__version__ = "1.0.0"
+__version__ = "1.1.0"

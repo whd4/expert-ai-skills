@@ -168,6 +168,41 @@ def test_divergence_scanner_on_self():
     print(f"✓ scanner: found {result['summary']['total']} divergences on self-scan")
 
 
+def test_calibration_tracker():
+    from engine.calibration import Calibrator
+    import tempfile, os
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "predictions.jsonl")
+        cal = Calibrator(path)
+        # Record a well-calibrated batch: predict 0.7, true ~70% of the time
+        for i in range(20):
+            cal.record_prediction(id=f"p{i}", predicted=0.7, claim="test")
+            cal.record_outcome(id=f"p{i}", actual=(i < 14))  # 14/20 = 70%
+        score = cal.score()
+        assert score["resolved_count"] == 20
+        assert abs(score["brier_score"] - 0.21) < 0.01, f"brier off: {score['brier_score']}"
+        # Reload from disk — should persist
+        cal2 = Calibrator(path)
+        assert len(cal2.resolved()) == 20
+        print(f"✓ calibration: brier={score['brier_score']:.3f} on 20 well-calibrated predictions")
+
+
+def test_calibration_overconfident():
+    from engine.calibration import Calibrator
+    import tempfile, os
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "overconf.jsonl")
+        cal = Calibrator(path)
+        # Predict 0.95 but right only 50% of the time — badly overconfident
+        for i in range(20):
+            cal.record_prediction(id=f"p{i}", predicted=0.95, claim="test")
+            cal.record_outcome(id=f"p{i}", actual=(i < 10))
+        score = cal.score()
+        hi = score["high_confidence_check"]
+        assert hi["gap"] < -0.3, f"expected large negative gap, got {hi['gap']}"
+        print(f"✓ calibration: detected overconfidence (gap={hi['gap']:+.3f})")
+
+
 def test_cli_json_output():
     import subprocess
     spec = json.dumps({
@@ -213,6 +248,8 @@ def main():
         test_tornado_detects_driver,
         test_decision_optimizer_compare,
         test_divergence_scanner_on_self,
+        test_calibration_tracker,
+        test_calibration_overconfident,
         test_cli_json_output,
         test_yaml_spec_loads,
     ]
