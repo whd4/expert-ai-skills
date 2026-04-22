@@ -1,0 +1,73 @@
+# Monte Carlo Spec Template — annotated
+# Copy this, fill in your variables and outcomes, then run:
+#   python -m engine run your-spec.yaml
+
+# ── Number of trials ──────────────────────────────────────────────
+# Default 10000. Higher = more stable stats, slower to run.
+# Recommended: 10k for exploration, 50k+ for final reports.
+trials: 10000
+
+# ── Optional seed ─────────────────────────────────────────────────
+# Set for reproducible output. Omit for fresh randomness every run.
+seed: 42
+
+# ── Variables ─────────────────────────────────────────────────────
+# Declare the uncertain inputs. Each has a distribution + params.
+# Pick distributions that match how you actually estimate the number:
+#   - "I know low/likely/high" → triangular
+#   - "Count of events over time" → poisson
+#   - "Percentage/probability" → beta (alpha=2, beta=5 leans low)
+#   - "Symmetric uncertainty around a point" → normal
+#   - "Must be positive, skewed" → lognormal
+#   - "A few discrete choices" → choice
+variables:
+
+  # Example: triangular (best/likely/worst estimate)
+  development_weeks:
+    distribution: triangular
+    low: 4       # best case
+    likely: 8    # most likely
+    high: 20     # worst case
+
+  # Example: normal (symmetric uncertainty)
+  weekly_burn_rate:
+    distribution: normal
+    mean: 10000
+    stddev: 2000
+
+  # Example: beta (a probability, 0..1)
+  adoption_rate:
+    distribution: beta
+    alpha: 2
+    beta: 8      # skews toward lower values; mean ≈ alpha/(alpha+beta) = 0.2
+
+  # Example: lognormal (positive, right-skewed; useful for revenue/multiples)
+  revenue_multiplier:
+    distribution: lognormal
+    mean: 0      # of the underlying normal (=> median multiplier of e^0 = 1)
+    stddev: 0.5
+
+  # Example: poisson (count)
+  critical_bugs:
+    distribution: poisson
+    lam: 3       # expected count
+
+  # Example: choice (discrete)
+  team_size:
+    distribution: choice
+    options: [2, 3, 5]
+    weights: [1, 3, 1]  # optional; same weight if omitted
+
+# ── Outcomes ──────────────────────────────────────────────────────
+# Expressions over variables (and previously-computed outcomes).
+# Comparisons (>, <=, ==) return 0/1, so boolean outcomes become probabilities.
+#
+# Allowed functions: min, max, abs, round, sqrt, log, exp, floor, ceil, clip
+# Allowed ops: + - * / // % ** == != < <= > >= and or not, `a if c else b`
+outcomes:
+  total_cost: "development_weeks * weekly_burn_rate"
+  projected_revenue: "revenue_multiplier * adoption_rate * 100000"
+  roi: "projected_revenue - total_cost"
+  profitable: "roi > 0"
+  ships_on_time: "development_weeks <= 12 and critical_bugs <= 2"
+  worst_case_loss: "clip(roi, -200000, 0)"

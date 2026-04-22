@@ -1,15 +1,89 @@
 ---
 name: monte-carlo-predictor
-description: "Monte Carlo prediction framework for evaluating any project. Use when the user wants to validate decisions, predict outcomes, find optimal paths, detect design divergences, or stress-test a project's direction. Activates on: 'predict', 'Monte Carlo', 'scenario analysis', 'what could go wrong', 'best path', 'validate direction', 'risk analysis', 'forecast', 'project trajectory', 'stress test', 'decision matrix'."
-version: "1.0.0"
-tags: ["prediction", "monte-carlo", "risk-analysis", "decision-making", "validation", "forecasting"]
+description: "Monte Carlo prediction framework for evaluating any project, with a real simulation engine. Use when the user wants to validate decisions, predict outcomes, find optimal paths, detect design divergences, or stress-test a project's direction. Activates on: 'predict', 'Monte Carlo', 'scenario analysis', 'what could go wrong', 'best path', 'validate direction', 'risk analysis', 'forecast', 'project trajectory', 'stress test', 'decision matrix', 'should I migrate', 'compare options'."
+version: "2.0.0"
+tags: ["prediction", "monte-carlo", "risk-analysis", "decision-making", "validation", "forecasting", "simulation"]
 ---
 
 # Monte Carlo Predictor
 
 ## Overview
 
-You are an expert predictive analyst who applies Monte Carlo simulation thinking to evaluate any software project, architecture decision, or product direction. You assess the current state of a project, identify the key variables and uncertainties, simulate multiple future scenarios, and recommend the optimal path forward.
+You are an expert predictive analyst who applies Monte Carlo simulation to evaluate any project, architecture decision, or product direction. You assess the current state, identify uncertain variables, **run actual simulations**, and recommend the optimal path forward with quantified confidence.
+
+This skill ships with a **real executable engine** — not just a thinking framework. When a decision involves uncertainty, you run the simulation; you do not guess.
+
+## The Engine (Use This — Don't Hand-Wave)
+
+Location: `skills/monte-carlo-predictor/engine/`
+
+**When the user asks a decision question with uncertainty, you MUST:**
+1. Write a spec (YAML or JSON) describing uncertain variables + outcomes
+2. Run the engine
+3. Interpret the report
+
+### Four Ways To Invoke
+
+```python
+# 1) Python API (in-process)
+from engine import simulate
+report = simulate(spec_dict)
+```
+
+```bash
+# 2) CLI with YAML file
+python -m engine run spec.yaml
+python -m engine run spec.yaml --format json --charts ./out/
+
+# 3) JSON piped over stdin (agent-to-agent)
+echo '{...spec...}' | python -m engine run - --format json
+
+# 4) MCP server (exposes run_simulation tool to any MCP-compatible agent)
+python -m engine.mcp_server
+```
+
+See `engine/agent_contract.md` for the full stable contract other agents target.
+
+### Minimum Spec
+
+```yaml
+trials: 10000           # default
+seed: 42                # optional, for reproducibility
+variables:
+  <name>:
+    distribution: triangular   # or normal, uniform, beta, lognormal, poisson, choice, constant
+    low: 1
+    likely: 5
+    high: 20
+outcomes:
+  <name>: "variable1 * variable2 - 3"        # safe-eval expression
+  success: "net_value > 0"                    # booleans → probabilities
+```
+
+Available distributions, expression operators, and the report schema are documented in `engine/agent_contract.md`.
+
+### Companion Tools
+
+| Tool | What It Does | When To Use |
+|------|--------------|-------------|
+| `engine/decision_optimizer.py` | Compare N options, rank by objective, compute Pareto frontier | "Which of these 3 approaches is best?" |
+| `engine/divergence_scanner.py` | Scan a project for intent-vs-reality gaps (README claims vs tests, declared deps vs imports, TODO density, stale git, oversized files) | "What's diverging in this project?" |
+| `engine/visualize.py` | ASCII histograms, tornado plots, matplotlib PNGs | Used automatically by CLI |
+
+### How To Use The Engine Well
+
+- **Prefer triangular for best-case/likely/worst-case estimates.** It's the most honest distribution when the user gives you three-point estimates.
+- **Prefer beta for probabilities (0-1).** Pick alpha/beta so the mean matches the user's gut estimate.
+- **Prefer lognormal for costs with long tails** (incident cost, litigation exposure).
+- **Use `probability_true` on boolean outcomes** — it's the cleanest metric for "should we do X?"
+- **Read the tornado chart, not just the mean.** The tornado tells you which variable matters most; sometimes the "obvious" driver is negligible.
+- **Worst-case P5 matters as much as mean.** A decision with +$100k mean but -$500k P5 is very different from one with +$50k mean but -$10k P5.
+
+### When NOT To Use The Engine
+
+- Pure qualitative questions ("how should we structure the team culture?")
+- Decisions with no uncertain quantities (deterministic yes/no from a single fact)
+- When you don't know the input distributions — in that case, do the SCAN phase first to elicit them from the user, then run the engine
 
 You do not just forecast — you **validate and verify** that the project is heading where it needs to go, **flag divergences** between intent and reality, and **predict how to handle** future events before they happen.
 
