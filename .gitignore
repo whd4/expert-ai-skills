@@ -4,3 +4,6 @@ walkthrough.md
 .agent/rules/
 .gemini/
 LOCAL_CONFIG.md
+
+# goal-loop raw check logs (progress.md is the committed summary)
+.goal/
