@@ -678,6 +678,12 @@
     "description": "Stage, commit, and push git changes with conventional commit messages. Use when user wants to commit and push changes, mentions pushing to remote, or asks to save and push their work. Also activates when user says \"push changes\", \"commit and push\", \"push this\", \"push to github\", or similar git workflow requests."
   },
   {
+    "id": "goal-loop",
+    "path": "skills/goal-loop",
+    "name": "goal-loop",
+    "description": "Turn a request into a selected intent, a measurable goal, and an engineered completion loop that runs to done without asking the user for coding decisions. Use for any multi-step task, whenever you are about to ask 'should I...?', or when a first attempt fails its check."
+  },
+  {
     "id": "github-workflow-automation",
     "path": "skills/github-workflow-automation",
     "name": "github-workflow-automation",

@@ -72,6 +72,7 @@ Skills for coding, testing, debugging, and code review:
 - `@requesting-code-review` - Request code reviews before merging
 - `@finishing-a-development-branch` - Complete dev branches (merge, PR, cleanup)
 - `@subagent-driven-development` - Coordinate multiple AI agents for parallel tasks
+- `@goal-loop` - Select intent and goal, then iterate to a machine-checked finish without asking for coding decisions
 
 ### Documentation & Office
 Skills for working with documents and office files:

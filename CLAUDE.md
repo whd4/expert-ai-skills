@@ -15,6 +15,9 @@ Triggers include: "should we migrate X to Y?", "what's the probability...", "P95
 
 Callable four ways: Python API, CLI, JSON stdin/stdout, MCP server. See `skills/monte-carlo-predictor/engine/agent_contract.md`.
 
+### `goal-loop` — intent selection, goal selection, engineered completion loops
+When a task has more than one step, or you are about to ask the user "should I…?", load this skill. It turns the request into `intent.md` (what, why, constraints, readings not chosen), `goal.md` (a completion condition a machine can check), and a plan → build → check → read → fix loop with stall detection and iteration budgets. It defines the short list of things worth stopping for and says everything else is Claude's decision. Templates are in `skills/goal-loop/templates/`, the check runner is `skills/goal-loop/scripts/goal-check.sh`, and the research behind it is in `skills/goal-loop/references/research-digest.md`.
+
 ### `prediction-toolkit` — the 7 prediction methods router
 When a user question involves **predicting the future, forecasting a time series, updating a belief, or inferring a causal effect**, load this skill first. It routes the problem to the right method family out of seven:
 
@@ -41,6 +44,8 @@ Callable four ways same as monte-carlo-predictor. See `skills/prediction-toolkit
 4. **Report honest uncertainty.** Every output from these skills includes CI/credible intervals and caveats. Pass those through to the user; don't strip them to make the answer look cleaner.
 
 5. **No raw `eval()`.** All expression parsing goes through AST whitelisting (see `monte-carlo-predictor/engine/expressions.py` for the canonical implementation).
+
+6. **Select the goal, run the loop, do not ask for coding decisions.** Load `skills/goal-loop` for any task longer than one step. Write the intent in the user's words to `intent/<date>-<slug>.md`, pick one goal with a machine-checkable completion condition, and iterate until it passes. Decide file layout, naming, libraries, test strategy, and fixes yourself and record each decision in the intent file. Stop only for the escalation set in that skill: destructive or irreversible actions, outward publishing or spend, contradictory hard constraints, missing credentials, or a change to what the deliverable is. When one iteration does not move the metric, run ten variants, not one more. Report with fresh check output, never with "should be working."
 
 ## Where to extend
 
