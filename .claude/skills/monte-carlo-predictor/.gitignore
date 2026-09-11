@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+# Chart output directories from CLI --charts flag
+out/
+mc_report/
