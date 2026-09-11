@@ -68,7 +68,7 @@ python3 -m engine bridge             # build from bridge.allowlist, as copies
 python3 -m engine bridge --check     # CI: exit 1 if missing / extra / broken / stale
 ```
 
-Why an allowlist: everything under `.claude/skills/` becomes agent instructions with no review step, and this library includes ~25 offensive-security skills. Why copies: the platform docs do not say the scanner follows symlinks. Why it never deletes: strays that are not the bridge's own symlinks go to `.claude/skills-quarantine/<date>/`.
+Why an allowlist: everything under `.claude/skills/` becomes agent instructions with no review step, and this library includes ~25 offensive-security skills. Why copies: the platform docs do not say the scanner follows symlinks. Why it never deletes: any real directory that is unwanted or locally edited goes to `.claude/skills-quarantine/<date>/`; only the bridge's own symlinks are unlinked. Why not `managed-agents` or the `*-official` document skills: a mounted session reads this skill's source directly, and the document skills (73% of the library's bytes) are attached hosted via `skills:`, not from the repo.
 
 Commit `.claude/skills/`. Edit `bridge.allowlist` to change what is exposed; `--all` bridges everything if you truly want that.
 

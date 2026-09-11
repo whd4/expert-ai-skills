@@ -10,7 +10,9 @@
 # `python -m engine bridge --all` bridges everything if you truly want that.
 
 # --- operating the fleet itself ---
-managed-agents
+# (managed-agents itself is NOT bridged: a session that has mounted this repo
+#  reads skills/managed-agents/ directly, and a copy would be a second source
+#  of truth that drifts every time a manifest changes.)
 skill-creator
 verification-before-completion
 systematic-debugging
@@ -32,8 +34,8 @@ copywriting
 email-sequence
 marketing-psychology
 
-# --- documents (script-driven; usable by agents that have bash) ---
-docx-official
-xlsx-official
-pdf-official
-pptx-official
+# --- documents ---
+# Deliberately NOT bridged: the four *-official document skills are 73% of the
+# library's bytes, and agents that need them attach Anthropic's HOSTED versions
+# via `skills: [{type: anthropic, skill_id: xlsx}]`, which never touches the
+# repository copy.

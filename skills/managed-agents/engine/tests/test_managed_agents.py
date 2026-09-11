@@ -122,13 +122,29 @@ def test_mcp_auth_in_manifest_rejected() -> None:
 
 
 def test_secret_shaped_strings_rejected_anywhere() -> None:
-    """A credential-shaped token in ANY string field fails - the file is committed."""
-    result = config.validate(_agent(system="Use ghp_abcdefghijklmnopqrstuvwxyz012345 to push."))
+    """A credential-SHAPED token in ANY string field fails - the file is committed.
+    Prose that merely names a format is not a credential (second-pass N-E)."""
+    result = config.validate(_agent(system="Use ghp_abcdefghijklmnopqrstuvwxyz0123456789 to push."))
     check("ghp_ token in system rejected", not result.ok, str(result.errors))
-    result = config.validate(_agent(metadata={"note": "key sk-ant-api03-xxxx"}))
-    check("sk-ant- in metadata rejected", not result.ok)
-    result = config.validate(_agent(description="access_token is stored in the vault"))
-    check("the word access_token in prose is fine", result.ok, str(result.errors))
+    result = config.validate(_agent(metadata={"note": "sk-ant-api03-ABCDEFGHIJKLMNOPQRSTUVWX"}))
+    check("sk-ant- token in metadata rejected", not result.ok)
+    result = config.validate(_agent(system="Never paste an AWS key AKIAABCDEFGHIJKLMNOP here."))
+    check("real AKIA-shaped key rejected", not result.ok)
+    for prose in ("Never paste an AWS key (they start with AKIA) into a prompt.",
+                  "Keys look like sk-ant-... - refuse them.",
+                  "access_token is stored in the vault, ghp_ tokens are never typed here."):
+        result = config.validate(_agent(system=prose))
+        check(f"prose mention is fine: {prose[:30]}...", result.ok, str(result.errors))
+    result = config.validate(_agent(metadata={"api_key": "literal-value"}))
+    check("literal value under a secret key rejected", not result.ok)
+
+
+def test_agent_unknown_top_level_keys_rejected() -> None:
+    """Second-pass N-F: keys the API would TypeError on must fail validation."""
+    result = config.validate(_agent(initial_events=[{"type": "user.message"}], schedule={}))
+    check("deployment keys on an agent rejected", not result.ok and any("unknown" in e for e in result.errors),
+          str(result.errors))
+    check("x-notes is allowed", config.validate(_agent(**{"x-notes": "fine"})).ok)
 
 
 def test_skills_require_read_tool() -> None:
@@ -381,6 +397,21 @@ def test_cross_validate_unattended_agent() -> None:
     check("unknown agent only warns", results["d.yaml"].ok and bool(results["d.yaml"].warnings))
 
 
+def test_custom_tools_count_as_unattended_blockers() -> None:
+    """Second-pass N-C: a custom tool idles the session for a client that a
+    deployment does not have."""
+    custom_agent = _agent(name="Custom", tools=[
+        {"type": config.TOOLSET_TYPE},
+        {"type": "custom", "name": "run_tests", "description": "d", "input_schema": {"type": "object"}}])
+    dep = _deployment(name="d", agent_name="Custom")
+    manifests = [("c.yaml", custom_agent), ("d.yaml", dep)]
+    results = {p: config.validate(m, p) for p, m in manifests}
+    config.cross_validate(manifests, results)
+    check("deployment on custom-tool agent rejected",
+          not results["d.yaml"].ok and any("custom:run_tests" in e for e in results["d.yaml"].errors),
+          str(results["d.yaml"].errors))
+
+
 def test_always_ask_detection_layers() -> None:
     tools = [{"type": config.TOOLSET_TYPE,
               "default_config": {"enabled": True, "permission_policy": {"type": "always_ask"}},
@@ -446,6 +477,23 @@ def test_secret_refs_expand_from_environment() -> None:
         del os.environ["MA_TEST_TOKEN"]
     redacted = deploy.redact({"resources": [{"authorization_token": "value-from-env"}], "agent": "a"})
     check("redact masks token", redacted["resources"][0]["authorization_token"] == deploy.REDACTED)
+
+    # Second-pass N-J: a dry run must not need the secret present.
+    manifest = _deployment(resources=[{"type": "github_repository", "url": "u",
+                                       "authorization_token": "${MA_UNSET_VAR_Y}"}])
+    body = deploy.build_body(manifest, "a", "e", expand_secrets=False)
+    check("dry-run body keeps the reference", body["resources"][0]["authorization_token"] == "${MA_UNSET_VAR_Y}")
+
+
+def test_find_by_name_required_raises_on_missing_capability() -> None:
+    """Second-pass N-I: a duplicate-preventing lookup must not degrade to 'not found'."""
+    client = SimpleNamespace(beta=SimpleNamespace())
+    try:
+        control.find_by_name(client, "deployments", "x", required=True)
+        check("required lookup raises without list()", False)
+    except RuntimeError:
+        check("required lookup raises without list()", True)
+    check("optional lookup still returns None", control.find_by_name(client, "deployments", "x") is None)
 
 
 class _NotFoundError(Exception):
@@ -549,7 +597,8 @@ def test_apply_agent_is_declarative() -> None:
     class Agents:
         @staticmethod
         def retrieve(agent_id):
-            return SimpleNamespace(id=agent_id, name="Tester", version=1)
+            return SimpleNamespace(id=agent_id, name="Tester", version=1,
+                                   metadata={"stale": "gone", "keep": "old"})
 
         @staticmethod
         def update(agent_id, **body):
@@ -561,16 +610,45 @@ def test_apply_agent_is_declarative() -> None:
             return []
 
     client = SimpleNamespace(beta=SimpleNamespace(agents=Agents))
-    manifest = _agent()
+    manifest = _agent(metadata={"keep": "yes", "changed": "new"})
     del manifest["system"]
     state = {"agents": {"Tester": {"id": "agent_1", "version": 1}}, "environments": {}, "deployments": {}}
     out = control.apply_agent(client, manifest, state)
     check("update path taken", out["action"] == "updated" and out["version"] == 2)
     check("absent system sent as explicit clear", "system" in captured and captured["system"] is None)
+    check("absent multiagent sent as explicit clear", "multiagent" in captured and captured["multiagent"] is None)
     check("absent skills sent as []", captured.get("skills") == [])
     check("absent mcp_servers sent as []", captured.get("mcp_servers") == [])
     check("present tools sent through", captured["tools"] == manifest["tools"])
     check("name never sent on update", "name" not in captured)
+    # metadata merges on update: dropped live keys are nulled, kept/changed sent.
+    check("dropped metadata key nulled, others sent",
+          captured["metadata"] == {"stale": None, "keep": "yes", "changed": "new"}, str(captured["metadata"]))
+
+
+def test_apply_environment_is_declarative() -> None:
+    captured = {}
+
+    class Environments:
+        @staticmethod
+        def retrieve(environment_id):
+            return SimpleNamespace(id=environment_id, name="env", metadata={"old": "x"}, description="d")
+
+        @staticmethod
+        def update(environment_id, **body):
+            captured.update(body)
+            return SimpleNamespace(id=environment_id)
+
+        @staticmethod
+        def list(limit=100):
+            return []
+
+    client = SimpleNamespace(beta=SimpleNamespace(environments=Environments))
+    state = {"agents": {}, "environments": {"env": {"id": "env_1"}}, "deployments": {}}
+    control.apply_environment(client, _env(), state)
+    check("env description cleared when absent", captured.get("description", "missing") is None)
+    check("env dropped metadata key nulled", captured.get("metadata") == {"old": None}, str(captured.get("metadata")))
+    check("env config sent", captured["config"]["type"] == "cloud")
 
 
 # ==========================================================================
@@ -612,9 +690,13 @@ class _FakeEvents:
         return _FakeStream(spec)
 
     def send(self, session_id, events):
+        if getattr(self, "send_failures", 0) > 0:
+            self.send_failures -= 1
+            raise ConnectionError("simulated send failure")
         self.sent.extend(events)
 
-    def list(self, session_id):
+    def list(self, session_id, **kwargs):
+        self.list_kwargs = kwargs
         if self.list_exc:
             raise self.list_exc
         return list(self.history)
@@ -765,6 +847,77 @@ def test_run_session_error_event_extracts_message() -> None:
     check("error message extracted", "bad token" in outcome.errors and "[error] bad token" in printed, str(outcome.errors))
 
 
+def _echo(text, id_, processed):
+    return _ev("user.message", id_, content=[{"type": "text", "text": text}],
+               processed_at="2026-09-11T00:00:00Z" if processed else None)
+
+
+def test_run_reuse_sends_prompt_and_returns_only_the_new_turn() -> None:
+    """Second-pass N-B: an old end_turn in history must not end the NEW turn."""
+    events = _FakeEvents(
+        history=[_ev("agent.message", "sevt_old", content=[{"type": "text", "text": "OLD"}]),
+                 _idle("end_turn", id_="sevt_old_idle")],
+        live=[_echo("new task", "sevt_q", False), _echo("new task", "sevt_q", True),
+              _ev("agent.message", "sevt_new", content=[{"type": "text", "text": "NEW"}]),
+              _idle("end_turn", id_="sevt_new_idle")],
+    )
+    outcome, _ = _run(events, prompt="new task")
+    check("prompt was sent", any(e["type"] == "user.message" for e in events.sent), str(events.sent))
+    check("returned text is the new turn only", "".join(outcome.text) == "NEW", repr("".join(outcome.text)))
+    check("stopped on the new turn's end", outcome.stop_reason == "end_turn" and not outcome.errors, str(outcome.errors))
+
+
+def test_run_reuse_ignores_matching_old_prompt_echo() -> None:
+    """The same prompt text sent last turn must not count as this turn's echo."""
+    events = _FakeEvents(
+        history=[_echo("again", "sevt_prev_q", True),
+                 _ev("agent.message", "sevt_old", content=[{"type": "text", "text": "OLD"}]),
+                 _idle("end_turn", id_="sevt_old_idle")],
+        live=[_echo("again", "sevt_q2", True),
+              _ev("agent.message", "sevt_new", content=[{"type": "text", "text": "NEW"}]),
+              _idle("end_turn", id_="sevt_new_idle")],
+    )
+    outcome, _ = _run(events, prompt="again")
+    check("old echo did not unlock the old idle", "".join(outcome.text) == "NEW", repr("".join(outcome.text)))
+
+
+def test_run_observe_mode_returns_immediately_on_finished_session() -> None:
+    events = _FakeEvents(history=[_idle("end_turn", id_="sevt_done")], live=[])
+    outcome, _ = _run(events)
+    check("no prompt -> old terminal honoured", outcome.stop_reason == "end_turn" and not outcome.errors)
+    check("nothing sent", events.sent == [])
+
+
+def test_run_history_order_pinned_and_late_ids_not_reported() -> None:
+    """Second-pass N-D: a requires_action idle listing an id that appears LATER
+    in the page must not raise a spurious 'not in history' error."""
+    events = _FakeEvents(
+        history=[_idle("requires_action", ["sevt_c1"], "sevt_i1"),
+                 _ev("agent.custom_tool_use", "sevt_c1", name="t", input={})],
+        live=[_idle("end_turn", id_="sevt_e")],
+    )
+    outcome, _ = _run(events)
+    check("history requested oldest-first", events.list_kwargs.get("order") == "asc", str(events.list_kwargs))
+    check("late-arriving pending answered once",
+          sum(1 for e in events.sent if e["type"] == "user.custom_tool_result") == 1, str(events.sent))
+    check("no spurious error", not outcome.errors, str(outcome.errors))
+
+
+def test_run_send_failure_reconnects_without_double_counting() -> None:
+    """Second-pass N-J: a deny whose send() raises is retried after reconnect
+    and counted once."""
+    ask = _ev("agent.tool_use", "sevt_a", name="bash", evaluated_permission="ask")
+    events = _FakeEvents(history=[], live=[[ask, _idle("requires_action", ["sevt_a"], "sevt_i")],
+                                           [_idle("end_turn", id_="sevt_e")]])
+    events.send_failures = 1
+    events.history = [ask, _idle("requires_action", ["sevt_a"], "sevt_i")]
+    outcome, _ = _run(events, approve=session.APPROVE_DENY)
+    confirmations = [e for e in events.sent if e["type"] == "user.tool_confirmation"]
+    check("confirmation eventually sent once", len(confirmations) == 1, str(events.sent))
+    check("denied counted once", outcome.denied == 1, str(outcome.denied))
+    check("reconnected", outcome.reconnects == 1)
+
+
 def test_create_session_refuses_uncapped_and_pins_version() -> None:
     captured = {}
     sessions = SimpleNamespace(create=lambda **kw: captured.update(kw) or SimpleNamespace(id="sesn_1", status="idle"))
@@ -809,6 +962,43 @@ def test_cli_rejects_non_positive_budgets() -> None:
 
 def test_cli_message_unwraps_keyerror() -> None:
     check("KeyError message unwrapped", cli._message(KeyError("no such agent")) == "no such agent")
+
+
+def _write_yaml(path: str, data: dict) -> None:
+    import yaml
+    with open(path, "w", encoding="utf-8") as fh:
+        yaml.safe_dump(data, fh)
+
+
+def test_cli_deploy_guard_cannot_be_bypassed_by_file_location() -> None:
+    """Second-pass N-A: the unattended guard must run wherever the manifest lives."""
+    gated_agent = _agent(name="Gated", tools=[{"type": config.TOOLSET_TYPE, "configs": [
+        {"name": "bash", "permission_policy": {"type": "always_ask"}}]}])
+    agents_dir = tempfile.mkdtemp()
+    elsewhere = tempfile.mkdtemp()
+    try:
+        _write_yaml(os.path.join(agents_dir, "gated.yaml"), gated_agent)
+        dep_path = os.path.join(elsewhere, "d.yaml")
+        _write_yaml(dep_path, _deployment(name="d", agent_name="Gated"))
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            code = cli.main(["deploy", dep_path, "--dry-run", "--manifests", agents_dir,
+                             "--state", os.path.join(elsewhere, "s.json")])
+        check("guard fires for a manifest outside the agents dir", code == 1 and "requires_action" in err.getvalue(),
+              f"code={code} err={err.getvalue()[:200]}")
+
+        # And when the agent cannot be found at all, deploy refuses (validate only warns).
+        empty = tempfile.mkdtemp()
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+            code = cli.main(["deploy", dep_path, "--dry-run", "--manifests", empty,
+                             "--state", os.path.join(elsewhere, "s.json")])
+        check("unknown agent is fatal for deploy", code == 1 and "cannot verify" in err.getvalue(),
+              f"code={code} err={err.getvalue()[:200]}")
+        shutil.rmtree(empty)
+    finally:
+        shutil.rmtree(agents_dir)
+        shutil.rmtree(elsewhere)
 
 
 def test_cli_apply_empty_dir_fails() -> None:
@@ -879,14 +1069,65 @@ def test_bridge_copy_mode_detects_stale_copies() -> None:
         built = bridge.build(tmp)  # default mode
         check("default mode is copy", built["mode"] == "copy" and not os.path.islink(os.path.join(tmp, bridge.BRIDGE_DIR, "alpha")))
         check("copy in sync", bridge.check(tmp)["in_sync"])
+        again = bridge.build(tmp)
+        check("unchanged copies are left alone", sorted(again["left"]) == ["alpha", "beta", "group-alpha"], str(again))
         with open(os.path.join(tmp, "skills", "alpha", "SKILL.md"), "a") as fh:
             fh.write("\nchanged\n")
         state = bridge.check(tmp)
         check("edited source -> stale reported", "alpha" in state["stale"] and not state["in_sync"], str(state))
-        bridge.build(tmp)
+        result = bridge.build(tmp)
         check("rebuild clears stale", bridge.check(tmp)["in_sync"])
+        check("the outdated copy was quarantined, not deleted", len(result["quarantined"]) == 1
+              and os.path.isfile(os.path.join(tmp, result["quarantined"][0], "SKILL.md")), str(result))
     finally:
         shutil.rmtree(tmp)
+
+
+def test_bridge_local_edit_in_wanted_copy_is_quarantined() -> None:
+    """Second-pass partial-6: a rebuild must never destroy a locally edited copy."""
+    tmp = tempfile.mkdtemp()
+    try:
+        _fixture_repo(tmp)
+        bridge.build(tmp)
+        local = os.path.join(tmp, bridge.BRIDGE_DIR, "alpha", "LOCAL_EDIT.md")
+        with open(local, "w") as fh:
+            fh.write("precious\n")
+        dry = bridge.build(tmp, dry_run=True)
+        check("dry-run announces the quarantine", "alpha" in dry["would_quarantine"], str(dry))
+        result = bridge.build(tmp)
+        moved = [q for q in result["quarantined"] if os.path.isfile(os.path.join(tmp, q, "LOCAL_EDIT.md"))]
+        check("local edit survives in quarantine", len(moved) == 1, str(result["quarantined"]))
+        check("fresh copy is clean", not os.path.exists(local) and bridge.check(tmp)["in_sync"])
+    finally:
+        shutil.rmtree(tmp)
+
+
+def test_bridge_refuses_escaping_symlinks_and_never_loops() -> None:
+    """Second-pass N-G: no external content copied in, no infinite walk."""
+    tmp = tempfile.mkdtemp()
+    outside = tempfile.mkdtemp()
+    try:
+        _fixture_repo(tmp)
+        with open(os.path.join(outside, "secret.txt"), "w") as fh:
+            fh.write("external\n")
+        os.symlink(outside, os.path.join(tmp, "skills", "alpha", "external"))
+        try:
+            bridge.build(tmp)
+            check("escaping symlink refused", False)
+        except RuntimeError as exc:
+            check("escaping symlink refused", "outside the repository" in str(exc))
+        check("nothing copied", not os.path.exists(os.path.join(tmp, bridge.BRIDGE_DIR, "alpha")))
+        os.unlink(os.path.join(tmp, "skills", "alpha", "external"))
+
+        # A self-referential link must not hang check()/digest.
+        os.symlink(".", os.path.join(tmp, "skills", "beta_loop"))
+        os.symlink("..", os.path.join(tmp, "skills", "group", "beta", "up"))
+        bridge.build(tmp)
+        state = bridge.check(tmp)
+        check("check() terminates with internal symlinks present", isinstance(state["in_sync"], bool))
+    finally:
+        shutil.rmtree(tmp)
+        shutil.rmtree(outside)
 
 
 def test_bridge_prune_quarantines_never_deletes() -> None:
@@ -1017,6 +1258,9 @@ def test_shipped_allowlist_matches_real_skills() -> None:
     for banned in ("metasploit-framework", "sqlmap-database-pentesting", "linux-privilege-escalation",
                    "active-directory-attacks", "red-team-tools"):
         check(f"offensive skill not bridged by default: {banned}", banned not in bridged)
+    check("managed-agents is not duplicated into the bridge", "managed-agents" not in bridged)
+    for heavy in ("docx-official", "pptx-official", "xlsx-official", "pdf-official"):
+        check(f"hosted document skill not copied: {heavy}", heavy not in bridged)
 
 
 def main() -> int:

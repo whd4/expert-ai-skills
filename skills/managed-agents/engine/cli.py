@@ -122,8 +122,8 @@ def cmd_bridge(args: argparse.Namespace) -> int:
 
     verb = "Would bridge" if args.dry_run else "Bridged"
     print(f"{verb} {result['planned']} skills into .claude/skills/ (mode={result['mode']})")
-    for key in ("would_create", "would_refresh", "would_unlink", "would_quarantine",
-                "created", "refreshed", "unlinked", "quarantined"):
+    for key in ("would_create", "would_refresh", "would_leave", "would_unlink", "would_quarantine",
+                "created", "refreshed", "left", "unlinked", "quarantined"):
         if result.get(key):
             print(f"  {key:<17} {len(result[key])}: {', '.join(result[key][:8])}"
                   f"{' ...' if len(result[key]) > 8 else ''}")
@@ -258,17 +258,39 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         print(f"{args.manifest}: kind must be `deployment`", file=sys.stderr)
         return 1
 
-    # Validate alongside its siblings so the unattended-agent cross-check runs.
-    sibling_paths = config.discover_manifests(os.path.dirname(os.path.abspath(args.manifest)))
-    results = {r.path: r for r in config.validate_all(sibling_paths)}
-    result = results.get(os.path.abspath(args.manifest)) or results.get(args.manifest) \
-        or config.validate(manifest, args.manifest)
+    # Validate alongside every manifest we know about - the configured
+    # manifest directory AND the deployment's own directory - so the
+    # unattended-agent cross-check can find the agent wherever it lives.
+    manifest_path = os.path.abspath(args.manifest)
+    candidate_paths = config.discover_manifests(args.manifests) + config.discover_manifests(
+        os.path.dirname(manifest_path)
+    )
+    sibling_paths = sorted({os.path.abspath(p) for p in candidate_paths} | {manifest_path})
+    results = {os.path.abspath(r.path): r for r in config.validate_all(sibling_paths)}
+    result = results[manifest_path]
     if not result.ok:
         for error in result.errors:
             print(f"  error: {error}", file=sys.stderr)
         return 1
     for warning in result.warnings:
         print(f"  warn: {warning}")
+
+    # For `validate` an unknown agent is a warning; for `deploy` it is fatal -
+    # unattended-safety cannot be certified without the agent's tool config.
+    known_agents = {
+        m.get("name")
+        for p in sibling_paths
+        for m in [config.load_manifest(p)]
+        if m.get("kind") == "agent"
+    }
+    if manifest["agent_name"] not in known_agents:
+        print(
+            f"  error: agent {manifest['agent_name']!r} is not defined in {args.manifests} "
+            f"or next to {args.manifest}; cannot verify it can run unattended. "
+            "Pass --manifests <dir containing its manifest>.",
+            file=sys.stderr,
+        )
+        return 1
 
     state = config.load_state(args.state)
     try:
@@ -279,7 +301,12 @@ def cmd_deploy(args: argparse.Namespace) -> int:
         return 1
     agent_version = state["agents"][manifest["agent_name"]].get("version")
 
-    body = deploy.build_body(manifest, agent_id, environment_id, args.budget, agent_version)
+    # A dry run must be inspectable without the secrets present: keep ${ENV}
+    # references unexpanded and print the body with any tokens redacted.
+    body = deploy.build_body(
+        manifest, agent_id, environment_id, args.budget, agent_version,
+        expand_secrets=not args.dry_run,
+    )
     cap = config.format_cost(body["budget"]["max_list_cost"])
     schedule = manifest.get("schedule") or {}
 
@@ -415,8 +442,12 @@ def main(argv: list[str] | None = None) -> int:
     except config.ManifestError as exc:
         print(f"manifest error: {exc}", file=sys.stderr)
         return 1
-    except ValueError as exc:
+    except (ValueError, RuntimeError) as exc:
         print(f"error: {_message(exc)}", file=sys.stderr)
+        return 1
+    except TypeError as exc:
+        # The SDK rejected a field the validator let through - report, don't trace.
+        print(f"error: the API client rejected the request: {_message(exc)}", file=sys.stderr)
         return 1
     except KeyboardInterrupt:
         print("\nInterrupted.", file=sys.stderr)

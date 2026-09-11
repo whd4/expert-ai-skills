@@ -167,12 +167,25 @@ def check_namespaces(report: Report, anthropic_module: Any) -> None:
 
 def check_credentials(report: Report, env: dict[str, str]) -> None:
     """Report which credential SOURCE resolves. Never touches a secret value."""
-    present = [name for name in CREDENTIAL_ENV_VARS if env.get(name)]
-    if present:
+    direct = [name for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN") if env.get(name)]
+    if direct:
         report.add(
             "credentials",
             OK,
-            f"{', '.join(present)} set in the environment (value not read)",
+            f"{', '.join(direct)} set in the environment (value not read)",
+        )
+        return
+
+    # ANTHROPIC_PROFILE only *selects* a profile; it is a credential only if
+    # that profile actually exists on disk, which `ant auth status` can tell us.
+    profile = env.get("ANTHROPIC_PROFILE")
+    if profile and not shutil.which("ant"):
+        report.add(
+            "credentials",
+            WARN,
+            f"ANTHROPIC_PROFILE={profile!r} is set but `ant` is not installed to confirm "
+            "that profile exists",
+            "install the ant CLI and run `ant auth status`, or export ANTHROPIC_API_KEY",
         )
         return
 

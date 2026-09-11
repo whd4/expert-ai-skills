@@ -6,17 +6,22 @@ ceiling is how an agent loop quietly turns into a bill.
 
 The loop implements the documented client patterns:
   * stream-first, then send (a stream opened after the send misses early events)
-  * lossless reconnect - `events.list()` history is read on every (re)connect,
-    deduped by event ID, and DISPATCHED through the same path as live events.
-    SSE has no replay: an event emitted while the stream was down exists only
-    in history, and a pending tool ask found there must be answered from there
-    or the session deadlocks.
+  * lossless reconnect - `events.list()` history (oldest first, every page) is
+    read on every (re)connect, deduped by event ID, and DISPATCHED through the
+    same path as live events. SSE has no replay: an event emitted while the
+    stream was down exists only in history, and a pending tool ask found there
+    must be answered from there or the session deadlocks.
   * the correct idle gate - `session.status_idle` alone is NOT done; the session
     idles transiently while it waits on you. A `requires_action` idle carries
     `stop_reason.event_ids` naming exactly what it is waiting on; anything
     listed there that we have not yet answered gets answered.
   * every `agent.custom_tool_use`, and every `agent.tool_use` / `agent.mcp_tool_use`
     with `evaluated_permission == "ask"`, is answered exactly once.
+  * when a prompt is sent into a session that already has history, terminal
+    events from EARLIER turns are not mistaken for the end of THIS turn: the
+    loop only honours an end-of-turn idle once it has seen its own
+    `user.message` echoed back with `processed_at` set (the documented
+    queued -> processed signal). `session.status_terminated` is always final.
 """
 
 from __future__ import annotations
@@ -60,7 +65,7 @@ class SessionOutcome:
     session_id: str
     stop_reason: str | None = None
     terminated: bool = False
-    text: list[str] = field(default_factory=list)
+    text: list[str] = field(default_factory=list)  # THIS turn's agent text
     tool_calls: int = 0
     answered: int = 0
     denied: int = 0
@@ -86,6 +91,15 @@ def _attr(obj: Any, name: str, default: Any = None) -> Any:
     if isinstance(obj, dict):
         return obj.get(name, default)
     return getattr(obj, name, default)
+
+
+def _text_of(event: Any) -> str:
+    """Concatenated text blocks of a message-shaped event."""
+    parts = []
+    for block in _attr(event, "content", []) or []:
+        if _attr(block, "type") == "text":
+            parts.append(_attr(block, "text", "") or "")
+    return "".join(parts)
 
 
 # --------------------------------------------------------------------------
@@ -151,7 +165,11 @@ def _default_custom_tool_handler(name: str, tool_input: dict[str, Any]) -> str:
 
 
 def _decide(event: Any, mode: str, stream_out: Any) -> tuple[str, str | None]:
-    """Resolve an always_ask tool call into (allow|deny, deny_message)."""
+    """Resolve an always_ask tool call into (allow|deny, deny_message).
+
+    Ctrl-C at the prompt aborts the run (KeyboardInterrupt propagates); only a
+    closed stdin is treated as a deny.
+    """
     tool_name = _attr(event, "name", "?")
     if mode == APPROVE_ALLOW:
         print(f"\n  [approve] AUTO-ALLOWED {tool_name!r} (--approve allow-all)", file=stream_out)
@@ -162,7 +180,7 @@ def _decide(event: Any, mode: str, stream_out: Any) -> tuple[str, str | None]:
     print(f"  [approve] input: {_attr(event, 'input', {})}", file=stream_out)
     try:
         answer = input("  [approve] allow? [y/N] ").strip().lower()
-    except (EOFError, KeyboardInterrupt):
+    except EOFError:
         return "deny", "Operator did not respond."
     if answer in {"y", "yes"}:
         return "allow", None
@@ -179,12 +197,25 @@ class _Loop:
     handler: Callable[[str, dict[str, Any]], str]
     out: Any
     outcome: SessionOutcome
+    prompt: str | None = None
+    prompt_sent: bool = False
+    prompt_processed: bool = False
+    ids_before_send: set[str] = field(default_factory=set)
     seen: set[str] = field(default_factory=set)
     by_id: dict[str, Any] = field(default_factory=dict)
     answered: set[str] = field(default_factory=set)
+    pending_unknown: set[str] = field(default_factory=set)
+
+    # -- outbound --------------------------------------------------------
 
     def send(self, event: dict[str, Any]) -> None:
         self.client.beta.sessions.events.send(session_id=self.session_id, events=[event])
+
+    def send_prompt(self) -> None:
+        if self.prompt and not self.prompt_sent:
+            self.ids_before_send = set(self.seen)
+            self.send({"type": "user.message", "content": [{"type": "text", "text": self.prompt}]})
+            self.prompt_sent = True
 
     def answer(self, event: Any) -> bool:
         """Resolve one pending tool event. Returns True if something was sent."""
@@ -194,6 +225,7 @@ class _Loop:
             return False
 
         payload: dict[str, Any] | None = None
+        denied = False
         if event_type == "agent.custom_tool_use":
             result = self.handler(_attr(event, "name", ""), _attr(event, "input", {}) or {})
             payload = {
@@ -205,7 +237,7 @@ class _Loop:
             decision, message = _decide(event, self.approve, self.out)
             payload = {"type": "user.tool_confirmation", "tool_use_id": event_id, "result": decision}
             if decision == "deny":
-                self.outcome.denied += 1
+                denied = True
                 if message:
                     payload["deny_message"] = message
         if payload is None:
@@ -217,10 +249,46 @@ class _Loop:
         if thread_id:
             payload["session_thread_id"] = thread_id
 
-        self.send(payload)
+        self.send(payload)  # counted only once the send succeeded
         self.answered.add(event_id)
+        self.pending_unknown.discard(event_id)
         self.outcome.answered += 1
+        if denied:
+            self.outcome.denied += 1
         return True
+
+    # -- inbound ---------------------------------------------------------
+
+    def _turn_boundary_is_ours(self, event_id: str | None) -> bool:
+        """Whether an end-of-turn idle belongs to the turn we started.
+
+        With no prompt we are observing: any terminal idle is final. With a
+        prompt, terminal idles are ignored until our own message has been
+        echoed back as processed - the documented queued -> processed signal.
+        """
+        if not self.prompt:
+            return True
+        if self.prompt_processed:
+            return True
+        return False
+
+    def _note_prompt_echo(self, event: Any) -> None:
+        if not self.prompt or self.prompt_processed:
+            return
+        if not self.prompt_sent:
+            return  # nothing we sent can be echoed yet - this is an earlier turn's message
+        if _attr(event, "type") != "user.message":
+            return
+        event_id = _attr(event, "id")
+        if event_id in self.ids_before_send:
+            return  # an earlier turn's message, even if the text matches
+        if _attr(event, "processed_at") is None:
+            return  # still queued
+        if _text_of(event) != self.prompt:
+            return
+        self.prompt_processed = True
+        # From here on, `text` means this turn's output.
+        self.outcome.text = []
 
     def dispatch(self, event: Any) -> str:
         """Fold one event in - from history or live - and say whether to stop."""
@@ -237,6 +305,8 @@ class _Loop:
         elif not event_id:
             _handle(event, self.outcome, self.out)
 
+        self._note_prompt_echo(event)
+
         if event_type == "agent.custom_tool_use" or event_type in CONFIRMABLE_TOOL_EVENTS:
             self.answer(event)
             return CONTINUE
@@ -248,27 +318,43 @@ class _Loop:
         if event_type == "session.status_idle":
             stop = _attr(event, "stop_reason") or {}
             reason = _attr(stop, "type")
+            if reason == STOP_REQUIRES_ACTION:
+                # Waiting on us. The idle names exactly what it is waiting on;
+                # answer anything there we have not already settled. An id we
+                # have not seen yet may simply be later in this page - note it
+                # and re-check when the drain completes.
+                for pending_id in _attr(stop, "event_ids", None) or []:
+                    if pending_id in self.answered:
+                        continue
+                    pending = self.by_id.get(pending_id)
+                    if pending is None:
+                        self.pending_unknown.add(pending_id)
+                    else:
+                        self.answer(pending)
+                return CONTINUE
+
+            if not self._turn_boundary_is_ours(event_id):
+                return CONTINUE  # an earlier turn's ending, replayed from history
             self.outcome.stop_reason = reason
-            if reason != STOP_REQUIRES_ACTION:
-                if reason not in TERMINAL_STOP_REASONS:
-                    self.outcome.errors.append(f"unrecognised stop_reason {reason!r} - treating as terminal")
-                return STOP
-            # Waiting on us. The idle names exactly what it is waiting on;
-            # answer anything there we have not already settled (covers a
-            # pending ask whose own event we somehow never saw).
-            for pending_id in _attr(stop, "event_ids", None) or []:
-                if pending_id in self.answered:
-                    continue
-                pending = self.by_id.get(pending_id)
-                if pending is None:
-                    self.outcome.errors.append(
-                        f"session is waiting on event {pending_id} which is not in history"
-                    )
-                    continue
-                self.answer(pending)
-            return CONTINUE
+            if reason not in TERMINAL_STOP_REASONS:
+                self.outcome.errors.append(f"unrecognised stop_reason {reason!r} - treating as terminal")
+            return STOP
 
         return CONTINUE
+
+    def resolve_pending(self) -> None:
+        """After a full drain: answer late-arriving asks, report the truly missing."""
+        for pending_id in sorted(self.pending_unknown):
+            pending = self.by_id.get(pending_id)
+            if pending is not None:
+                self.answer(pending)
+        self.pending_unknown -= self.answered
+
+    def report_unresolved(self) -> None:
+        for pending_id in sorted(self.pending_unknown):
+            self.outcome.errors.append(
+                f"session is waiting on event {pending_id} which never appeared in history or on the stream"
+            )
 
 
 def run_session(
@@ -280,7 +366,12 @@ def run_session(
     stream_out: Any = None,
     max_reconnects: int = 3,
 ) -> SessionOutcome:
-    """Stream a session to completion, answering everything it waits on."""
+    """Stream a session to completion, answering everything it waits on.
+
+    With `prompt`, sends it once (after the stream is open) and returns when
+    THAT turn ends. Without it, observes the session until it is idle-done or
+    terminated - useful for reattaching to a run in progress.
+    """
     stream_out = stream_out or sys.stdout
     outcome = SessionOutcome(session_id=session_id)
     loop = _Loop(
@@ -290,8 +381,8 @@ def run_session(
         handler=custom_tool_handler or _default_custom_tool_handler,
         out=stream_out,
         outcome=outcome,
+        prompt=prompt,
     )
-    sent_prompt = False
 
     for attempt in range(max_reconnects + 1):
         try:
@@ -305,19 +396,22 @@ def run_session(
                           file=stream_out)
                 for event in history:
                     if loop.dispatch(event) == STOP:
+                        loop.report_unresolved()
                         return outcome
+                loop.resolve_pending()
 
-                if prompt and not sent_prompt:
-                    loop.send({"type": "user.message", "content": [{"type": "text", "text": prompt}]})
-                    sent_prompt = True
+                loop.send_prompt()
 
                 for event in stream:
                     if loop.dispatch(event) == STOP:
+                        loop.resolve_pending()
+                        loop.report_unresolved()
                         return outcome
 
             # Stream ended without a terminal event - reconnect and re-read.
             if attempt >= max_reconnects:
                 outcome.errors.append("stream ended without a terminal event")
+                loop.report_unresolved()
                 return outcome
             outcome.reconnects += 1
         except KeyboardInterrupt:
@@ -325,6 +419,7 @@ def run_session(
         except Exception as exc:  # network drop, proxy reset, heartbeat timeout
             if attempt >= max_reconnects:
                 outcome.errors.append(f"stream failed after {attempt + 1} attempts: {exc}")
+                loop.report_unresolved()
                 return outcome
             outcome.reconnects += 1
             print(
@@ -333,13 +428,19 @@ def run_session(
                 file=stream_out,
             )
 
+    loop.report_unresolved()
     return outcome
 
 
 def _fetch_history(client: Any, session_id: str) -> tuple[list[Any], str | None]:
-    """Every persisted event so far. Iterating the pager auto-paginates."""
+    """Every persisted event so far, oldest first. Iterating the pager auto-paginates."""
     try:
-        page = client.beta.sessions.events.list(session_id=session_id)
+        page = client.beta.sessions.events.list(session_id=session_id, order="asc")
+    except TypeError:
+        try:
+            page = client.beta.sessions.events.list(session_id=session_id)
+        except Exception as exc:
+            return [], f"{type(exc).__name__}: {exc}"
     except Exception as exc:
         return [], f"{type(exc).__name__}: {exc}"
     if isinstance(page, list):
@@ -356,11 +457,10 @@ def _handle(event: Any, outcome: SessionOutcome, stream_out: Any) -> None:
     event_type = _attr(event, "type")
 
     if event_type == "agent.message":
-        for block in _attr(event, "content", []) or []:
-            if _attr(block, "type") == "text":
-                text = _attr(block, "text", "")
-                outcome.text.append(text)
-                print(text, end="", flush=True, file=stream_out)
+        text = _text_of(event)
+        if text:
+            outcome.text.append(text)
+            print(text, end="", flush=True, file=stream_out)
 
     elif event_type in {"agent.tool_use", "agent.mcp_tool_use", "agent.custom_tool_use"}:
         outcome.tool_calls += 1

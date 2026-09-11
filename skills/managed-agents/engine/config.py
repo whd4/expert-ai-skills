@@ -32,7 +32,13 @@ except ImportError:  # pragma: no cover - yaml is in the repo's baseline
 # --------------------------------------------------------------------------
 
 TOOLSET_TYPE = "agent_toolset_20260401"
-BETA_HEADER = "managed-agents-2026-04-01"
+
+# Top-level keys POST /v1/agents accepts (+ the manifest's own two). Anything
+# else would TypeError inside the SDK call, after validation said "ok".
+AGENT_KEYS = frozenset(
+    {"kind", "name", "model", "system", "tools", "mcp_servers", "skills",
+     "description", "multiagent", "metadata", "x-notes"}
+)
 
 BUILTIN_TOOLS = frozenset(
     {"bash", "read", "write", "edit", "glob", "grep", "web_fetch", "web_search"}
@@ -94,8 +100,18 @@ _REGISTRY_SUFFIXES = frozenset(
     }
 )
 
-# Anything shaped like a credential has no business in a committed manifest.
-_SECRET_MARKERS = ("sk-ant-", "ghp_", "github_pat_", "gho_", "ghs_", "xoxb-", "xoxp-", "AKIA")
+# Anything shaped like a real credential has no business in a committed
+# manifest. These match token SHAPES, not prefixes, so a system prompt that
+# says "keys start with AKIA - refuse them" is not flagged.
+_SECRET_SHAPES = (
+    re.compile(r"sk-ant-[A-Za-z0-9_\-]{20,}"),
+    re.compile(r"\bghp_[A-Za-z0-9]{36}\b"),
+    re.compile(r"\bgithub_pat_[A-Za-z0-9_]{22,}\b"),
+    re.compile(r"\bgh[osu]_[A-Za-z0-9]{36}\b"),
+    re.compile(r"\bxox[bpa]-[A-Za-z0-9\-]{10,}\b"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bAIza[0-9A-Za-z_\-]{35}\b"),
+)
 _SECRET_KEYS = frozenset(
     {"access_token", "refresh_token", "client_secret", "secret_value", "api_key", "password"}
 )
@@ -260,6 +276,11 @@ def _validate_agent(manifest: dict[str, Any], result: ValidationResult) -> None:
             result.errors.append(
                 f"`{forbidden}` is a SESSION field - it does not belong on an agent manifest"
             )
+    unknown = sorted(set(manifest) - AGENT_KEYS - {"environment_id", "resources", "vault_ids", "budget"})
+    if unknown:
+        result.errors.append(
+            f"unknown top-level keys on an agent: {unknown} - the API would reject them"
+        )
 
     _validate_model(manifest.get("model"), result)
 
@@ -832,11 +853,12 @@ def _scan_for_secrets(node: Any, result: ValidationResult, path: str = "") -> No
         for index, value in enumerate(node):
             _scan_for_secrets(value, result, f"{path}.{index}")
     elif isinstance(node, str):
-        for marker in _SECRET_MARKERS:
-            if marker in node:
+        for shape in _SECRET_SHAPES:
+            match = shape.search(node)
+            if match:
                 result.errors.append(
-                    f"{path or '<root>'}: contains a credential-shaped token ({marker}...) - "
-                    "remove it; this file is committed"
+                    f"{path or '<root>'}: contains a credential-shaped token "
+                    f"({match.group(0)[:8]}...) - remove it; this file is committed"
                 )
                 break
 
@@ -901,12 +923,20 @@ def schedule_warnings(schedule: Any) -> list[str]:
 
 
 def _always_ask_tools(tools: Any) -> list[str]:
-    """Names of built-in/MCP tools gated by always_ask after config layering."""
+    """Tools that would park an unattended session.
+
+    Built-in / MCP tools gated by always_ask after config layering, plus every
+    custom tool: a custom tool call idles the session until a client sends
+    `user.custom_tool_result`, and a fired deployment has no client.
+    """
     gated: list[str] = []
     if not isinstance(tools, list):
         return gated
     for tool in tools:
         if not isinstance(tool, dict):
+            continue
+        if tool.get("type") == "custom":
+            gated.append(f"custom:{tool.get('name', '?')}")
             continue
         default = (tool.get("default_config") or {}).get("permission_policy") or {}
         default_ask = default.get("type") == "always_ask"
@@ -952,9 +982,10 @@ def cross_validate(
         gated = _always_ask_tools(effective_tools)
         if gated:
             result.errors.append(
-                f"deployment fires with no client attached, but its effective tools gate "
-                f"{gated} with always_ask - every firing would park in requires_action. "
-                "Disable or always_allow them via `agent_overrides.tools` for this deployment."
+                f"deployment fires with no client attached, but its effective tools "
+                f"{gated} would wait on one (always_ask, or a custom tool) - every firing "
+                "would park in requires_action. Disable them, or set always_allow, via "
+                "`agent_overrides.tools` for this deployment."
             )
 
 

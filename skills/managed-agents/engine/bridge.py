@@ -23,9 +23,11 @@ Two deliberate defaults:
     guaranteed to work; `--check` detects when a copy has drifted from its
     source. `--mode symlink` is available once symlink-following is confirmed.
 
-Nothing under `skills/` is ever modified. Inside `.claude/skills/`, an entry
-the plan no longer wants is unlinked if it is a symlink (the bridge's own
-artefact) and otherwise MOVED to a dated quarantine directory - never deleted.
+Nothing under `skills/` is ever modified, and nothing inside `.claude/skills/`
+is ever deleted: a stray symlink is unlinked (it is the bridge's own artefact
+and points at content that still exists), while any real directory that is
+either not wanted or has been edited locally is MOVED to a dated quarantine
+directory before being replaced.
 """
 
 from __future__ import annotations
@@ -43,7 +45,14 @@ SOURCE_DIR = "skills"
 SKILL_FILE = "SKILL.md"
 MAX_SCAN_DEPTH = 3
 DEFAULT_MODE = "copy"
-_IGNORE = shutil.ignore_patterns(".git", "__pycache__", "*.pyc", ".pytest_cache")
+# Build noise and per-workspace state never belong in a bridged copy.
+_SKIP_DIRS = frozenset({".git", "__pycache__", ".pytest_cache"})
+_SKIP_FILES = frozenset({"state.json"})
+_SKIP_SUFFIXES = (".pyc", ".pyo")
+
+
+def _ignore(directory: str, names: list[str]) -> set[str]:
+    return {n for n in names if n in _SKIP_DIRS or n in _SKIP_FILES or n.endswith(_SKIP_SUFFIXES)}
 
 
 @dataclass
@@ -112,8 +121,9 @@ def plan(
 ) -> BridgePlan:
     """Compute the flat name -> source mapping, resolving collisions.
 
-    `allowlist` entries match a skill by leaf name (`docx-official`) or by
-    repo-relative path (`skills/game-development/2d-games`). None means all.
+    `allowlist` entries match a skill by leaf name (`docx-official` - matches
+    EVERY skill with that leaf) or by repo-relative path
+    (`skills/game-development/2d-games` - exact). None means all.
     """
     result = BridgePlan()
     taken: dict[str, str] = {}
@@ -175,22 +185,52 @@ def _relative_target(link_name: str, repo_rel_target: str) -> str:
     return os.path.relpath(repo_rel_target, os.path.dirname(link_dir))
 
 
+def _walk(root: str):
+    """os.walk without following symlinks, skipping build noise."""
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+        dirnames[:] = sorted(d for d in dirnames if d not in _SKIP_DIRS)
+        yield dirpath, dirnames, sorted(
+            f for f in filenames if f not in _SKIP_FILES and not f.endswith(_SKIP_SUFFIXES)
+        )
+
+
 def _tree_digest(root: str) -> str:
-    """Content hash of a directory tree (paths + bytes), ignoring build noise."""
+    """Content hash of a directory tree (paths + bytes).
+
+    Symlinks are hashed by their target string, never followed - following
+    would let a self-referential link loop forever.
+    """
     digest = hashlib.sha256()
-    for dirpath, dirnames, filenames in os.walk(root, followlinks=True):
-        dirnames[:] = sorted(d for d in dirnames if d not in {".git", "__pycache__", ".pytest_cache"})
-        for filename in sorted(filenames):
-            if filename.endswith((".pyc",)):
-                continue
+    for dirpath, _dirnames, filenames in _walk(root):
+        for filename in filenames:
             path = os.path.join(dirpath, filename)
             digest.update(os.path.relpath(path, root).encode("utf-8"))
+            if os.path.islink(path):
+                digest.update(b"link:" + os.readlink(path).encode("utf-8"))
+                continue
             try:
                 with open(path, "rb") as handle:
                     digest.update(handle.read())
             except OSError:
                 digest.update(b"<unreadable>")
     return digest.hexdigest()
+
+
+def _escaping_symlinks(source: str, real_repo: str) -> list[str]:
+    """Symlinks inside a source tree whose target resolves outside the repo.
+
+    Copying one would drag external content into a committed directory.
+    """
+    escapes: list[str] = []
+    for dirpath, dirnames, filenames in _walk(source):
+        for name in list(dirnames) + list(filenames):
+            path = os.path.join(dirpath, name)
+            if not os.path.islink(path):
+                continue
+            target = os.path.realpath(path)
+            if not (target == real_repo or target.startswith(real_repo + os.sep)):
+                escapes.append(os.path.relpath(path, real_repo))
+    return escapes
 
 
 # --------------------------------------------------------------------------
@@ -245,6 +285,17 @@ def check(
     }
 
 
+def _quarantine(real_repo: str, path: str, stamp: str) -> str:
+    """Move an entry out of the bridge, never delete it. Returns the new relpath."""
+    quarantine_root = os.path.join(real_repo, QUARANTINE_DIR, stamp)
+    os.makedirs(quarantine_root, exist_ok=True)
+    destination = os.path.join(quarantine_root, os.path.basename(path))
+    if os.path.lexists(destination):
+        destination = f"{destination}-{_dt.datetime.now().strftime('%H%M%S%f')}"
+    shutil.move(path, destination)
+    return os.path.relpath(destination, real_repo)
+
+
 def build(
     repo_root: str,
     source_dir: str = SOURCE_DIR,
@@ -255,9 +306,11 @@ def build(
 ) -> dict[str, Any]:
     """Materialise `.claude/skills/`.
 
-    Only entries inside `.claude/skills/` are ever touched, and only when they
-    are not in the plan. Symlinks are unlinked (the bridge's own artefacts);
-    anything else is MOVED to `.claude/skills-quarantine/<date>/` - never deleted.
+    Only entries inside `.claude/skills/` are ever touched. Symlinks are
+    unlinked (the bridge's own artefacts). A real directory is never deleted:
+    an unwanted one, or a wanted copy whose content differs from its source
+    (local edits, or drift), is MOVED to `.claude/skills-quarantine/<date>/`
+    before the fresh copy is written. An up-to-date copy is left untouched.
     """
     if mode not in {"symlink", "copy"}:
         raise ValueError(f"mode must be 'symlink' or 'copy', got {mode!r}")
@@ -266,6 +319,16 @@ def build(
     real_repo, bridge_root = _roots(repo_root)
     wanted = {name for name, _ in computed.entries}
 
+    # Refuse before touching anything if a source would drag in external content.
+    if mode == "copy":
+        for name, rel_target in computed.entries:
+            escapes = _escaping_symlinks(os.path.join(real_repo, rel_target), real_repo)
+            if escapes:
+                raise RuntimeError(
+                    f"skill {name!r} contains symlinks that resolve outside the repository "
+                    f"({', '.join(escapes[:3])}); refusing to copy them into .claude/skills/"
+                )
+
     present: set[str] = set()
     if os.path.isdir(bridge_root):
         present = {e for e in os.listdir(bridge_root) if not e.startswith(".")}
@@ -273,49 +336,61 @@ def build(
     stray_links = [s for s in strays if os.path.islink(os.path.join(bridge_root, s))]
     stray_dirs = [s for s in strays if s not in stray_links]
 
+    # Classify wanted entries that already exist.
+    unchanged: list[str] = []
+    edited: list[str] = []  # real dirs whose content differs from source
+    replace_links: list[str] = []
+    for name, rel_target in computed.entries:
+        link = os.path.join(bridge_root, name)
+        if not os.path.lexists(link):
+            continue
+        if os.path.islink(link) or os.path.isfile(link):
+            replace_links.append(name)
+        elif mode == "copy" and _tree_digest(os.path.join(real_repo, rel_target)) == _tree_digest(link):
+            unchanged.append(name)
+        else:
+            edited.append(name)
+
     if dry_run:
         return {
             "mode": mode,
             "dry_run": True,
             "planned": len(computed.entries),
             "would_create": sorted(wanted - present),
-            "would_refresh": sorted(wanted & present),
+            "would_refresh": sorted(replace_links),
+            "would_leave": sorted(unchanged),
+            "would_quarantine": sorted(stray_dirs + edited),
             "would_unlink": stray_links,
-            "would_quarantine": stray_dirs,
             **computed.to_dict(),
         }
 
     os.makedirs(bridge_root, exist_ok=True)
-    created, refreshed, unlinked, quarantined = [], [], [], []
+    stamp = _dt.date.today().isoformat()
+    created, refreshed, left, unlinked, quarantined = [], [], [], [], []
 
     if prune:
         for entry in stray_links:
             os.unlink(os.path.join(bridge_root, entry))
             unlinked.append(entry)
-        if stray_dirs:
-            stamp = _dt.date.today().isoformat()
-            quarantine_root = os.path.join(real_repo, QUARANTINE_DIR, stamp)
-            os.makedirs(quarantine_root, exist_ok=True)
-            for entry in stray_dirs:
-                destination = os.path.join(quarantine_root, entry)
-                if os.path.exists(destination):
-                    destination = f"{destination}-{_dt.datetime.now().strftime('%H%M%S')}"
-                shutil.move(os.path.join(bridge_root, entry), destination)
-                quarantined.append(os.path.relpath(destination, real_repo))
+        for entry in stray_dirs:
+            quarantined.append(_quarantine(real_repo, os.path.join(bridge_root, entry), stamp))
 
     for name, rel_target in computed.entries:
         link = os.path.join(bridge_root, name)
-        existed = os.path.islink(link) or os.path.exists(link)
+        if name in unchanged:
+            left.append(name)
+            continue
+        existed = os.path.lexists(link)
         if existed:
             if os.path.islink(link) or os.path.isfile(link):
                 os.unlink(link)
             else:
-                shutil.rmtree(link)  # a copy the bridge itself made; the source is untouched
+                quarantined.append(_quarantine(real_repo, link, stamp))
 
         if mode == "symlink":
             os.symlink(_relative_target(name, rel_target), link)
         else:
-            shutil.copytree(os.path.join(real_repo, rel_target), link, symlinks=False, ignore=_IGNORE)
+            shutil.copytree(os.path.join(real_repo, rel_target), link, symlinks=True, ignore=_ignore)
 
         (refreshed if existed else created).append(name)
 
@@ -325,6 +400,7 @@ def build(
         "planned": len(computed.entries),
         "created": created,
         "refreshed": refreshed,
+        "left": left,
         "unlinked": unlinked,
         "quarantined": quarantined,
         **computed.to_dict(),

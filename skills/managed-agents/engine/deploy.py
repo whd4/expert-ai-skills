@@ -80,6 +80,7 @@ def build_body(
     environment_id: str,
     budget_dollars: float | None = None,
     agent_version: int | None = None,
+    expand_secrets: bool = True,
 ) -> dict[str, Any]:
     """Turn a deployment manifest plus resolved IDs into the API body.
 
@@ -87,6 +88,9 @@ def build_body(
     replaces a manifest `budget:`; otherwise the manifest's value stands. A body
     with NO budget is refused - a cron deployment fires unattended, so an
     uncapped one is the single most expensive mistake this engine can make.
+
+    `expand_secrets=False` leaves `${ENV}` references in place, so a dry run
+    can be inspected on a machine that does not hold the secret.
     """
     body = config.to_api_body(manifest)
     body.pop("agent_name", None)
@@ -113,7 +117,7 @@ def build_body(
             "An uncapped cron deployment is never created by this engine."
         )
 
-    if "resources" in body:
+    if "resources" in body and expand_secrets:
         body["resources"] = expand_secret_refs(body["resources"])
     return body
 
@@ -155,7 +159,9 @@ def apply_deployment(
             if not _not_found(exc):
                 raise
     if existing is None:
-        existing = control.find_by_name(client, "deployments", name)
+        # Required: this lookup is what stops a lost state.json from
+        # producing a second, equally billable cron deployment.
+        existing = control.find_by_name(client, "deployments", name, required=True)
 
     if existing is None:
         resource = client.beta.deployments.create(**body)

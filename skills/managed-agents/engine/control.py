@@ -43,10 +43,21 @@ def iter_all(pager: Any) -> list[Any]:
         return list(data) if data is not None else []
 
 
-def find_by_name(client: Any, resource: str, name: str) -> Any | None:
-    """Locate an existing agent/environment/deployment by exact name, or None."""
+def find_by_name(client: Any, resource: str, name: str, required: bool = False) -> Any | None:
+    """Locate an existing agent/environment/deployment by exact name, or None.
+
+    `required=True` makes a missing `list` capability an error instead of a
+    quiet "not found" - when this lookup is what stands between a lost
+    state.json and a duplicate resource, degrading silently is the wrong
+    failure mode.
+    """
     namespace = getattr(client.beta, resource, None)
     if namespace is None or not hasattr(namespace, "list"):
+        if required:
+            raise RuntimeError(
+                f"this SDK cannot list {resource}; refusing to create one blind - "
+                "upgrade the anthropic package (pip install --upgrade anthropic)"
+            )
         return None
     try:
         page = namespace.list(limit=100)
@@ -56,6 +67,17 @@ def find_by_name(client: Any, resource: str, name: str) -> Any | None:
         if getattr(item, "name", None) == name:
             return item
     return None
+
+
+def _metadata_delta(live: Any, desired: Any) -> dict[str, Any]:
+    """Metadata body that makes the live resource match the manifest exactly.
+
+    The API merges metadata on update and deletes a key when its value is
+    null, so every live key absent from the manifest is sent as null.
+    """
+    live_keys = set(live or {}) if isinstance(live, dict) else set()
+    wanted = dict(desired or {})
+    return {**{key: None for key in live_keys if key not in wanted}, **wanted}
 
 
 def apply_environment(
@@ -84,6 +106,10 @@ def apply_environment(
         resource = created
     else:
         update_body = {k: v for k, v in body.items() if k != "name"}
+        update_body.setdefault("description", None)
+        update_body["metadata"] = _metadata_delta(
+            getattr(existing, "metadata", None), body.get("metadata")
+        )
         resource = client.beta.environments.update(existing.id, **update_body)
         action = "updated"
 
@@ -126,10 +152,15 @@ def apply_agent(
         # omitted fields on update, so a block deleted from the manifest must
         # be sent as an explicit clear or the old value silently stays live.
         update_body = {k: v for k, v in body.items() if k != "name"}
-        for cleared in ("system", "description"):
+        for cleared in ("system", "description", "multiagent"):
             update_body.setdefault(cleared, None)
         for cleared in ("tools", "skills", "mcp_servers"):
             update_body.setdefault(cleared, [])
+        # metadata merges key-by-key on update (a null value deletes a key),
+        # so a key dropped from the manifest must be sent as null explicitly.
+        update_body["metadata"] = _metadata_delta(
+            getattr(existing, "metadata", None), body.get("metadata")
+        )
         resource = client.beta.agents.update(existing.id, **update_body)
         action = "updated"
 
