@@ -4,3 +4,6 @@ walkthrough.md
 .agent/rules/
 .gemini/
 LOCAL_CONFIG.md
+
+# managed-agents bridge: local safety net for entries the bridge moved aside - never committed
+.claude/skills-quarantine/

@@ -28,7 +28,7 @@ This repository provides essential skills to transform your AI assistant into a 
 - [🚀 New Here? Start Here!](#-new-here-start-here)
 - [🔌 Compatibility](#-compatibility)
 - [Features & Categories](#features--categories)
-- [Full Skill Registry](#full-skill-registry-155155)
+- [Full Skill Registry](#full-skill-registry-240240)
 - [Installation](#installation)
 - [How to Contribute](#how-to-contribute)
 - [Credits & Sources](#credits--sources)
@@ -109,7 +109,7 @@ The repository is organized into several key areas of expertise:
 
 ---
 
-## Full Skill Registry (233/233)
+## Full Skill Registry (240/240)
 
 Below is the complete list of available skills. Each skill folder contains a `SKILL.md` that can be imported into Antigravity or Claude Code.
 
@@ -225,6 +225,7 @@ Below is the complete list of available skills. Each skill folder contains a `SK
 | **Linux Shell Scripting**                           | This skill should be used when the user asks to "create bash scripts", "automate Linux tasks", "monitor system resources", "backup files", "manage users", or "write production shell scripts".                                                                                                                                                                                                                                                          | `skills/linux-shell-scripting`               |
 | **LLM App Patterns**                                | "Production-ready patterns for building LLM applications.                                                                                                                                                                                                                                                                                                                                                                                                | `skills/llm-app-patterns`                    |
 | **Loki Mode**                                       | Multi-agent autonomous startup system for Claude Code.                                                                                                                                                                                                                                                                                                                                                                                                   | `skills/loki-mode`                           |
+| **Managed Agents**                                  | Stand up, budget, and operate Claude Managed Agents - Anthropic-hosted agents with a per-session sandbox, versioned YAML manifests, vault-held credentials, cron deployments, and platform-enforced dollar budgets. Includes a preflight readiness check and an offline validator that catches API 400s before they cost a round-trip. | `skills/managed-agents`                      |
 | **Marketing Ideas**                                 | 140 proven SaaS marketing ideas and strategies organized by category.                                                                                                                                                                                                                                                                                                                                                                                    | `skills/marketing-ideas`                     |
 | **Marketing Psychology**                            | 70+ mental models and psychological principles for marketing and persuasion.                                                                                                                                                                                                                                                                                                                                                                             | `skills/marketing-psychology`                |
 | **MCP Builder**                                     | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools.                                                                                                                                                                                                                                                                                                    | `skills/mcp-builder`                         |

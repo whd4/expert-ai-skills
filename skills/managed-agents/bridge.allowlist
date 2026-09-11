@@ -1,0 +1,41 @@
+# Skills exposed to a Managed Agents session that mounts this repository.
+# One skill per line: a leaf directory name under skills/ (e.g. docx-official)
+# or a repo-relative path (e.g. skills/game-development/2d-games).
+# Lines starting with # are comments.
+#
+# Everything a mounted repo carries in .claude/skills/ becomes agent
+# instructions with no review step, in a sandbox with bash and web_fetch.
+# Keep this list to what the HENRY agents actually need. The ~25
+# offensive-security skills in this library are deliberately NOT here.
+# `python -m engine bridge --all` bridges everything if you truly want that.
+
+# --- operating the fleet itself ---
+# (managed-agents itself is NOT bridged: a session that has mounted this repo
+#  reads skills/managed-agents/ directly, and a copy would be a second source
+#  of truth that drifts every time a manifest changes.)
+skill-creator
+verification-before-completion
+systematic-debugging
+test-driven-development
+executing-plans
+writing-plans
+plan-writing
+
+# --- quantitative reasoning (the engines CLAUDE.md tells Claude to reach for) ---
+prediction-toolkit
+monte-carlo-predictor
+
+# --- strategy / finance / sales ---
+brainstorming
+pricing-strategy
+launch-strategy
+competitor-alternatives
+copywriting
+email-sequence
+marketing-psychology
+
+# --- documents ---
+# Deliberately NOT bridged: the four *-official document skills are 73% of the
+# library's bytes, and agents that need them attach Anthropic's HOSTED versions
+# via `skills: [{type: anthropic, skill_id: xlsx}]`, which never touches the
+# repository copy.

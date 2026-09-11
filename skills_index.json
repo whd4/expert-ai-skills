@@ -354,14 +354,14 @@
     "description": "\"You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.\""
   },
   {
-    "id": "brand-guidelines-community",
-    "path": "skills/brand-guidelines-community",
+    "id": "brand-guidelines-anthropic",
+    "path": "skills/brand-guidelines-anthropic",
     "name": "brand-guidelines",
     "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply."
   },
   {
-    "id": "brand-guidelines-anthropic",
-    "path": "skills/brand-guidelines-anthropic",
+    "id": "brand-guidelines-community",
+    "path": "skills/brand-guidelines-community",
     "name": "brand-guidelines",
     "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply."
   },
@@ -519,7 +519,7 @@
     "id": "deep-confidence",
     "path": "skills/deep-confidence",
     "name": "deep-confidence",
-    "description": "Deep Confidence Harness — a thinking, planning, and execution framework that forces structured reasoning before acting. Combines Monte Carlo scenario analysis, calibrated confidence, multi-perspective debate (MAD), and ATLAS decomposition. Use before any complex decision, build, or task. Activates on: 'deep confidence', 'think before you act', 'plan first', 'Atlas mode', 'reason through this', 'think this through', 'best approach', 'reason carefully', 'plan and execute'."
+    "description": "\"Deep Confidence Harness \u2014 a thinking, planning, and execution framework that forces structured reasoning before acting. Combines Monte Carlo scenario analysis, calibrated confidence, multi-perspective debate, and optimal path planning. Use before any complex decision, build, or task. Activates on: 'deep confidence', 'think before you act', 'plan first', 'Atlas mode', 'reason through this', 'what should I do', 'think this through', 'best approach', 'reason carefully', 'plan and execute'.\""
   },
   {
     "id": "deployment-procedures",
@@ -774,6 +774,12 @@
     "description": "Multi-agent autonomous startup system for Claude Code. Triggers on \"Loki Mode\". Orchestrates 100+ specialized agents across engineering, QA, DevOps, security, data/ML, business operations, marketing, HR, and customer success. Takes PRD to fully deployed, revenue-generating product with zero human intervention. Features Task tool for subagent dispatch, parallel code review with 3 specialized reviewers, severity-based issue triage, distributed task queue with dead letter handling, automatic deployment to cloud providers, A/B testing, customer feedback loops, incident response, circuit breakers, and self-healing. Handles rate limits via distributed state checkpoints and auto-resume with exponential backoff. Requires --dangerously-skip-permissions flag."
   },
   {
+    "id": "managed-agents",
+    "path": "skills/managed-agents",
+    "name": "managed-agents",
+    "description": "\"Stand up, budget, and operate Claude Managed Agents - Anthropic-hosted agents with a per-session sandbox, versioned agent configs, vault-held credentials, cron deployments, and hard dollar budgets. Use when a task should run WITHOUT a human at the keyboard (scheduled briefings, recurring research, unattended ops), when you need Anthropic to run the agent loop and host the container, or when a user says 'managed agent', 'run this every night', 'spin up an agent that...', or 'enable Managed Agents'. Ships a preflight readiness check, an offline manifest validator that catches API 400s before they cost a round-trip, an idempotent apply loop, a budget-mandatory session runner with lossless reconnect and the correct idle gate, cron deployments that refuse to fire uncapped or on an agent that would wait for a human, and an allowlisted bridge that exposes chosen skills from this repository to a mounted session.\""
+  },
+  {
     "id": "marketing-ideas",
     "path": "skills/marketing-ideas",
     "name": "marketing-ideas",
@@ -813,7 +819,7 @@
     "id": "monte-carlo-predictor",
     "path": "skills/monte-carlo-predictor",
     "name": "monte-carlo-predictor",
-    "description": "Monte Carlo prediction framework for evaluating any project. Use when the user wants to validate decisions, predict outcomes, find optimal paths, detect design divergences, or stress-test a project's direction. Activates on: 'predict', 'Monte Carlo', 'scenario analysis', 'what could go wrong', 'best path', 'validate direction', 'risk analysis', 'forecast', 'project trajectory', 'stress test', 'decision matrix'."
+    "description": "\"Monte Carlo prediction framework for evaluating any project, with a real simulation engine. Use when the user wants to validate decisions, predict outcomes, find optimal paths, detect design divergences, or stress-test a project's direction. Activates on: 'predict', 'Monte Carlo', 'scenario analysis', 'what could go wrong', 'best path', 'validate direction', 'risk analysis', 'forecast', 'project trajectory', 'stress test', 'decision matrix', 'should I migrate', 'compare options'.\""
   },
   {
     "id": "moodle-external-api-development",
@@ -879,7 +885,7 @@
     "id": "openclaw-henry",
     "path": "skills/openclaw-henry",
     "name": "openclaw-henry",
-    "description": "OpenClaw personal AI assistant configuration for life organization and income generation. Use when setting up, configuring, or instructing an OpenClaw agent named Henry to manage daily life, finances, tasks, calendar, and money-making activities. Activates on: 'Henry', 'OpenClaw Henry', 'organize my life', 'make money with AI', 'set up Henry', 'Henry config'."
+    "description": "\"OpenClaw personal AI assistant configuration for life organization and income generation. Use when setting up, configuring, or instructing an OpenClaw agent named Henry to manage daily life, finances, tasks, calendar, and money-making activities. Activates on: 'Henry', 'OpenClaw Henry', 'my AI assistant', 'organize my life', 'make money with AI', 'set up Henry', 'Henry config'.\""
   },
   {
     "id": "page-cro",
@@ -927,7 +933,7 @@
     "id": "personal-ai-orchestrator",
     "path": "skills/personal-ai-orchestrator",
     "name": "personal-ai-orchestrator",
-    "description": "Your personal AI operating system — a digital twin that advocates for your interests 24/7. Orchestrates sub-agents, maintains persistent memory, forecasts opportunities, guards against threats, and never gives up on finding answers. Uses parallel exploration with pruning (MCTS-style). Activates on: 'orchestrator', 'my AI', 'digital twin', 'spin up agent', 'find me', 'watch for'."
+    "description": "\"Your personal AI operating system \u2014 a digital twin that advocates for your interests 24/7. Orchestrates sub-agents, maintains persistent memory, forecasts opportunities, guards against threats, and never gives up on finding answers. Built on OpenClaw. Activates on: 'orchestrator', 'my AI', 'digital twin', 'second brain', 'spin up agent', 'find me', 'watch for', 'optimize my', 'what should I do'.\""
   },
   {
     "id": "personal-tool-builder",
@@ -976,6 +982,12 @@
     "path": "skills/pptx-official",
     "name": "pptx",
     "description": "\"Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks\""
+  },
+  {
+    "id": "prediction-toolkit",
+    "path": "skills/prediction-toolkit",
+    "name": "prediction-toolkit",
+    "description": "\"Route prediction and forecasting problems to the right method. Covers 7 families: Monte Carlo simulation, statistical forecasting (ARIMA/exponential smoothing), machine learning, Bayesian inference, crowd aggregation, causal inference, and first-principles modeling. Use when you need to predict a future outcome, quantify uncertainty, forecast time-series, update a belief with evidence, infer a cause, or synthesize expert opinions. Combines Monte Carlo Predictor, bootstrap, Bayesian update, and exponential smoothing as callable tools; routes to external methods (ML, markets, causal, physics) when those are the right fit.\""
   },
   {
     "id": "pricing-strategy",
@@ -1305,7 +1317,7 @@
     "id": "universal-ai-harness",
     "path": "skills/universal-ai-harness",
     "name": "universal-ai-harness",
-    "description": "Universal AI Harness — a meta-framework that wraps any AI model to reduce token waste, ensure spec-driven thinking, maintain persistent memory, and produce calibrated outputs. Combines BMAD spec-driven methodology, Deep Confidence reasoning, Monte Carlo validation, ReAct execution, and continuous learning. Seven layers: INTAKE, MEMORY, SPEC, REASON, VALIDATE, EXECUTE, LEARN. Activates on: 'harness mode', 'spec-driven', 'BMAD', 'think first', 'structured thinking', 'truth-seeking'."
+    "description": "\"Universal AI Harness \u2014 a meta-framework that wraps any AI model to reduce token waste, ensure spec-driven thinking, maintain persistent memory, and produce calibrated, high-accuracy outputs. Combines BMAD spec-driven methodology, Deep Confidence reasoning, Monte Carlo validation, ReAct execution, and continuous learning. Use for any complex task, decision, or build. Activates on: 'think first', 'harness mode', 'spec-driven', 'BMAD', 'deep reasoning', 'plan before acting', 'structured thinking', 'truth-seeking'.\""
   },
   {
     "id": "upstash-qstash",

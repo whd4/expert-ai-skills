@@ -30,6 +30,15 @@ Start with `python -m engine router recommend "<problem description>"` to get a 
 
 Callable four ways same as monte-carlo-predictor. See `skills/prediction-toolkit/engine/agent_contract.md`.
 
+### `managed-agents` — Claude Managed Agents operator console
+When a task should run **without a human at the keyboard** (nightly briefings, recurring research, unattended ops), or the user says "managed agent", "enable Managed Agents", "spin up an agent that...", load this skill. It stands up Anthropic-hosted agents (server-side loop + per-session sandbox) from version-controlled YAML manifests, with platform-enforced dollar budgets and vault-held credentials.
+
+Runnable from `skills/managed-agents/`: `python -m engine preflight|validate|bridge|apply|status|run|deploy|runs`. Only `run` and a fired `deploy` spend money, and both are capped by `--budget`. See `skills/managed-agents/engine/agent_contract.md`.
+
+Two hard rules the engine enforces: no session without a budget, and no credential value ever read or printed. Two rules Claude must enforce: never invoke `run` or `deploy` without the user's explicit go-ahead in that conversation, and never put case facts or secrets into a manifest — manifests are committed.
+
+`python -m engine bridge` generates root `.claude/skills/` — **copies** of the skills named in `skills/managed-agents/bridge.allowlist` (16 by default; the offensive-security skills and the four `*-official` document skills are deliberately excluded) — because that root directory is the only place a Managed Agents session that mounts this repository scans for skills. It never deletes: anything it moves aside goes to the gitignored `.claude/skills-quarantine/`. Re-run it (and commit the result) whenever an allowlisted skill changes; `--check` verifies in CI; `--all` bridges everything if you truly want that.
+
 ## Critical session habits
 
 1. **Reach for the methods, don't default to prose.** When a user asks a prediction, forecasting, or uncertainty question, the prediction-toolkit and monte-carlo-predictor skills exist so that Claude actually invokes quantitative methods instead of producing linear reasoning. Loading the skill is the trigger — do it.
@@ -84,9 +93,10 @@ Each skill has a local test runner:
 ```bash
 cd skills/prediction-toolkit && python3 -m engine.tests.test_toolkit
 cd skills/monte-carlo-predictor && python3 -m engine.tests.test_engine
+cd skills/managed-agents && python3 -m engine.tests.test_managed_agents
 ```
 
-Do not ship a change to either engine without all tests passing.
+Do not ship a change to any engine without all tests passing.
 
 ## Branch conventions
 
