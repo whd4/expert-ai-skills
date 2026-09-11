@@ -1,0 +1,51 @@
+kind: deployment
+name: henry-morning-briefing
+
+# Resolved to real IDs at deploy time from agents/state.json, so this file
+# stays readable and portable across workspaces.
+agent_name: Atlas
+environment_name: henry-cloud
+
+schedule:
+  type: cron
+  # 07:10 local, Monday-Friday. Deliberately outside 01:00-03:59: cron matches
+  # literal wall-clock, so a DST spring-forward SKIPS a time in that window and
+  # a fall-back fires it TWICE.
+  expression: "10 7 * * 1-5"
+  timezone: America/Chicago
+
+initial_events:
+  - type: user.message
+    content:
+      - type: text
+        text: |
+          Produce this morning's briefing for HENRY AI Corporation. Keep it to
+          one page and lead with the bottom line.
+
+          1. Track 2 pipeline (TXS5450, TXS5491, TXS5513): search for anything
+             new that is publicly reported about these firms or their local
+             market. Cite each item with URL and retrieval date. If there is
+             nothing new, say "no change" - do not manufacture movement.
+          2. Houston market signal for Track 1: one or two developments that
+             would change who is worth approaching this week, with sources.
+          3. The single highest-leverage action available today, and what it
+             costs. If it creates a recurring cost, name what would have to be
+             sold to pay for it.
+          4. Anything you could NOT verify - list it plainly under "unverified".
+
+          Write the briefing to /mnt/session/outputs/briefing-<YYYY-MM-DD>.md.
+          Do not send it anywhere.
+
+x-notes: |
+  Fire times are jittered up to 15% of the interval (floor 5s, cap 9 minutes),
+  so a daily deployment can land several minutes off the listed time. Never
+  hang a downstream deadline on `upcoming_runs_at`.
+
+  Test it before trusting the schedule:
+    python -m engine deploy agents/morning-briefing.deployment.yaml --dry-run
+    # then, once created, a manual fire (works even while paused):
+    #   POST /v1/deployments/{id}/run
+
+  Every firing creates a real session and spends real money. The --budget flag
+  is copied onto each fired session as a hard cap. Pause the deployment
+  (reversible) rather than archiving it (terminal) if you need it to stop.
