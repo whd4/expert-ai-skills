@@ -37,7 +37,7 @@ Runnable from `skills/managed-agents/`: `python -m engine preflight|validate|bri
 
 Two hard rules the engine enforces: no session without a budget, and no credential value ever read or printed. Two rules Claude must enforce: never invoke `run` or `deploy` without the user's explicit go-ahead in that conversation, and never put case facts or secrets into a manifest — manifests are committed.
 
-`python -m engine bridge` generates root `.claude/skills/` (relative symlinks into `skills/`) so a session that mounts this repository discovers the whole library. Re-run it whenever a skill is added; `--check` verifies in CI.
+`python -m engine bridge` generates root `.claude/skills/` — **copies** of the skills named in `skills/managed-agents/bridge.allowlist` (16 by default; the offensive-security skills and the four `*-official` document skills are deliberately excluded) — because that root directory is the only place a Managed Agents session that mounts this repository scans for skills. It never deletes: anything it moves aside goes to the gitignored `.claude/skills-quarantine/`. Re-run it (and commit the result) whenever an allowlisted skill changes; `--check` verifies in CI; `--all` bridges everything if you truly want that.
 
 ## Critical session habits
 
