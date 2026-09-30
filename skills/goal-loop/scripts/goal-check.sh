@@ -28,16 +28,22 @@ mkdir -p "$OUT_DIR"
 touch "$LOG"
 
 stall_state() {
-  # Stalled = last three runs produced byte-identical output.
+  # Stalled = three failures of the same command, exit code and output.
+  # Passing a completion check is done, even if its output repeats.
   local last3
-  last3=$(tail -n 3 "$LOG" | awk -F'\t' '{print $4}')
+  last3=$(tail -n 3 "$LOG")
   local n
   n=$(echo "$last3" | grep -c .)
   if [[ "$n" -lt 3 ]]; then
     echo "not enough runs"
     return
   fi
-  if [[ $(echo "$last3" | sort -u | wc -l) -eq 1 ]]; then
+  if printf '%s\n' "$last3" | awk -F'\t' '
+    NF != 4 || $3 !~ /^[1-9][0-9]*$/ { invalid = 1 }
+    NR == 1 { first = $2 FS $3 FS $4 }
+    $2 FS $3 FS $4 != first { changed = 1 }
+    END { exit !(NR == 3 && !invalid && !changed) }
+  '; then
     echo "STALLED (3 identical outputs) — change approach, do not rerun"
   else
     echo "moving"
@@ -60,7 +66,10 @@ bash -c "$CMD" >"$OUT_FILE" 2>&1
 RC=$?
 
 HASH=$(sha256sum "$OUT_FILE" | cut -c1-16)
-printf '%s\t%s\t%s\t%s\n' "$TS" "$CMD" "$RC" "$HASH" >>"$LOG"
+# Bash-escaped commands keep tabs/newlines inside one TSV field. The original
+# command is still executed unchanged above; status displays its escaped form.
+printf -v LOG_CMD '%q' "$CMD"
+printf '%s\t%s\t%s\t%s\n' "$TS" "$LOG_CMD" "$RC" "$HASH" >>"$LOG"
 
 if [[ $RC -eq 0 ]]; then
   echo "PASS  run=$RUN_ID  exit=0"

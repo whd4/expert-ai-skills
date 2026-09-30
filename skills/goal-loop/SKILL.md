@@ -22,6 +22,10 @@ Learn or decide the answer, write it down, and keep going.
 
 A "coding decision" is anything a senior engineer on the team would decide alone: file layout, naming, library choice among reasonable options, test strategy, data shape, error handling, refactor scope, which of two working approaches to keep, how to fix a failing check. If you can reverse it with `git checkout`, it is yours to decide.
 
+Work within the user's authorization and constraints. Preserve pre-existing
+edits and user data; reversibility does not authorize discarding someone else's
+work. Prefer an isolated branch or worktree when the checkout contains local edits.
+
 You still stop for the **escalation set**, and only for it:
 
 | Escalate when | Why it is the user's call |
@@ -123,12 +127,17 @@ Three horizons run at once:
 
 ### Stall detection
 
-Track the last three check outputs. If they are identical, you are stalled. Do not run the same fix a fourth time. Change one of:
+Track the last three failed checks. If the same command returns the same nonzero exit code and byte-identical output three times consecutively, you are stalled. Passing checks mean completion; a changed command or exit code starts a new comparison. Do not run the same fix a fourth time. Change one of:
 
 - **Approach:** different algorithm, library, or file.
 - **Observability:** add logging, print intermediate state, run a smaller case.
 - **Decomposition:** split the goal into two goals with their own checks.
 - **Altitude:** step back and re-read `intent.md`; the goal may be wrong.
+
+The runner logs commands in Bash-escaped form so multiline commands and tabs
+remain one evidence record per run. Its regression suite is
+`python -m unittest discover -s skills/goal-loop/tests -v` from the repo root;
+it requires Bash (Git Bash on Windows) and Python's standard library.
 
 If twenty iterations pass with no metric movement, write the diagnosis to `progress.md` and escalate with a specific question, never a general "what should I do?".
 

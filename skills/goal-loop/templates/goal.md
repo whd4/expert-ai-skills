@@ -25,7 +25,7 @@ Keep as JSON when the list is long; models corrupt Markdown checklists more ofte
 
 | Horizon | Max iterations | Stall rule |
 |---|---|---|
-| Micro (edit → check) | 30 | 3 identical outputs → change approach |
+| Micro (edit → check) | 30 | 3 consecutive identical failed checks → change approach |
 | Macro (feature) | 10 | no metric movement in 20 micro loops → write diagnosis, escalate |
 | Session | until done | commit + progress.md before context ends |
 
