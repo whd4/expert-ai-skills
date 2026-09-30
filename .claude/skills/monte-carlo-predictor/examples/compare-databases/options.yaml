@@ -1,0 +1,73 @@
+# Multi-option decision: compare 3 database strategies over 3 years.
+#
+# Run as:
+#   python -m engine.decision_optimizer examples/compare-databases/options.yaml --pareto
+#   python -m engine.decision_optimizer examples/compare-databases/options.yaml   # single-objective ranking
+
+# Single-objective ranking setting
+objective: "outcomes.net_value_usd.stats.mean"
+maximize: true
+
+# Multi-criteria Pareto setting (used with --pareto)
+criteria:
+  - {path: "outcomes.net_value_usd.stats.mean",  maximize: true,  label: "expected_value"}
+  - {path: "outcomes.net_value_usd.stats.p5",    maximize: true,  label: "worst_case_floor"}
+  - {path: "outcomes.migration_cost_usd.stats.mean", maximize: false, label: "avg_migration_cost"}
+
+options:
+  stay_on_postgres:
+    trials: 15000
+    seed: 1
+    variables:
+      migration_weeks: {distribution: constant, value: 0}
+      team_size: {distribution: constant, value: 5}
+      engineer_week_cost_usd: {distribution: normal, mean: 5500, stddev: 800}
+      team_disruption_pct: {distribution: constant, value: 0}
+      perf_gain_factor: {distribution: constant, value: 1.0}
+      annual_ops_cost_delta_usd: {distribution: constant, value: 0}
+      perf_value_per_unit_per_year_usd: {distribution: triangular, low: 20000, likely: 50000, high: 120000}
+      scaling_headroom_lost: {distribution: triangular, low: 0, likely: 8000, high: 30000}
+    outcomes:
+      migration_cost_usd: "migration_weeks * team_size * team_disruption_pct * engineer_week_cost_usd"
+      perf_value_3yr_usd: "(perf_gain_factor - 1.0) * perf_value_per_unit_per_year_usd * 3"
+      ops_cost_3yr_usd: "annual_ops_cost_delta_usd * 3"
+      headroom_cost_3yr: "scaling_headroom_lost * 3"
+      net_value_usd: "perf_value_3yr_usd - migration_cost_usd - ops_cost_3yr_usd - headroom_cost_3yr"
+
+  migrate_to_mongo:
+    trials: 15000
+    seed: 1
+    variables:
+      migration_weeks: {distribution: triangular, low: 6, likely: 10, high: 24}
+      team_size: {distribution: constant, value: 5}
+      engineer_week_cost_usd: {distribution: normal, mean: 5500, stddev: 800}
+      team_disruption_pct: {distribution: normal, mean: 0.40, stddev: 0.12}
+      perf_gain_factor: {distribution: triangular, low: 0.85, likely: 1.25, high: 1.8}
+      annual_ops_cost_delta_usd: {distribution: normal, mean: 15000, stddev: 20000}
+      perf_value_per_unit_per_year_usd: {distribution: triangular, low: 20000, likely: 50000, high: 120000}
+      scaling_headroom_lost: {distribution: constant, value: 0}
+    outcomes:
+      migration_cost_usd: "migration_weeks * team_size * team_disruption_pct * engineer_week_cost_usd"
+      perf_value_3yr_usd: "(perf_gain_factor - 1.0) * perf_value_per_unit_per_year_usd * 3"
+      ops_cost_3yr_usd: "annual_ops_cost_delta_usd * 3"
+      headroom_cost_3yr: "scaling_headroom_lost * 3"
+      net_value_usd: "perf_value_3yr_usd - migration_cost_usd - ops_cost_3yr_usd - headroom_cost_3yr"
+
+  scale_postgres_vertically:
+    trials: 15000
+    seed: 1
+    variables:
+      migration_weeks: {distribution: triangular, low: 1, likely: 2, high: 4}
+      team_size: {distribution: constant, value: 2}
+      engineer_week_cost_usd: {distribution: normal, mean: 5500, stddev: 800}
+      team_disruption_pct: {distribution: normal, mean: 0.15, stddev: 0.05}
+      perf_gain_factor: {distribution: triangular, low: 1.0, likely: 1.3, high: 1.6}
+      annual_ops_cost_delta_usd: {distribution: triangular, low: 10000, likely: 25000, high: 50000}
+      perf_value_per_unit_per_year_usd: {distribution: triangular, low: 20000, likely: 50000, high: 120000}
+      scaling_headroom_lost: {distribution: triangular, low: 0, likely: 3000, high: 10000}
+    outcomes:
+      migration_cost_usd: "migration_weeks * team_size * team_disruption_pct * engineer_week_cost_usd"
+      perf_value_3yr_usd: "(perf_gain_factor - 1.0) * perf_value_per_unit_per_year_usd * 3"
+      ops_cost_3yr_usd: "annual_ops_cost_delta_usd * 3"
+      headroom_cost_3yr: "scaling_headroom_lost * 3"
+      net_value_usd: "perf_value_3yr_usd - migration_cost_usd - ops_cost_3yr_usd - headroom_cost_3yr"

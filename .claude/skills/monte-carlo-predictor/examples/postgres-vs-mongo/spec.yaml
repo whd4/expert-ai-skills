@@ -1,0 +1,110 @@
+# Decision: Should we migrate from Postgres to MongoDB?
+#
+# Context: 2M user SaaS, current Postgres cluster, team of 5 engineers.
+# Considering MongoDB for read scalability. Question: is it worth it?
+#
+# Run with:
+#   python -m engine run examples/postgres-vs-mongo/spec.yaml
+
+trials: 20000
+seed: 7
+
+variables:
+  # How many weeks will the migration actually take?
+  # Best case we nail it in 6 weeks, most likely 10, worst case 24.
+  migration_weeks:
+    distribution: triangular
+    low: 6
+    likely: 10
+    high: 24
+
+  # How much time does the team lose per week during migration?
+  # Normally distributed around 40% of capacity lost.
+  team_disruption_pct:
+    distribution: normal
+    mean: 0.40
+    stddev: 0.12
+
+  # Average cost of an engineer-week (burdened).
+  engineer_week_cost_usd:
+    distribution: normal
+    mean: 5500
+    stddev: 800
+
+  # Team size
+  team_size:
+    distribution: constant
+    value: 5
+
+  # Probability of a data corruption/loss incident during migration.
+  # Beta(2, 50) => mean ≈ 4%, but 95th percentile still up to ~10%.
+  data_loss_probability:
+    distribution: beta
+    alpha: 2
+    beta: 50
+
+  # Cost of recovery if data loss happens.
+  data_loss_cost_usd:
+    distribution: lognormal
+    mean: 10.8     # underlying-normal mean; e^10.8 ≈ $49k median
+    stddev: 1.2    # => wide right tail — could be up to $500k
+
+  # Realized read-performance gain after migration (multiplier on p95 latency).
+  # MongoDB promised 2x, but reality often lands between 0.9x and 1.8x.
+  perf_gain_factor:
+    distribution: triangular
+    low: 0.85
+    likely: 1.25
+    high: 1.8
+
+  # Annual dollar value of a 1x improvement in read performance.
+  # Translates perf gain into revenue/retention. Uncertain, so triangular.
+  perf_value_per_unit_per_year_usd:
+    distribution: triangular
+    low: 20000
+    likely: 50000
+    high: 120000
+
+  # Ongoing annual operational cost delta (MongoDB hosting vs Postgres).
+  # Could be negative (cheaper) or positive (more expensive) depending on scale.
+  annual_ops_cost_delta_usd:
+    distribution: normal
+    mean: 15000
+    stddev: 20000
+
+  # Probability the team can actually sustain MongoDB operationally
+  # without hiring. Beta(5, 2) => mean ~70%.
+  operational_sustainability:
+    distribution: beta
+    alpha: 5
+    beta: 2
+
+outcomes:
+  # Total direct engineering cost of migration (weeks * team * disruption * cost)
+  migration_cost_usd: >
+    migration_weeks * team_size * team_disruption_pct * engineer_week_cost_usd
+
+  # Expected data loss cost (probability-weighted)
+  expected_data_loss_cost_usd: "data_loss_probability * data_loss_cost_usd"
+
+  # Performance value over 3 years (decision horizon)
+  perf_value_3yr_usd: "(perf_gain_factor - 1.0) * perf_value_per_unit_per_year_usd * 3"
+
+  # Ops cost delta over 3 years
+  ops_cost_3yr_usd: "annual_ops_cost_delta_usd * 3"
+
+  # Net value of migration over 3 years
+  net_value_usd: >
+    perf_value_3yr_usd
+    - migration_cost_usd
+    - expected_data_loss_cost_usd
+    - ops_cost_3yr_usd
+
+  # Decision criteria
+  migration_pays_off: "net_value_usd > 0"
+  big_win: "net_value_usd > 100000"
+  disaster: "net_value_usd < -100000"
+  team_can_sustain: "operational_sustainability > 0.6"
+
+  # "Green light" — positive net value AND sustainable operationally
+  should_migrate: "net_value_usd > 0 and operational_sustainability > 0.6"

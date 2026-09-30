@@ -7,3 +7,5 @@ LOCAL_CONFIG.md
 
 # goal-loop raw check logs (progress.md is the committed summary)
 .goal/
+# managed-agents bridge: local safety net for entries the bridge moved aside - never committed
+.claude/skills-quarantine/
