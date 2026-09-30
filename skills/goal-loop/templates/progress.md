@@ -15,13 +15,13 @@ Newest first. One line per run: timestamp, command, exit code, one-phrase summar
 
 Decision, reason, how to reverse.
 
-- 
+-
 
 ## Stalls and approach changes
 
 What was tried three times, what changed, what happened.
 
-- 
+-
 
 ## Next
 

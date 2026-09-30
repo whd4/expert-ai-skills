@@ -33,4 +33,4 @@ Keep as JSON when the list is long; models corrupt Markdown checklists more ofte
 
 Only these stop the loop:
 
-- 
+-

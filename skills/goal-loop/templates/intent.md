@@ -39,4 +39,4 @@ Questions that do not block the work. Answer them in `progress.md` as they resol
 
 Appended during the loop. Each line: decision, reason, how to reverse.
 
-- 
+-
