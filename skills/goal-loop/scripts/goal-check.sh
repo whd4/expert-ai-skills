@@ -16,7 +16,9 @@
 #
 # Log record (TSV): timestamp, bash-escaped command, exit code, output hash.
 #
-# Exit code mirrors the command's exit code so it can be used in hooks or /goal.
+# Commands run under `bash -o pipefail`, so any failing stage of a pipeline
+# fails the check. Exit code mirrors the command's exit code so it can be used
+# in hooks or /goal.
 
 set -u
 
@@ -94,7 +96,9 @@ TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 OUT_FILE=$(mktemp "$OUT_DIR/run.XXXXXXXX") || { echo "goal-check: cannot create output file in $OUT_DIR" >&2; exit 2; }
 RUN_ID="${OUT_FILE##*/run.}"
 
-bash -c "$CMD" >"$OUT_FILE" 2>&1
+# pipefail: a pipeline fails if any stage fails, so `curl ... | jq ...` cannot
+# log PASS when curl itself failed.
+bash -o pipefail -c "$CMD" >"$OUT_FILE" 2>&1
 RC=$?
 
 HASH=$(sha256_file "$OUT_FILE" | cut -c1-16)

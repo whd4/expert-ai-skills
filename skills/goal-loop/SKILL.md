@@ -91,10 +91,12 @@ Then write `goal.md` with a **completion condition that a machine can check**. B
 ```
 python3 -m engine.tests.test_engine        exits 0
 npx tsc --noEmit                            exits 0 and prints nothing
-curl -s localhost:3000/health | jq .ok      prints true
-diff <(./render) fixtures/expected.txt      is empty
+curl -fsS localhost:3000/health | jq -e .ok exits 0
+diff <(./render) fixtures/expected.txt      exits 0
 playwright screenshot matches baseline      within 0.1% pixels
 ```
+
+Put pass or fail in the **exit code**, because that is what `scripts/goal-check.sh` and `/goal` read. Plain `jq .ok` exits 0 even when it prints `false`, so use `jq -e`. Plain `curl -s` exits 0 on an HTTP 500, so use `curl -f`. The runner executes every check under `pipefail`, so a failing stage anywhere in a pipeline fails the check.
 
 If no machine check exists, **build one first**. A fixture, a smoke script, a golden file, a screenshot baseline. That is step zero of the loop, not optional polish. Without a check the user becomes the verification loop, which is exactly what this skill exists to prevent.
 

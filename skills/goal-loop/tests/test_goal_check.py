@@ -61,6 +61,23 @@ class GoalCheckTests(unittest.TestCase):
             self.assertEqual(result.returncode, code)
         self.assertNotIn("STALLED", result.stdout)
 
+    def test_failing_pipeline_stage_fails_the_check(self):
+        # Regression: without pipefail, `false | cat` logged PASS with exit 0.
+        result = self.run_check("false | cat")
+        self.assertEqual(result.returncode, 1)
+        self.assertTrue(result.stdout.startswith("FAIL"))
+        record = (self.root / ".goal/checks.log").read_text().splitlines()[-1]
+        self.assertEqual(record.split("\t")[2], "1")
+
+    def test_producer_exit_code_propagates_through_pipeline(self):
+        result = self.run_check("(printf data; exit 5) | cat")
+        self.assertEqual(result.returncode, 5)
+
+    def test_passing_pipeline_still_passes(self):
+        result = self.run_check("printf ok | grep -q ok")
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue(result.stdout.startswith("PASS"))
+
     def test_parallel_runs_get_unique_outputs_and_log_records(self):
         # Regression: run ids came from the log length, so concurrent runs
         # shared one output file and one id.
