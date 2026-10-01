@@ -91,6 +91,64 @@ class GoalCheckTests(unittest.TestCase):
         self.assertEqual(len({r.split("\t")[3] for r in records}), n)
 
 
+class HasherFallbackTests(unittest.TestCase):
+    """Run the script with a PATH that hides some hashing tools."""
+
+    # Everything the script and its test commands need, minus the hashers.
+    BASE_TOOLS = ["bash", "mktemp", "date", "cut", "tail", "awk", "grep",
+                  "wc", "cat", "printf", "touch", "mkdir", "flock"]
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="goal-check-hash-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.bin = self.root / "bin"
+        self.bin.mkdir()
+        for tool in self.BASE_TOOLS:
+            real = shutil.which(tool)
+            if real:
+                (self.bin / tool).symlink_to(real)
+
+    def add_tool(self, name):
+        real = shutil.which(name)
+        if real is None:
+            self.skipTest(f"{name} not installed")
+        (self.bin / name).symlink_to(real)
+
+    def run_check(self, command):
+        env = {"PATH": str(self.bin), "HOME": str(self.root)}
+        return subprocess.run([str(self.bin / "bash"), SCRIPT.as_posix(), command],
+                              cwd=self.root, env=env, text=True,
+                              capture_output=True, check=False)
+
+    def assert_hashes_track_output(self):
+        for i in range(3):
+            result = self.run_check(f"printf 'out-{i}'; exit 4")
+            self.assertEqual(result.returncode, 4, result.stderr)
+        self.assertNotIn("STALLED", result.stdout)
+        hashes = [r.split("\t")[3] for r in
+                  (self.root / ".goal/checks.log").read_text().splitlines()]
+        self.assertEqual(len(hashes), 3)
+        self.assertTrue(all(len(h) == 16 for h in hashes))
+        self.assertEqual(len(set(hashes)), 3)
+
+    def test_shasum_fallback_when_sha256sum_missing(self):
+        # Regression: on stock macOS the empty hash made changed output look stalled.
+        self.add_tool("shasum")
+        self.assert_hashes_track_output()
+
+    def test_openssl_fallback_when_sha256sum_and_shasum_missing(self):
+        self.add_tool("openssl")
+        self.assert_hashes_track_output()
+
+    def test_no_hasher_fails_loudly_and_logs_nothing(self):
+        result = self.run_check("true")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("no SHA-256 tool", result.stderr)
+        log = self.root / ".goal/checks.log"
+        self.assertEqual(log.read_text() if log.exists() else "", "")
+
+
 class GitignoreTests(unittest.TestCase):
     REPO = Path(__file__).resolve().parents[3]
 

@@ -34,6 +34,29 @@ fi
 mkdir -p "$OUT_DIR"
 touch "$LOG"
 
+# Stall detection compares output hashes, so a missing hasher must fail loudly
+# instead of logging an empty hash. sha256sum is GNU coreutils; stock macOS
+# ships shasum; openssl is the last resort.
+sha256_file() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1"
+  elif command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1"
+  elif command -v openssl >/dev/null 2>&1; then
+    openssl dgst -sha256 -r "$1"
+  else
+    return 127
+  fi
+}
+
+if [[ "$MODE" != "--status" ]] \
+   && ! command -v sha256sum >/dev/null 2>&1 \
+   && ! command -v shasum >/dev/null 2>&1 \
+   && ! command -v openssl >/dev/null 2>&1; then
+  echo "goal-check: no SHA-256 tool found (need sha256sum, shasum, or openssl)" >&2
+  exit 2
+fi
+
 stall_state() {
   # Stalled = three failures of the same command, exit code and output.
   # Passing a completion check is done, even if its output repeats.
@@ -74,7 +97,11 @@ RUN_ID="${OUT_FILE##*/run.}"
 bash -c "$CMD" >"$OUT_FILE" 2>&1
 RC=$?
 
-HASH=$(sha256sum "$OUT_FILE" | cut -c1-16)
+HASH=$(sha256_file "$OUT_FILE" | cut -c1-16)
+if [[ ! "$HASH" =~ ^[0-9a-f]{16}$ ]]; then
+  echo "goal-check: could not hash $OUT_FILE; not logging this run" >&2
+  exit 2
+fi
 # Bash-escaped commands keep tabs/newlines inside one TSV field. The original
 # command is still executed unchanged above; status displays its escaped form.
 printf -v LOG_CMD '%q' "$CMD"
