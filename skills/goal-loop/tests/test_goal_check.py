@@ -153,7 +153,8 @@ class GoalCheckTests(unittest.TestCase):
         (self.root / ".goal").chmod(0o555)
         self.addCleanup((self.root / ".goal").chmod, 0o755)
         args = [BASH, SCRIPT.as_posix(), "x", "--status"]
-        if os.geteuid() == 0:
+        # os.geteuid does not exist on Windows; there is no root to drop there.
+        if getattr(os, "geteuid", lambda: -1)() == 0:
             # root ignores file modes; run as an unprivileged user instead.
             if shutil.which("runuser") is None:
                 self.skipTest("cannot drop root to test read-only access")
@@ -209,6 +210,10 @@ class HasherFallbackTests(unittest.TestCase):
                   "wc", "cat", "printf", "touch", "mkdir", "flock"]
 
     def setUp(self):
+        # These tests hide tools by building a PATH of symlinks. That needs
+        # POSIX symlinks and a POSIX PATH, so skip on Windows / Git Bash.
+        if os.name != "posix":
+            self.skipTest("PATH-of-symlinks tool hiding is POSIX-only")
         self.temp = tempfile.TemporaryDirectory(prefix="goal-check-hash-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
