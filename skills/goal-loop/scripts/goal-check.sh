@@ -6,8 +6,15 @@
 #   scripts/goal-check.sh "<command>" --status   # show last 5 runs and stall state
 #
 # Log lives at .goal/checks.log in the current directory (create .goal/ first
-# or let this script do it). Add .goal/ to .gitignore if you do not want it
-# committed; progress.md is the committed summary, this log is the raw evidence.
+# or let this script do it). Ignore only .goal/checks.log and .goal/out/ in
+# .gitignore; .goal/goal.md and .goal/progress.md are the committed handoff
+# artifacts, the log and out/ are the raw evidence.
+#
+# Safe to run concurrently (parallel subagent checks): each run gets its own
+# output file from mktemp, and the log line is appended in a single write,
+# under flock when available.
+#
+# Log record (TSV): timestamp, bash-escaped command, exit code, output hash.
 #
 # Exit code mirrors the command's exit code so it can be used in hooks or /goal.
 
@@ -59,8 +66,10 @@ if [[ "$MODE" == "--status" ]]; then
 fi
 
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-RUN_ID=$(wc -l < "$LOG")
-OUT_FILE="$OUT_DIR/$RUN_ID.txt"
+# mktemp allocates the output file atomically, so concurrent runs never share
+# one. The random suffix doubles as the run id printed below.
+OUT_FILE=$(mktemp "$OUT_DIR/run.XXXXXXXX") || { echo "goal-check: cannot create output file in $OUT_DIR" >&2; exit 2; }
+RUN_ID="${OUT_FILE##*/run.}"
 
 bash -c "$CMD" >"$OUT_FILE" 2>&1
 RC=$?
@@ -69,7 +78,12 @@ HASH=$(sha256sum "$OUT_FILE" | cut -c1-16)
 # Bash-escaped commands keep tabs/newlines inside one TSV field. The original
 # command is still executed unchanged above; status displays its escaped form.
 printf -v LOG_CMD '%q' "$CMD"
-printf '%s\t%s\t%s\t%s\n' "$TS" "$LOG_CMD" "$RC" "$HASH" >>"$LOG"
+printf -v RECORD '%s\t%s\t%s\t%s\n' "$TS" "$LOG_CMD" "$RC" "$HASH"
+if command -v flock >/dev/null 2>&1; then
+  { flock 9; printf '%s' "$RECORD" >>"$LOG"; } 9>>"$LOG"
+else
+  printf '%s' "$RECORD" >>"$LOG"
+fi
 
 if [[ $RC -eq 0 ]]; then
   echo "PASS  run=$RUN_ID  exit=0"

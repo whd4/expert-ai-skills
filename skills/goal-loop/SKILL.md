@@ -54,8 +54,10 @@ Templates live in `templates/`. Put the instances in the project, not in the ski
 | File | Lives at | Written by |
 |---|---|---|
 | `intent.md` | `intent/<date>-<slug>.md` in the repo | You, from the user's words, then corrected by them if they choose |
-| `goal.md` | `.goal/goal.md` (gitignored) or the plan file | You |
-| `progress.md` | `.goal/progress.md` or `progress.md` | You, every time a check runs |
+| `goal.md` | `.goal/goal.md` (committed) or the plan file | You |
+| `progress.md` | `.goal/progress.md` (committed) or `progress.md` | You, every time a check runs |
+
+Only the raw evidence is gitignored: `.goal/checks.log` and `.goal/out/`. Ignore those two paths, never the whole `.goal/` folder, or a fresh worktree loses the handoff files.
 
 ---
 

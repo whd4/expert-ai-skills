@@ -61,6 +61,52 @@ class GoalCheckTests(unittest.TestCase):
             self.assertEqual(result.returncode, code)
         self.assertNotIn("STALLED", result.stdout)
 
+    def test_parallel_runs_get_unique_outputs_and_log_records(self):
+        # Regression: run ids came from the log length, so concurrent runs
+        # shared one output file and one id.
+        n = 10
+        procs = [
+            subprocess.Popen(
+                [BASH, SCRIPT.as_posix(), f"sleep 0.2; printf 'run-{i}'; exit 3"],
+                cwd=self.root, text=True, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            for i in range(n)
+        ]
+        outs = [p.communicate()[0] for p in procs]
+        self.assertTrue(all(p.returncode == 3 for p in procs))
+
+        run_ids = {line.split("run=")[1].split()[0]
+                   for out in outs for line in out.splitlines()
+                   if line.startswith("FAIL")}
+        self.assertEqual(len(run_ids), n)
+
+        out_files = sorted((self.root / ".goal/out").iterdir())
+        self.assertEqual(len(out_files), n)
+        contents = {f.read_text() for f in out_files}
+        self.assertEqual(contents, {f"run-{i}" for i in range(n)})
+
+        records = (self.root / ".goal/checks.log").read_text().splitlines()
+        self.assertEqual(len(records), n)
+        self.assertTrue(all(len(r.split("\t")) == 4 for r in records))
+        self.assertEqual(len({r.split("\t")[3] for r in records}), n)
+
+
+class GitignoreTests(unittest.TestCase):
+    REPO = Path(__file__).resolve().parents[3]
+
+    def check_ignored(self, path):
+        return subprocess.run(["git", "check-ignore", "-q", path],
+                              cwd=self.REPO, check=False).returncode == 0
+
+    def test_raw_evidence_is_ignored(self):
+        self.assertTrue(self.check_ignored(".goal/checks.log"))
+        self.assertTrue(self.check_ignored(".goal/out/run.abc123"))
+
+    def test_handoff_files_are_tracked(self):
+        # Regression: ignoring all of .goal/ dropped the committed handoff files.
+        self.assertFalse(self.check_ignored(".goal/goal.md"))
+        self.assertFalse(self.check_ignored(".goal/progress.md"))
+
 
 if __name__ == "__main__":
     unittest.main()

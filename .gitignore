@@ -5,7 +5,8 @@ walkthrough.md
 .gemini/
 LOCAL_CONFIG.md
 
-# goal-loop raw check logs (progress.md is the committed summary)
-.goal/
+# goal-loop raw check evidence only; .goal/goal.md and .goal/progress.md are committed handoff files
+.goal/checks.log
+.goal/out/
 # managed-agents bridge: local safety net for entries the bridge moved aside - never committed
 .claude/skills-quarantine/
