@@ -34,13 +34,6 @@ if [[ -z "$CMD" ]]; then
   exit 2
 fi
 
-# A check without an evidence record is not a verified check. Prove the log is
-# appendable before running anything, and exit 2 (runner error) if it is not.
-if ! mkdir -p "$OUT_DIR" 2>/dev/null || ! { : >>"$LOG"; } 2>/dev/null; then
-  echo "goal-check: cannot write evidence log $LOG; not running the check" >&2
-  exit 2
-fi
-
 # Stall detection compares output hashes, so a missing hasher must fail loudly
 # instead of logging an empty hash. sha256sum is GNU coreutils; stock macOS
 # ships shasum; openssl is the last resort.
@@ -87,12 +80,29 @@ stall_state() {
   fi
 }
 
+# --status is read-only: it needs read access to the log and nothing else, so
+# it works in read-only checkouts and never creates .goal/.
 if [[ "$MODE" == "--status" ]]; then
+  if [[ ! -e "$LOG" ]]; then
+    echo "No runs recorded at $LOG"
+    exit 0
+  fi
+  if [[ ! -f "$LOG" || ! -r "$LOG" ]]; then
+    echo "goal-check: cannot read evidence log $LOG" >&2
+    exit 2
+  fi
   echo "Last 5 runs:"
   tail -n 5 "$LOG" | awk -F'\t' '{printf "  %s  exit=%s  %s\n", $1, $3, $2}'
   echo "Total runs: $(wc -l < "$LOG")"
   echo "Stall: $(stall_state)"
   exit 0
+fi
+
+# A check without an evidence record is not a verified check. Prove the log is
+# appendable before running anything, and exit 2 (runner error) if it is not.
+if ! mkdir -p "$OUT_DIR" 2>/dev/null || ! { : >>"$LOG"; } 2>/dev/null; then
+  echo "goal-check: cannot write evidence log $LOG; not running the check" >&2
+  exit 2
 fi
 
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)

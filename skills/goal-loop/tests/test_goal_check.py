@@ -79,7 +79,7 @@ class GoalCheckTests(unittest.TestCase):
         self.assertTrue(result.stdout.startswith("PASS"))
 
     # The exact-value form documented in templates/goal.md and SKILL.md.
-    EXACT = 'out=$({cmd}) && test "$out" = "expected"'
+    EXACT = 'set -o pipefail; out=$({cmd}) && test "$out" = "expected"'
 
     def test_exact_value_form_fails_when_command_fails_with_expected_output(self):
         # Regression: `test "$(cmd)" = value` passed when cmd exited 7 but printed value.
@@ -122,6 +122,54 @@ class GoalCheckTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertNotIn("PASS", result.stdout)
         self.assertIn("could not write evidence record", result.stderr)
+
+    def test_exact_value_form_is_safe_without_the_runner(self):
+        # Regression: the documented form relied on the runner's pipefail, so
+        # under plain bash (as in /goal) a failing producer still passed.
+        cmd = self.EXACT.format(cmd="(printf expected; exit 7) | cat")
+        plain = subprocess.run([BASH, "-c", cmd], cwd=self.root, check=False)
+        self.assertEqual(plain.returncode, 7)
+
+    def test_documented_pipelines_are_self_contained(self):
+        # Every condition containing a pipe, in the docs' code blocks, must
+        # enable pipefail itself so it is correct outside the runner.
+        root = SCRIPT.parents[1]
+        for doc in [root / "SKILL.md", root / "templates" / "goal.md"]:
+            in_code = False
+            for line in doc.read_text(encoding="utf-8").splitlines():
+                if line.startswith("```"):
+                    in_code = not in_code
+                    continue
+                if in_code and " | " in line:
+                    self.assertTrue(line.lstrip().startswith("set -o pipefail;"),
+                                    f"{doc.name}: pipeline without pipefail: {line}")
+
+    def test_status_is_read_only(self):
+        # Regression: --status required write access and created .goal/out.
+        self.assertEqual(self.run_check("printf boom; exit 3").returncode, 3)
+        shutil.rmtree(self.root / ".goal/out")
+        log = self.root / ".goal/checks.log"
+        log.chmod(0o444)
+        (self.root / ".goal").chmod(0o555)
+        self.addCleanup((self.root / ".goal").chmod, 0o755)
+        args = [BASH, SCRIPT.as_posix(), "x", "--status"]
+        if os.geteuid() == 0:
+            # root ignores file modes; run as an unprivileged user instead.
+            if shutil.which("runuser") is None:
+                self.skipTest("cannot drop root to test read-only access")
+            os.chmod(self.root, 0o755)
+            args = ["runuser", "-u", "nobody", "--"] + args
+        result = subprocess.run(args, cwd=self.root, text=True,
+                                capture_output=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Total runs: 1", result.stdout)
+        self.assertFalse((self.root / ".goal/out").exists())
+
+    def test_status_without_log_creates_nothing(self):
+        result = self.run_check("x", status=True)
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("No runs recorded", result.stdout)
+        self.assertFalse((self.root / ".goal").exists())
 
     def test_parallel_runs_get_unique_outputs_and_log_records(self):
         # Regression: run ids came from the log length, so concurrent runs
