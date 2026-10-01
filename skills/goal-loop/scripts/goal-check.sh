@@ -34,8 +34,12 @@ if [[ -z "$CMD" ]]; then
   exit 2
 fi
 
-mkdir -p "$OUT_DIR"
-touch "$LOG"
+# A check without an evidence record is not a verified check. Prove the log is
+# appendable before running anything, and exit 2 (runner error) if it is not.
+if ! mkdir -p "$OUT_DIR" 2>/dev/null || ! { : >>"$LOG"; } 2>/dev/null; then
+  echo "goal-check: cannot write evidence log $LOG; not running the check" >&2
+  exit 2
+fi
 
 # Stall detection compares output hashes, so a missing hasher must fail loudly
 # instead of logging an empty hash. sha256sum is GNU coreutils; stock macOS
@@ -112,9 +116,16 @@ fi
 printf -v LOG_CMD '%q' "$CMD"
 printf -v RECORD '%s\t%s\t%s\t%s\n' "$TS" "$LOG_CMD" "$RC" "$HASH"
 if command -v flock >/dev/null 2>&1; then
-  { flock 9; printf '%s' "$RECORD" >>"$LOG"; } 9>>"$LOG"
+  { flock 9 && printf '%s' "$RECORD" >>"$LOG"; } 9>>"$LOG"
 else
   printf '%s' "$RECORD" >>"$LOG"
+fi
+WRITE_RC=$?
+# The log was appendable before the run, but the write can still fail (disk
+# full, log replaced mid-run). Never report a result that was not recorded.
+if [[ $WRITE_RC -ne 0 ]]; then
+  echo "goal-check: could not write evidence record to $LOG (command exit was $RC); not reporting a result" >&2
+  exit 2
 fi
 
 if [[ $RC -eq 0 ]]; then

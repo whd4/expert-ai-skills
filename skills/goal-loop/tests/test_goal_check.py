@@ -103,6 +103,26 @@ class GoalCheckTests(unittest.TestCase):
                 if line.lstrip().startswith('test "$('):
                     self.fail(f"{doc.name}: unsafe exact-value form: {line}")
 
+    def test_unwritable_log_fails_before_running_the_command(self):
+        # Regression: a directory at the log path still printed PASS and exited 0.
+        (self.root / ".goal/checks.log").mkdir(parents=True)
+        result = self.run_check("touch ran")
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn("PASS", result.stdout)
+        self.assertIn("cannot write evidence log", result.stderr)
+        self.assertFalse((self.root / "ran").exists(), "command ran without a log")
+
+    def test_failed_record_write_is_not_reported_as_pass(self):
+        # Regression: a write error after the run (disk full) still printed PASS.
+        if not Path("/dev/full").exists():
+            self.skipTest("/dev/full not available")
+        (self.root / ".goal").mkdir()
+        (self.root / ".goal/checks.log").symlink_to("/dev/full")
+        result = self.run_check("true")
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn("PASS", result.stdout)
+        self.assertIn("could not write evidence record", result.stderr)
+
     def test_parallel_runs_get_unique_outputs_and_log_records(self):
         # Regression: run ids came from the log length, so concurrent runs
         # shared one output file and one id.
