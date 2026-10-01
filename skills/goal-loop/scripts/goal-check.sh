@@ -6,8 +6,9 @@
 #   scripts/goal-check.sh "<command>" --status   # show last 5 runs and stall state
 #
 # Log lives at .goal/checks.log in the current directory (create .goal/ first
-# or let this script do it). Ignore only .goal/checks.log and .goal/out/ in
-# .gitignore; .goal/goal.md and .goal/progress.md are the committed handoff
+# or let this script do it). Ignore only **/.goal/checks.log and **/.goal/out/
+# in .gitignore (the **/ form covers runs launched from subdirectories);
+# .goal/goal.md and .goal/progress.md are the committed handoff
 # artifacts, the log and out/ are the raw evidence.
 #
 # Safe to run concurrently (parallel subagent checks): each run gets its own

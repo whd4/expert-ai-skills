@@ -177,6 +177,17 @@ class GitignoreTests(unittest.TestCase):
         self.assertTrue(self.check_ignored(".goal/checks.log"))
         self.assertTrue(self.check_ignored(".goal/out/run.abc123"))
 
+    def test_raw_evidence_in_nested_dirs_is_ignored(self):
+        # Regression: root-anchored patterns missed runs launched from subdirectories.
+        for prefix in ["foo/", "skills/goal-loop/", "a/b/c/"]:
+            self.assertTrue(self.check_ignored(prefix + ".goal/checks.log"), prefix)
+            self.assertTrue(self.check_ignored(prefix + ".goal/out/run.abc123"), prefix)
+
+    def test_nested_handoff_files_are_tracked(self):
+        for prefix in ["foo/", "a/b/c/"]:
+            self.assertFalse(self.check_ignored(prefix + ".goal/goal.md"), prefix)
+            self.assertFalse(self.check_ignored(prefix + ".goal/progress.md"), prefix)
+
     def test_handoff_files_are_tracked(self):
         # Regression: ignoring all of .goal/ dropped the committed handoff files.
         self.assertFalse(self.check_ignored(".goal/goal.md"))

@@ -6,9 +6,11 @@
 ## Completion condition (machine-checkable)
 
 ```
-<command>            must exit 0
-<command> | <filter> must print <exact value>
+<command>                                          must exit 0
+test "$(<command> | <filter>)" = "<exact value>"   must exit 0
 ```
+
+Every condition is pass or fail by **exit code only**; that is all `scripts/goal-check.sh` and `/goal` read. To require an exact printed value, put the comparison inside the command as above, so a mismatch exits nonzero. Never write "must print X" on its own.
 
 If no such command exists yet, the first sub-goal below is to build one.
 
