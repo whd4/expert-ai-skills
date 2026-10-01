@@ -93,11 +93,11 @@ python3 -m engine.tests.test_engine        exits 0
 npx tsc --noEmit                            exits 0
 curl -fsS localhost:3000/health | jq -e .ok exits 0
 diff <(./render) fixtures/expected.txt      exits 0
-test "$(./bin/version)" = "2.1.0"           exits 0
+v=$(./bin/version) && test "$v" = "2.1.0"  exits 0
 npx playwright test visual.spec.ts          exits 0   (toHaveScreenshot, maxDiffPixelRatio: 0.001)
 ```
 
-Put pass or fail in the **exit code**, because that is what `scripts/goal-check.sh` and `/goal` read. Never write a condition as "prints X" or "within N%" on its own; build the comparison into the command. Plain `jq .ok` exits 0 even when it prints `false`, so use `jq -e`. Plain `curl -s` exits 0 on an HTTP 500, so use `curl -f`. To require an exact value, wrap it as `test "$(cmd)" = "expected"`. The runner executes every check under `pipefail`, so a failing stage anywhere in a pipeline fails the check.
+Put pass or fail in the **exit code**, because that is what `scripts/goal-check.sh` and `/goal` read. Never write a condition as "prints X" or "within N%" on its own; build the comparison into the command. Plain `jq .ok` exits 0 even when it prints `false`, so use `jq -e`. Plain `curl -s` exits 0 on an HTTP 500, so use `curl -f`. To require an exact value, write `out=$(cmd) && test "$out" = "expected"`. Do not write `test "$(cmd)" = "expected"`: the outer `test` decides the status, so a command that fails but still prints the expected value would pass. The runner executes every check under `pipefail`, so a failing stage anywhere in a pipeline fails the check.
 
 If no machine check exists, **build one first**. A fixture, a smoke script, a golden file, a screenshot baseline. That is step zero of the loop, not optional polish. Without a check the user becomes the verification loop, which is exactly what this skill exists to prevent.
 

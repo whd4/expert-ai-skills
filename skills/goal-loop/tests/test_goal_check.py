@@ -78,6 +78,31 @@ class GoalCheckTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertTrue(result.stdout.startswith("PASS"))
 
+    # The exact-value form documented in templates/goal.md and SKILL.md.
+    EXACT = 'out=$({cmd}) && test "$out" = "expected"'
+
+    def test_exact_value_form_fails_when_command_fails_with_expected_output(self):
+        # Regression: `test "$(cmd)" = value` passed when cmd exited 7 but printed value.
+        result = self.run_check(self.EXACT.format(cmd="(printf expected; exit 7) | cat"))
+        self.assertEqual(result.returncode, 7)
+        self.assertTrue(result.stdout.startswith("FAIL"))
+
+    def test_exact_value_form_passes_on_match(self):
+        result = self.run_check(self.EXACT.format(cmd="printf expected | cat"))
+        self.assertEqual(result.returncode, 0)
+
+    def test_exact_value_form_fails_on_mismatch(self):
+        result = self.run_check(self.EXACT.format(cmd="printf other | cat"))
+        self.assertEqual(result.returncode, 1)
+
+    def test_documented_exact_value_forms_use_assignment(self):
+        # Guard the docs: the unsafe `test "$(` form must not come back.
+        root = SCRIPT.parents[1]
+        for doc in [root / "SKILL.md", root / "templates" / "goal.md"]:
+            for line in doc.read_text(encoding="utf-8").splitlines():
+                if line.lstrip().startswith('test "$('):
+                    self.fail(f"{doc.name}: unsafe exact-value form: {line}")
+
     def test_parallel_runs_get_unique_outputs_and_log_records(self):
         # Regression: run ids came from the log length, so concurrent runs
         # shared one output file and one id.
