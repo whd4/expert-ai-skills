@@ -678,16 +678,16 @@
     "description": "Stage, commit, and push git changes with conventional commit messages. Use when user wants to commit and push changes, mentions pushing to remote, or asks to save and push their work. Also activates when user says \"push changes\", \"commit and push\", \"push this\", \"push to github\", or similar git workflow requests."
   },
   {
-    "id": "goal-loop",
-    "path": "skills/goal-loop",
-    "name": "goal-loop",
-    "description": "Turn a request into a selected intent, a measurable goal, and an engineered completion loop that runs to done without asking the user for coding decisions. Use for any multi-step task, whenever you are about to ask 'should I...?', or when a first attempt fails its check."
-  },
-  {
     "id": "github-workflow-automation",
     "path": "skills/github-workflow-automation",
     "name": "github-workflow-automation",
     "description": "\"Automate GitHub workflows with AI assistance. Includes PR reviews, issue triage, CI/CD integration, and Git operations. Use when automating GitHub workflows, setting up PR review automation, creating GitHub Actions, or triaging issues.\""
+  },
+  {
+    "id": "goal-loop",
+    "path": "skills/goal-loop",
+    "name": "goal-loop",
+    "description": "\"Turn a request into a selected intent, a measurable goal, and an engineered completion loop that runs to done without asking the user for coding decisions. Use whenever a task is more than one step, whenever you feel the urge to ask 'should I...?', and whenever a first attempt does not pass its check. Encodes Anthropic's AI-native SDLC artifact chain (intent \u2192 spec \u2192 plan \u2192 diff \u2192 verification), the /goal completion-condition pattern, long-running-agent harness practice, and order-of-magnitude iteration. Triggers: 'just do it', 'don't ask me', 'iterate until it works', 'run to completion', 'goal', 'intent', 'autonomous', 'loop'.\""
   },
   {
     "id": "graphql",
