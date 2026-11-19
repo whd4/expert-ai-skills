@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<!--
+    THIS IS A TEMPLATE THAT SHOULD BE USED EVERY TIME AND MODIFIED.
+    WHAT TO KEEP:
+    ✓ Overall structure (header, sidebar, main content)
+    ✓ Anthropic branding (colors, fonts, layout)
+    ✓ Seed navigation section (always include this)
+    ✓ Self-contained artifact (everything inline)
+
+    WHAT TO CREATIVELY EDIT:
+    ✗ The p5.js algorithm (implement YOUR vision)
+    ✗ The parameters (define what YOUR art needs)
+    ✗ The UI controls (match YOUR parameters)
+
+    Let your philosophy guide the implementation.
+    The world is your oyster - be creative!
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convergent Trials Scoreboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Anthropic Brand Colors */
+        :root {
+            --anthropic-dark: #141413;
+            --anthropic-light: #faf9f5;
+            --anthropic-mid-gray: #b0aea5;
+            --anthropic-light-gray: #e8e6dc;
+            --anthropic-orange: #d97757;
+            --anthropic-blue: #6a9bcc;
+            --anthropic-green: #788c5d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--anthropic-light) 0%, #f5f3ee 100%);
+            min-height: 100vh;
+            color: var(--anthropic-dark);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(20, 20, 19, 0.1);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar h1 {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--anthropic-dark);
+            margin-bottom: 8px;
+        }
+
+        .sidebar .subtitle {
+            color: var(--anthropic-mid-gray);
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        /* Control Sections */
+        .control-section {
+            margin-bottom: 32px;
+        }
+
+        .control-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--anthropic-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-section h3::before {
+            content: '•';
+            color: var(--anthropic-orange);
+            font-weight: bold;
+        }
+
+        /* Seed Controls */
+        .seed-input {
+            width: 100%;
+            background: var(--anthropic-light);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 12px;
+            border: 1px solid var(--anthropic-light-gray);
+            text-align: center;
+        }
+
+        .seed-input:focus {
+            outline: none;
+            border-color: var(--anthropic-orange);
+            box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.1);
+            background: white;
+        }
+
+        .seed-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .regen-button {
+            margin-bottom: 0;
+        }
+
+        /* Parameter Controls */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--anthropic-dark);
+            margin-bottom: 8px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 4px;
+            background: var(--anthropic-light-gray);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--anthropic-orange);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            background: #c86641;
+        }
+
+        .slider-container input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--anthropic-orange);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .value-display {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        /* Color Pickers */
+        .color-group {
+            margin-bottom: 16px;
+        }
+
+        .color-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+            margin-bottom: 4px;
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-picker-container input[type="color"] {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--anthropic-mid-gray);
+        }
+
+        /* Buttons */
+        .button {
+            background: var(--anthropic-orange);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .button:hover {
+            background: #c86641;
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: var(--anthropic-blue);
+        }
+
+        .button.secondary:hover {
+            background: #5a8bb8;
+        }
+
+        .button.tertiary {
+            background: var(--anthropic-green);
+        }
+
+        .button.tertiary:hover {
+            background: #6b7b52;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .button-row .button {
+            flex: 1;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        #canvas-container {
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(20, 20, 19, 0.1);
+            background: white;
+        }
+
+        #canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--anthropic-mid-gray);
+        }
+
+        /* Scoreboard panel (below canvas) */
+        .canvas-area { flex-direction: column; gap: 20px; justify-content: flex-start; }
+        .panel {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(20, 20, 19, 0.1);
+            padding: 24px;
+        }
+        .panel h2 { font-family: 'Lora', serif; font-weight: 500; font-size: 22px; margin-bottom: 6px; }
+        .panel .bottom-line { font-size: 15px; line-height: 1.5; margin-bottom: 18px; }
+        .table-wrap { overflow-x: auto; }
+        table.goals { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table.goals th, table.goals td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--anthropic-light-gray); vertical-align: top; }
+        table.goals th { font-weight: 600; color: var(--anthropic-mid-gray); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+        .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+        .badge.verified { background: #e6ecdc; color: #4d5e38; }
+        .badge.pending { background: #f6e3da; color: #9c4a2c; }
+        .badge.na { background: var(--anthropic-light-gray); color: #6b6a64; }
+        tr.master td { font-weight: 500; background: #fbf6ef; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+        .gallery figure { background: var(--anthropic-light); border-radius: 8px; padding: 8px; }
+        .gallery img { width: 100%; height: auto; display: block; border-radius: 4px; cursor: zoom-in; }
+        .gallery figcaption { font-size: 12px; color: #6b6a64; margin-top: 6px; line-height: 1.35; }
+        .legend { font-size: 12px; color: #6b6a64; margin-top: 4px; line-height: 1.5; }
+        .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 18px; }
+        .stat { background: var(--anthropic-light); border-radius: 8px; padding: 10px 12px; }
+        .stat .v { font-size: 22px; font-weight: 600; }
+        .stat .k { font-size: 11px; color: #6b6a64; text-transform: uppercase; letter-spacing: .04em; }
+
+        /* Responsive - Stack on mobile */
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .canvas-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Control Sidebar -->
+        <div class="sidebar">
+            <!-- Headers (CUSTOMIZE THIS FOR YOUR ART) -->
+            <h1>Convergent Trials</h1>
+            <div class="subtitle">Agentic OS vs AI OS — goal scoreboard. Each trial is a path; only verified goals have gravity. Arrivals build the histogram on the floor.</div>
+
+            <!-- Seed Section (ALWAYS KEEP THIS) -->
+            <div class="control-section">
+                <h3>Seed</h3>
+                <input type="number" id="seed-input" class="seed-input" value="12345" onchange="updateSeed()">
+                <div class="seed-controls">
+                    <button class="button secondary" onclick="previousSeed()">← Prev</button>
+                    <button class="button secondary" onclick="nextSeed()">Next →</button>
+                </div>
+                <button class="button tertiary regen-button" onclick="randomSeedAndUpdate()">↻ Random</button>
+            </div>
+
+            <!-- Parameters Section (CUSTOMIZE THIS FOR YOUR ART) -->
+            <div class="control-section">
+                <h3>Parameters</h3>
+                
+                <div class="control-group">
+                    <label>Trials</label>
+                    <div class="slider-container">
+                        <input type="range" id="trials" min="300" max="5000" step="100" value="2000" oninput="updateParam('trials', this.value)">
+                        <span class="value-display" id="trials-value">2000</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Uncertainty (noise turbulence)</label>
+                    <div class="slider-container">
+                        <input type="range" id="uncertainty" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateParam('uncertainty', this.value)">
+                        <span class="value-display" id="uncertainty-value">1.0</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Evidence gravity (verified wells)</label>
+                    <div class="slider-container">
+                        <input type="range" id="gravity" min="0" max="3" step="0.1" value="1.2" oninput="updateParam('gravity', this.value)">
+                        <span class="value-display" id="gravity-value">1.2</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Trail ink</label>
+                    <div class="slider-container">
+                        <input type="range" id="ink" min="4" max="60" step="1" value="18" oninput="updateParam('ink', this.value)">
+                        <span class="value-display" id="ink-value">18</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>Colors</h3>
+                <div class="color-group">
+                    <label>Searching trials</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="color1" value="#d97757" onchange="updateColor('color1', this.value)">
+                        <span class="color-value" id="color1-value">#d97757</span>
+                    </div>
+                </div>
+                <div class="color-group">
+                    <label>Floor histogram</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="color2" value="#6a9bcc" onchange="updateColor('color2', this.value)">
+                        <span class="color-value" id="color2-value">#6a9bcc</span>
+                    </div>
+                </div>
+                <div class="color-group">
+                    <label>Verified evidence</label>
+                    <div class="color-picker-container">
+                        <input type="color" id="color3" value="#788c5d" onchange="updateColor('color3', this.value)">
+                        <span class="color-value" id="color3-value">#788c5d</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Section (ALWAYS KEEP THIS) -->
+            <div class="control-section">
+                <h3>Actions</h3>
+                <div class="button-row">
+                    <button class="button" onclick="initializeSystem()">Regenerate</button>
+                    <button class="button" onclick="resetParameters()">Reset</button>
+                </div>
+                <div class="button-row" style="margin-top:8px">
+                    <button class="button secondary" onclick="saveCanvas('convergent-trials-' + params.seed, 'png')">Download PNG</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Canvas Area -->
+        <div class="canvas-area">
+            <div id="canvas-container">
+                <div class="loading">Initializing generative art...</div>
+            </div>
+
+            <div class="panel">
+                <h2>Scoreboard — what success looks like</h2>
+                <div class="bottom-line" id="bottom-line"></div>
+                <div class="stat-row">
+                    <div class="stat"><div class="v">25%</div><div class="k">P(Agentic beats AI OS)</div></div>
+                    <div class="stat"><div class="v">+$81k</div><div class="k">AI OS net, median</div></div>
+                    <div class="stat"><div class="v">+$4k</div><div class="k">Agentic net, median</div></div>
+                    <div class="stat"><div class="v">≥ 7 hrs/wk</div><div class="k">Agentic 70% gate (≤2% errors)</div></div>
+                </div>
+                <div class="table-wrap">
+                    <table class="goals">
+                        <thead><tr><th>#</th><th>Goal</th><th>Success means</th><th>Evidence</th><th>Status</th></tr></thead>
+                        <tbody id="goal-rows"></tbody>
+                    </table>
+                </div>
+                <div class="legend">Verified = checked with a tool in this session (run output, file read back, image viewed, or review returned). Pending = not yet proven. The master goal is verified only when all six are.</div>
+            </div>
+
+            <div class="panel">
+                <h2>Goal 4 — every chart in the write-up</h2>
+                <div class="legend">From <code>agentic_vs_ai_os.py</code>: 20,000-trial base case, seed 42; sweep at 10,000 trials per cell. Click a chart to open it full size.</div>
+                <div class="gallery">
+                    <figure><img src="overlay_net_a_vs_b.png" alt="Net benefit A vs B overlay"><figcaption><b>A vs B net benefit.</b> A median +$81k; B wider, −$145k (P5) to +$256k (P95).</figcaption></figure>
+                    <figure><img src="histogram_diff_b_minus_a.png" alt="B minus A histogram"><figcaption><b>B − A, paired.</b> Median −$81k; B wins 25.0% of trials.</figcaption></figure>
+                    <figure><img src="tornado_diff_b_minus_a.png" alt="Tornado B minus A"><figcaption><b>What drives B − A.</b> Agent hours (+0.42), ambient hours (−0.35), error rate (−0.32), review (−0.30), seat use (+0.26).</figcaption></figure>
+                    <figure><img src="sweep_p_b_wins.png" alt="Sweep probability B wins"><figcaption><b>Sweep: P(B wins).</b> Error rate × hours saved. At ≤3 hrs/wk B wins ≤6%; above ~12% errors it stays under 40%.</figcaption></figure>
+                    <figure><img src="sweep_median_diff.png" alt="Sweep median difference"><figcaption><b>Sweep: median B − A ($k).</b> Where the green starts is the scale-up gate.</figcaption></figure>
+                    <figure><img src="histogram_net_a.png" alt="Net A histogram"><figcaption><b>Net A.</b> 97.5% of trials positive.</figcaption></figure>
+                    <figure><img src="tornado_net_a.png" alt="Net A tornado"><figcaption><b>Net A drivers.</b></figcaption></figure>
+                    <figure><img src="histogram_net_b.png" alt="Net B histogram"><figcaption><b>Net B.</b> 51.5% of trials positive.</figcaption></figure>
+                    <figure><img src="tornado_net_b.png" alt="Net B tornado"><figcaption><b>Net B drivers.</b></figcaption></figure>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════════
+        // GOALS — the data this artwork renders. Update status as evidence lands.
+        // ═══════════════════════════════════════════════════════════════════════
+        const GOALS = [
+            { n: '1', name: 'Routing confirmed',
+              success: 'prediction-toolkit router names Monte Carlo the top method for this decision.',
+              evidence: 'Router: Simulation (Monte Carlo) ranked #1. Weak match (score 0.053) — reported, not hidden.',
+              status: 'verified' },
+            { n: '2', name: 'Reproducible model',
+              success: 'agentic_vs_ai_os.py runs end-to-end via the repo engine, ≥10k trials, all negative controls pass (incl. error-rate controls), result stable across seeds.',
+              evidence: '20k trials, exit 0; 4/4 controls PASS incl. 40%-error and monotonicity; P(B>A) 0.246–0.250 across 4 seeds up to 100k trials; adoption formula matches closed form exactly.',
+              status: 'verified' },
+            { n: '3', name: 'Charts generated',
+              success: 'Histogram + tornado for net A, net B, B−A; overlay; 2 sweep heatmaps — saved and visually checked.',
+              evidence: '9 PNGs in docs/research/agentic-vs-ai-os-mc/; overlay, tornado and sweep opened and inspected.',
+              status: 'verified' },
+            { n: '4', name: 'Write-up',
+              success: 'Results tables match results.json; all 9 charts embedded/linked; assumptions table; honest CIs + caveats; plain recommendation; independent review finds no critical defect.',
+              evidence: 'Two cold review rounds (same model family): 0 critical; 8 important defects found and fixed. Every headline, tornado and sweep number machine-checked against results.json: 0 mismatches.',
+              status: 'verified' },
+            { n: '5', name: 'Engine intact',
+              success: 'python3 -m engine.tests.test_engine passes with no engine files changed.',
+              evidence: '15 passed, 0 failed (before and after).',
+              status: 'verified' },
+            { n: '6', name: 'Shipped',
+              success: 'Branch claude/agentic-vs-ai-os-monte-carlo pushed; draft PR open.',
+              evidence: 'Not yet pushed.',
+              status: 'pending' },
+            { n: '★', name: 'MASTER: a decision you can act on',
+              success: 'P(Agentic beats AI OS) seed-stable; sweep on the two drivers; 70%-confidence scale gates; pilot cost quantified; goals 1–6 all verified.',
+              evidence: 'Decision: AI OS for all 25 (wins ~75%). Agentic pilot only as a ~$28k-net information purchase; scale only if the pilot shows ≥70% seat use and ≤30% review AND ≥7 hrs/wk delegated at ≤2% errors (≥10 at ≤5%); 10%+ errors = stop unless usage is exceptional.',
+              status: 'master' },
+        ];
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // PARAMETERS
+        // ═══════════════════════════════════════════════════════════════════════
+        let params = {
+            seed: 12345,
+            trials: 2000,
+            uncertainty: 1.0,
+            gravity: 1.2,
+            ink: 18,
+            colorPalette: ['#d97757', '#6a9bcc', '#788c5d']
+        };
+        let defaultParams = { ...params, colorPalette: [...params.colorPalette] };
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // CONVERGENT TRIALS — algorithm
+        // ═══════════════════════════════════════════════════════════════════════
+        const W = 1200, H = 800;
+        const FLOOR = H * 0.80;            // histogram baseline region starts here
+        const BINS = 72;
+        const ACTIVE = 260;                // trials in flight at once
+        let trailLayer, wells, master, trials, bins, spawned, arrived, done;
+
+        function verifiedCount() { return GOALS.filter(g => g.status === 'verified').length; }
+        function goalTotal() { return GOALS.filter(g => g.status !== 'master').length; }
+
+        function setup() {
+            const c = createCanvas(W, H);
+            c.parent('canvas-container');
+            pixelDensity(1);
+            trailLayer = createGraphics(W, H);
+            trailLayer.pixelDensity(1);
+            document.querySelector('.loading').style.display = 'none';
+            initializeSystem();
+        }
+
+        function initializeSystem() {
+            randomSeed(params.seed);
+            noiseSeed(params.seed);
+            trailLayer.clear();
+            trailLayer.background(250, 249, 245);
+
+            // Goal wells along a seeded meander from left to the master basin.
+            const goals = GOALS.filter(g => g.status !== 'master');
+            const phase = random(TWO_PI);
+            wells = goals.map((g, i) => {
+                const t = (i + 1) / (goals.length + 1);
+                return {
+                    g,
+                    x: lerp(W * 0.13, W * 0.80, t),
+                    y: H * 0.40 + sin(phase + t * PI * 2.2) * H * 0.15 + random(-18, 18),
+                    r: 44,
+                    mass: g.status === 'verified' ? 1 : 0,
+                    hits: 0
+                };
+            });
+            const frac = verifiedCount() / goalTotal();
+            master = { x: W * 0.925, y: H * 0.40, r: 58, frac, hits: 0 };
+
+            trials = [];
+            bins = new Array(BINS).fill(0);
+            spawned = 0; arrived = 0; done = false;
+            loop();
+        }
+
+        function spawnTrial() {
+            spawned++;
+            return {
+                x: random(-40, 0), y: random(H * 0.06, H * 0.74),
+                vx: random(1.6, 2.4), vy: 0,
+                px: 0, py: 0, touched: false, age: 0
+            };
+        }
+
+        function draw() {
+            // Top up the flight pool until the trial budget is spent.
+            while (trials.length < ACTIVE && spawned < params.trials) trials.push(spawnTrial());
+
+            const ns = 0.0022, u = params.uncertainty, G = params.gravity;
+            const c1 = color(params.colorPalette[0]), c3 = color(params.colorPalette[2]);
+            for (let s = 0; s < 3; s++) {                         // sub-steps per frame
+                for (let i = trials.length - 1; i >= 0; i--) {
+                    const p = trials[i];
+                    p.px = p.x; p.py = p.y; p.age++;
+                    // Fog: seeded noise field steers vertical drift.
+                    const a = (noise(p.x * ns, p.y * ns, p.age * 0.004) - 0.5) * TWO_PI * u;
+                    p.vy += sin(a) * 0.22;
+                    // Fog is bounded by the problem: a gentle pull back toward the decision band.
+                    p.vy += (H * 0.40 - p.y) * 0.0009;
+                    p.vx += 0.012 + cos(a) * 0.02;
+                    // Evidence: only verified wells have mass.
+                    for (const w of wells) {
+                        if (!w.mass) continue;
+                        const dx = w.x - p.x, dy = w.y - p.y, d2 = dx * dx + dy * dy;
+                        if (d2 < 220 * 220) {
+                            const f = G * 26 / max(d2, 600);
+                            p.vx += dx * f * 0.05; p.vy += dy * f;
+                        }
+                        if (d2 < w.r * w.r && !p.touched) { p.touched = true; w.hits++; }
+                    }
+                    // Master basin pulls in proportion to verified fraction.
+                    const mdy = master.y - p.y;
+                    p.vy += mdy * 0.00022 * master.frac * (p.x / W);
+                    p.vy *= 0.94; p.vx = constrain(p.vx * 0.995, 0.9, 3.4);
+                    p.x += p.vx; p.y += p.vy;
+                    // Soft walls: reflect instead of pinning, so lost trials don't pile on the edge.
+                    if (p.y < 20) { p.y = 20; p.vy = abs(p.vy) * 0.6 + 0.3; }
+                    if (p.y > FLOOR - 24) { p.y = FLOOR - 24; p.vy = -abs(p.vy) * 0.6 - 0.3; }
+
+                    const col = p.touched ? c3 : c1;
+                    col.setAlpha(p.touched ? params.ink * 1.5 : params.ink);
+                    trailLayer.stroke(col);
+                    trailLayer.strokeWeight(p.touched ? 1.15 : 0.7);
+                    trailLayer.line(p.px, p.py, p.x, p.y);
+
+                    if (p.x >= master.x) {                              // arrival → deposit
+                        const b = floor(map(p.y, 20, FLOOR - 24, 0, BINS - 0.001));
+                        bins[constrain(b, 0, BINS - 1)]++;
+                        master.hits++; arrived++;
+                        trials.splice(i, 1);
+                    }
+                }
+            }
+
+            image(trailLayer, 0, 0);
+            drawWells();
+            drawFloor();
+            drawCaption();
+
+            if (spawned >= params.trials && trials.length === 0) { done = true; noLoop(); }
+        }
+
+        function drawWells() {
+            const c3 = color(params.colorPalette[2]), c1 = color(params.colorPalette[0]);
+            textFont('Poppins');
+            for (const w of wells) {
+                if (w.mass) {
+                    for (let k = 4; k >= 1; k--) {               // soft halo = gravity
+                        c3.setAlpha(14 * k);
+                        noStroke(); fill(c3); circle(w.x, w.y, w.r * (0.6 + k * 0.32));
+                    }
+                    fill(255); stroke(c3); strokeWeight(2.5); circle(w.x, w.y, w.r);
+                    noStroke(); fill(c3);
+                } else {                                       // hollow ring = no mass
+                    noFill(); stroke(c1); strokeWeight(1.5);
+                    drawingContext.setLineDash([5, 5]); circle(w.x, w.y, w.r); drawingContext.setLineDash([]);
+                    noStroke(); fill(c1);
+                }
+                textAlign(CENTER, CENTER); textSize(17); textStyle(BOLD); text(w.g.n, w.x, w.y);
+                textStyle(NORMAL); textSize(12); fill(20, 20, 19, 190);
+                text(w.g.name, w.x, w.y + w.r * 0.5 + 16);
+                textSize(10); fill(20, 20, 19, 120);
+                text(w.mass ? 'verified' : 'pending', w.x, w.y + w.r * 0.5 + 31);
+            }
+            // Master basin — luminance tracks the verified fraction.
+            const c3m = color(params.colorPalette[2]);
+            for (let k = 5; k >= 1; k--) {
+                c3m.setAlpha(8 + 26 * master.frac * k / 5);
+                noStroke(); fill(c3m); circle(master.x, master.y, master.r * (0.7 + k * 0.38));
+            }
+            fill(255); stroke(20, 20, 19, 60 + 160 * master.frac); strokeWeight(2);
+            circle(master.x, master.y, master.r);
+            noStroke(); fill(20, 20, 19); textAlign(CENTER, CENTER); textSize(22); text('★', master.x, master.y - 2);
+            textSize(12); text('Master goal', master.x, master.y + master.r * 0.5 + 18);
+            textSize(10); fill(20, 20, 19, 140);
+            text(verifiedCount() + ' / ' + goalTotal() + ' verified', master.x, master.y + master.r * 0.5 + 33);
+        }
+
+        function drawFloor() {
+            noStroke(); fill(250, 249, 245, 235); rect(0, FLOOR, W, H - FLOOR);
+            stroke(20, 20, 19, 40); strokeWeight(1); line(40, H - 26, W - 40, H - 26);
+            const peak = max(1, max(bins));
+            const bw = (W - 80) / BINS;
+            const c2 = color(params.colorPalette[1]);
+            // P5/P95 band from the arrival distribution.
+            const total = bins.reduce((a, b) => a + b, 0);
+            let lo = -1, hi = -1, cum = 0;
+            for (let i = 0; i < BINS; i++) {
+                cum += bins[i];
+                if (lo < 0 && cum >= total * 0.05) lo = i;
+                if (hi < 0 && cum >= total * 0.95) hi = i;
+            }
+            if (total > 20) {
+                c2.setAlpha(28); fill(c2); noStroke();
+                rect(40 + lo * bw, FLOOR + 6, (hi - lo + 1) * bw, H - FLOOR - 32);
+            }
+            for (let i = 0; i < BINS; i++) {
+                const h = (bins[i] / peak) * (H - FLOOR - 40);
+                c2.setAlpha(200); fill(c2); noStroke();
+                rect(40 + i * bw + 1, H - 26 - h, bw - 2, h);
+            }
+            fill(20, 20, 19, 150); textSize(11); textAlign(LEFT, BOTTOM);
+            text('arrivals: ' + arrived + ' / ' + params.trials + (total > 20 ? '   shaded = P5–P95 band' : ''), 44, FLOOR + 18);
+        }
+
+        function drawCaption() {
+            fill(20, 20, 19, 110); noStroke(); textAlign(LEFT, TOP); textSize(11);
+            text('seed ' + params.seed + (done ? '   · equilibrium reached' : '   · running'), 16, 12);
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SCOREBOARD TABLE
+        // ═══════════════════════════════════════════════════════════════════════
+        function renderGoalTable() {
+            const v = verifiedCount(), t = goalTotal();
+            const masterOk = v === t;
+            const rows = GOALS.map(g => {
+                const st = g.status === 'master' ? (masterOk ? 'verified' : 'pending') : g.status;
+                const label = g.status === 'master' ? (masterOk ? 'verified' : `${v}/${t} upstream`) : g.status;
+                return `<tr class="${g.status === 'master' ? 'master' : ''}"><td>${g.n}</td><td>${g.name}</td>` +
+                       `<td>${g.success}</td><td>${g.evidence}</td><td><span class="badge ${st}">${label}</span></td></tr>`;
+            }).join('');
+            document.getElementById('goal-rows').innerHTML = rows;
+            document.getElementById('bottom-line').innerHTML =
+                `<b>${v} of ${t} goals verified.</b> ` +
+                (masterOk ? 'Master goal verified: the decision is backed end to end.'
+                          : 'Master goal is held until every upstream goal is verified.');
+        }
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // UI CONTROL HANDLERS
+        // ═══════════════════════════════════════════════════════════════════════
+        function updateParam(paramName, value) {
+            params[paramName] = parseFloat(value);
+            document.getElementById(paramName + '-value').textContent = value;
+            if (paramName === 'trials') initializeSystem();
+            else if (done) initializeSystem();
+        }
+
+        function updateColor(colorId, value) {
+            const idx = { color1: 0, color2: 1, color3: 2 }[colorId];
+            params.colorPalette[idx] = value;
+            document.getElementById(colorId + '-value').textContent = value;
+            initializeSystem();
+        }
+
+        document.addEventListener('click', e => {
+            if (e.target.matches('.gallery img')) window.open(e.target.src, '_blank');
+        });
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SEED CONTROL FUNCTIONS - ALWAYS KEEP THESE
+        // ═══════════════════════════════════════════════════════════════════════
+
+        function updateSeedDisplay() {
+            document.getElementById('seed-input').value = params.seed;
+        }
+
+        function updateSeed() {
+            let input = document.getElementById('seed-input');
+            let newSeed = parseInt(input.value);
+            if (newSeed && newSeed > 0) {
+                params.seed = newSeed;
+                initializeSystem();
+            } else {
+                updateSeedDisplay();
+            }
+        }
+
+        function previousSeed() {
+            params.seed = Math.max(1, params.seed - 1);
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function nextSeed() {
+            params.seed = params.seed + 1;
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function randomSeedAndUpdate() {
+            params.seed = Math.floor(Math.random() * 999999) + 1;
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        function resetParameters() {
+            params = { ...defaultParams, colorPalette: [...defaultParams.colorPalette] };
+            for (const k of ['trials', 'uncertainty', 'gravity', 'ink']) {
+                document.getElementById(k).value = params[k];
+                document.getElementById(k + '-value').textContent = params[k];
+            }
+            ['color1', 'color2', 'color3'].forEach((id, i) => {
+                document.getElementById(id).value = params.colorPalette[i];
+                document.getElementById(id + '-value').textContent = params.colorPalette[i];
+            });
+            updateSeedDisplay();
+            initializeSystem();
+        }
+
+        // Initialize UI on load
+        // Table renders without p5, so the scoreboard survives a blocked CDN.
+        document.addEventListener('DOMContentLoaded', renderGoalTable);
+        window.addEventListener('load', function() {
+            updateSeedDisplay();
+            if (typeof p5 === 'undefined') {
+                document.querySelector('.loading').textContent = 'Artwork needs p5.js from cdnjs — scoreboard below is unaffected.';
+            }
+        });
+    </script>
+</body>
+</html>
