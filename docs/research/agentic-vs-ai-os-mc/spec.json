@@ -1,0 +1,161 @@
+{
+  "trials": 20000,
+  "seed": 42,
+  "variables": {
+    "wage": {
+      "distribution": "triangular",
+      "low": 45,
+      "likely": 65,
+      "high": 110
+    },
+    "value_capture": {
+      "distribution": "beta",
+      "alpha": 6,
+      "beta": 4
+    },
+    "a_seat": {
+      "distribution": "triangular",
+      "low": 18,
+      "likely": 25,
+      "high": 35
+    },
+    "a_overage": {
+      "distribution": "uniform",
+      "low": 0,
+      "high": 5
+    },
+    "a_setup": {
+      "distribution": "triangular",
+      "low": 1000,
+      "likely": 3000,
+      "high": 8000
+    },
+    "a_hours": {
+      "distribution": "triangular",
+      "low": 0.5,
+      "likely": 2.0,
+      "high": 4.5
+    },
+    "a_rework": {
+      "distribution": "triangular",
+      "low": 0.05,
+      "likely": 0.25,
+      "high": 0.7
+    },
+    "a_ramp": {
+      "distribution": "triangular",
+      "low": 1,
+      "likely": 2,
+      "high": 4
+    },
+    "a_util": {
+      "distribution": "beta",
+      "alpha": 6,
+      "beta": 4
+    },
+    "b_seat": {
+      "distribution": "triangular",
+      "low": 40,
+      "likely": 100,
+      "high": 250
+    },
+    "b_overage": {
+      "distribution": "lognormal",
+      "mean": 3.69,
+      "stddev": 0.8
+    },
+    "b_setup": {
+      "distribution": "triangular",
+      "low": 5000,
+      "likely": 20000,
+      "high": 60000
+    },
+    "b_hours": {
+      "distribution": "triangular",
+      "low": 1.0,
+      "likely": 5.0,
+      "high": 12.0
+    },
+    "b_task_hours": {
+      "distribution": "triangular",
+      "low": 0.15,
+      "likely": 0.35,
+      "high": 1.0
+    },
+    "b_review": {
+      "distribution": "beta",
+      "alpha": 3,
+      "beta": 7
+    },
+    "b_error": {
+      "distribution": "beta",
+      "alpha": 2,
+      "beta": 38
+    },
+    "b_reliab": {
+      "distribution": "uniform",
+      "low": 0.1,
+      "high": 0.6
+    },
+    "b_escape": {
+      "distribution": "beta",
+      "alpha": 2,
+      "beta": 8
+    },
+    "b_fix_hours": {
+      "distribution": "triangular",
+      "low": 0.25,
+      "likely": 0.5,
+      "high": 2.0
+    },
+    "b_bad_cost": {
+      "distribution": "lognormal",
+      "mean": 5.0,
+      "stddev": 0.8
+    },
+    "b_incidents": {
+      "distribution": "poisson",
+      "lam": 0.3
+    },
+    "b_incident_cost": {
+      "distribution": "lognormal",
+      "mean": 9.6,
+      "stddev": 1.0
+    },
+    "b_ramp": {
+      "distribution": "triangular",
+      "low": 2,
+      "likely": 4,
+      "high": 9
+    },
+    "b_util": {
+      "distribution": "beta",
+      "alpha": 5,
+      "beta": 4
+    }
+  },
+  "outcomes": {
+    "a_adopt": "(1 - min(a_ramp, 24) / 48) * (a_ramp <= 24) + (24 / (2 * a_ramp)) * (a_ramp > 24)",
+    "a_hours_net": "25 * 92.0 * a_adopt * a_util * max(a_hours - a_rework, 0)",
+    "a_cost": "25 * 24 * (a_seat + a_overage) + a_setup",
+    "a_value": "a_hours_net * wage * value_capture",
+    "net_a": "a_value - a_cost",
+    "b_adopt": "(1 - min(b_ramp, 24) / 48) * (b_ramp <= 24) + (24 / (2 * b_ramp)) * (b_ramp > 24)",
+    "b_active": "25 * 92.0 * b_adopt * b_util",
+    "b_usage": "b_adopt * b_util",
+    "b_err_avg": "min(b_error * (1 - b_reliab * 1.0 / 2), 1)",
+    "b_gross_hours": "b_active * b_hours",
+    "b_tasks_total": "b_gross_hours / b_task_hours",
+    "b_bad_actions": "b_tasks_total * b_err_avg",
+    "b_escaped": "b_bad_actions * b_escape",
+    "b_hours_net": "b_gross_hours * (1 - b_err_avg) - b_gross_hours * b_review - (b_bad_actions - b_escaped) * b_fix_hours",
+    "b_incident_n": "b_incidents * 1.0 * (25 / 25) * (b_usage / 0.5) * (b_error / 0.05)",
+    "b_cost": "25 * 24 * b_seat + 25 * 24 * b_usage * b_overage + b_setup + b_escaped * b_bad_cost + b_incident_n * b_incident_cost",
+    "b_value": "b_hours_net * wage * value_capture",
+    "net_b": "b_value - b_cost",
+    "diff_b_minus_a": "net_b - net_a",
+    "b_beats_a": "diff_b_minus_a > 0",
+    "a_positive": "net_a > 0",
+    "b_positive": "net_b > 0"
+  }
+}

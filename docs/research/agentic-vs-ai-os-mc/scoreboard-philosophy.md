@@ -1,0 +1,13 @@
+# Convergent Trials — an algorithmic philosophy
+
+**Movement:** Convergent Trials
+
+Every decision begins as fog. A thousand possible futures leave the left edge of the canvas at once. None of them knows where it is going, and each is pushed by a seeded noise field that stands for everything we do not yet know. The philosophy is simple: uncertainty is not removed by argument. It is *integrated away* by running the trials, and the shape that remains is the answer. The algorithm should feel meticulously crafted. Every force constant has to read as tuned over countless iterations, because a careless flow field reads as decoration while a calibrated one reads as evidence.
+
+The trials move through a chain of attractors, the goals. A goal that has been **verified** is a gravity well. It bends nearby paths toward itself, and the trails that pass through it brighten and thicken, leaving a permanent record of the work. A goal that is still **pending** has no gravity. It is a hollow ring, and trials slide past it untouched. The difference between a claim and a verified result is rendered as physics: only evidence has mass. The rule is master-level in its restraint. One mechanism, applied consistently, carries the whole meaning.
+
+At the right edge sits the master goal. It is the basin every surviving trial drifts toward, and it only reaches full luminance when every goal upstream of it holds weight. As the trials arrive, they deposit into a quiet histogram along the floor of the canvas. The distribution is built one landing at a time, so the viewer watches a P5–P95 band emerge rather than being told it exists. This accumulation is the product of painstaking calibration: deposition rate, bin width and fade must be balanced so the histogram grows legibly without swallowing the flow above it.
+
+Colour is functional, never ornamental. Warm clay traces the paths of trials still searching. Sage marks the wells that hold. Slate blue marks the floor where results collect. Density, not hue, carries emphasis: where many trials agree, the strokes overlap into a deeper tone. The palette stays quiet so the structure can speak, which is the discipline of a practitioner at the top of the field in computational aesthetics.
+
+Seeds matter. The same seed must always produce the same fog, the same paths and the same histogram, because reproducibility is the point of the exercise. Changing the seed is re-running the simulation: the paths differ, but the verified wells pull them to the same places. That invariance — different noise, same conclusion — is the quiet thesis of the piece, expressed through a deeply considered, master-level implementation.
