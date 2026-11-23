@@ -462,8 +462,8 @@
                 <div class="stat-row">
                     <div class="stat"><div class="v">4%</div><div class="k">P(Agentic for all beats AI OS)</div></div>
                     <div class="stat"><div class="v">+$86k</div><div class="k">AI OS for all, median (best)</div></div>
-                    <div class="stat"><div class="v">≤13%</div><div class="k">P(any agent-seat mix beats AI OS)</div></div>
-                    <div class="stat"><div class="v">$1k vs $6k</div><div class="k">Pilot info value vs cost → no pilot</div></div>
+                    <div class="stat"><div class="v">≤13%</div><div class="k">P(any 1–25 agent-seat mix beats AI OS)</div></div>
+                    <div class="stat"><div class="v">≈10%</div><div class="k">Agent error belief where a pilot starts paying</div></div>
                 </div>
                 <div class="table-wrap">
                     <table class="goals">
@@ -480,7 +480,7 @@
                 <div class="gallery">
                     <figure><img src="overlay_net_a_vs_b.png" alt="Three strategies"><figcaption><b>Three strategies.</b> A median +$86k; B −$116k (loses money 86% of trials); best mix (A + 1 agent seat) +$67k.</figcaption></figure>
                     <figure><img src="mix_seats.png" alt="Mix seats"><figcaption><b>Option C: how many agent seats.</b> Every seat count lowers the expected result; P(beat A) never exceeds 13%.</figcaption></figure>
-                    <figure><img src="value_of_information.png" alt="Value of information"><figcaption><b>Is a pilot worth it?</b> What a pilot learns (EVSI) ≈ $1.1k vs ≈ $6.4k cost → no.</figcaption></figure>
+                    <figure><img src="value_of_information.png" alt="Value of information"><figcaption><b>Is a pilot worth it?</b> At today's ~20% error evidence, EVSI ≈ $1.5k vs ≈ $8.3k cost → no; at ≤10% believed errors → yes.</figcaption></figure>
                     <figure><img src="tornado_diff_b_minus_a.png" alt="Tornado B minus A"><figcaption><b>What drives B − A.</b> Agent error rate (−0.45) and cost per escaped error (−0.42); hours delegated barely matter.</figcaption></figure>
                     <figure><img src="sweep_p_b_wins.png" alt="Sweep probability B wins"><figcaption><b>Sweep: P(B wins).</b> Error rate × hours delegated. Above ~12% errors B stays under 50% even at 14 h/wk.</figcaption></figure>
                     <figure><img src="sweep_median_diff.png" alt="Sweep median difference"><figcaption><b>Sweep: median B − A ($k).</b> Where the green starts is the scale-up gate.</figcaption></figure>
@@ -513,8 +513,8 @@
               status: 'verified' },
             { n: '4', name: 'Write-up',
               success: 'Results tables match results.json; all 11 charts embedded/linked; assumptions table; honest CIs + caveats; plain recommendation; independent review finds no critical defect.',
-              evidence: 'v3 cold review: 3 critical + 9 important found, all fixed (pilot verdict reversed). All tables machine-checked against results.json. Re-review running.',
-              status: 'pending' },
+              evidence: 'v3 cold review: 3 critical + 9 important found, all fixed (pilot verdict reversed). Re-review: 12 fixed, 4 new findings fixed (incl. verdict-vs-error-belief table). All tables machine-checked: 0 mismatches.',
+              status: 'verified' },
             { n: '5', name: 'Engine intact',
               success: 'python3 -m engine.tests.test_engine passes with no engine files changed.',
               evidence: '15 passed, 0 failed (before and after).',
@@ -525,7 +525,7 @@
               status: 'pending' },
             { n: '★', name: 'MASTER: a decision you can act on',
               success: 'Evidence-anchored inputs; 3 strategies compared (A, B, Mix); scale-up gates; pilot priced against its information value; goals 1–6 all verified.',
-              evidence: 'Decision: AI OS for all 25 (median +$86k, positive 99.9%). No agent seats yet: every mix lowers expected value. No paid pilot (learns ≈$1k for ≈$6k). Revisit when benchmarks show agent bad-action rates ≈2–5%.',
+              evidence: 'Decision: AI OS for all 25 (median +$86k, positive 99.9%). No agent seats yet: every mix lowers expected value. No paid pilot at today's evidence (learns ≈$1.5k for ≈$8k). Run a lean pilot once agent bad-action rates are credibly ≤10%.',
               status: 'master' },
         ];
 

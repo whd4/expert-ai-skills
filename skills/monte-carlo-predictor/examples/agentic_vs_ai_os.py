@@ -43,7 +43,7 @@ OUT_DIR = os.path.join(REPO_ROOT, "docs", "research", "agentic-vs-ai-os-mc")
 TEAM = 25
 MONTHS = 24
 WORK_WEEKS_PER_YEAR = 46          # 52 minus holidays, PTO, sick days
-C_K_GRID = [1, 2, 3, 5, 8, 12]    # agent seats tested in the Mix option
+C_K_GRID = [1, 2, 3, 5, 8, 12, 18, 25]   # agent seats tested in the Mix option (25 = everyone)
 SETUP_FIXED_SHARE = 0.4           # share of rollout setup that does not shrink with seats
 PILOT_SEATS = 3
 PILOT_MONTHS = 3
@@ -121,7 +121,7 @@ VARIABLES = {
     "p_util": {"distribution": "beta", "alpha": 8, "beta": 2},                   # mean 0.80
     # Power users delegate this multiple of an ordinary user's hours (mean ≈ 1.67).
     "p_hours_mult": {"distribution": "triangular", "low": 1.0, "likely": 1.5, "high": 2.5},
-    # Share of a seat-holder's assistant saving the agent displaces (same work).
+    # Share of ANY agent seat-holder's assistant saving that the agent displaces (same work).
     "p_overlap": {"distribution": "uniform", "low": 0.3, "high": 0.8},
 }
 
@@ -188,7 +188,7 @@ def build_outcomes(team: int = TEAM, months: int = MONTHS, k_grid=None, pilot: b
     if pilot:
         # Lean pilot: PILOT_SEATS power-user seats for PILOT_MONTHS, on top of A.
         out.update(_agent_block("pil_", PILOT_SEATS, PILOT_MONTHS, PILOT_SETUP_SHARE))
-        out["pilot_net"] = "pil_value - pil_cost"
+        out["pilot_net"] = "pil_value - pil_cost - pil_overlap"
     out["diff_b_minus_a"] = "net_b - net_a"
     out["b_beats_a"] = "diff_b_minus_a > 0"
     out["a_positive"] = "net_a > 0"
@@ -310,14 +310,17 @@ def selfcheck(trials: int = 5000, seed: int = 1) -> bool:
     # analytic displaced value. Fails if the sign or units of the overlap term are wrong.
     base = {"b_error": 0.05, "b_hours": 6.0}
     r0, _, o0 = run(trials, seed, {**base, "p_overlap": 0.0}, k_grid=[3], pilot=False)
-    r1, _, o1 = run(trials, seed, {**base, "p_overlap": 1.0}, k_grid=[3], pilot=False)
+    r1v, v1, o1 = run(trials, seed, {**base, "p_overlap": 1.0}, k_grid=[3], pilot=False)
     drop = np.asarray(o0["net_c3"]) - np.asarray(o1["net_c3"])
-    expect = np.asarray(o1["c3_overlap"])          # analytic displaced value at overlap = 1
+    # Independent recomputation from first principles (units: h/person × seats × use × $/h × capture).
+    weeks = MONTHS / 12 * WORK_WEEKS_PER_YEAR
+    a_hrs = weeks * np.asarray(o1["a_adopt"]) * np.maximum(np.asarray(v1["a_hours"]) - np.asarray(v1["a_rework"]), 0)
+    expect = 3 * a_hrs * np.asarray(o1["c3_usage"]) * np.asarray(v1["wage"]) * np.asarray(v1["value_capture"])
     good = np.all(drop >= 0) and np.allclose(drop, expect, rtol=1e-9, atol=1e-6) and \
-        r0["outcomes"]["c3_beats_a"]["probability_true"] > r1["outcomes"]["c3_beats_a"]["probability_true"]
-    report("Overlap 0 → 1 lowers C exactly by the displaced A value, and P(C>A)", good,
+        r0["outcomes"]["c3_beats_a"]["probability_true"] > r1v["outcomes"]["c3_beats_a"]["probability_true"]
+    report("Overlap 0 → 1 lowers C by the independently recomputed displaced A value", good,
            f"mean drop ${drop.mean():,.0f}; P {r0['outcomes']['c3_beats_a']['probability_true']:.3f}"
-           f" → {r1['outcomes']['c3_beats_a']['probability_true']:.3f}")
+           f" → {r1v['outcomes']['c3_beats_a']['probability_true']:.3f}")
 
     # Diminishing returns: with 2 power users, the MARGINAL gain of a power-user seat
     # (k 1→2) must be far above that of an ordinary-user seat (k 2→5, 5→12). Average
@@ -385,13 +388,37 @@ def mix_gates(trials, seed):
             gains = {k: float((np.asarray(o[f"net_c{k}"]) - na).mean()) for k in C_K_GRID}
             k_star = max(gains, key=gains.get)
             if gains[k_star] <= 0:
-                row.append({"h": h, "k": 0, "p": 0.0, "mean_gain": 0.0})
+                best_p = max(rep["outcomes"][f"c{k}_beats_a"]["probability_true"] for k in C_K_GRID)
+                row.append({"h": h, "k": 0, "p": best_p, "mean_gain": gains[k_star]})
             else:
                 row.append({"h": h, "k": k_star, "mean_gain": gains[k_star],
                             "p": rep["outcomes"][f"c{k_star}_beats_a"]["probability_true"]})
         gate = next((r for r in row if r["k"] > 0 and r["p"] >= 0.70), None)
         out[e] = {"curve": row, "gate": gate}
     return out
+
+
+PRIOR_MEANS = [0.05, 0.08, 0.10, 0.12, 0.15, 0.20]
+
+
+def error_prior_sensitivity(trials, seed):
+    """Re-run the decision and the pilot value under different BELIEFS about the agent
+    bad-action rate (beta(4, 4/m − 4), mean m). The error prior is the #1 driver and a
+    judgement call, so the verdicts are reported as a function of it."""
+    import numpy as np
+    rows = []
+    options = ["net_a", "net_b"] + [f"net_c{k}" for k in C_K_GRID]
+    for m in PRIOR_MEANS:
+        spec = build_spec(trials, seed)
+        spec["variables"]["b_error"] = {"distribution": "beta", "alpha": 4, "beta": 4 / m - 4}
+        TRIAL_COUNT["n"] += trials
+        rep, vs, os_ = simulate_with_samples(spec)
+        voi = value_of_information(vs, os_, options, seed=seed)
+        cost = -float(np.mean(os_["pilot_net"]))
+        rows.append({"error_prior_mean": m, "best_option": voi["best_option"],
+                     "mean_net": voi["mean_net"], "evsi": voi["evsi_pilot"], "evpi": voi["evpi"],
+                     "pilot_net_cost": cost, "pilot_worth_it": voi["evsi_pilot"] > cost})
+    return rows
 
 
 # ---------------------------------------------------------------------------
@@ -558,6 +585,14 @@ def main(argv=None):
         print(f"  error {e:.0%}: gate = " + (f"{gate['h']} h/wk (k={gate['k']}, P={gate['p']:.0%})" if gate else "none ≤16 h")
               + "   [" + " ".join(f"{r['h']}h:k{r['k']}/{r['p']:.0%}" for r in g["curve"]) + "]")
 
+    print("\nVerdict vs belief about agent bad-action rate (prior mean):")
+    sens = error_prior_sensitivity(args.trials, args.seed)
+    for r in sens:
+        print(f"  mean {r['error_prior_mean']:.0%}: best {r['best_option']:<8} "
+              f"EVSI {fmt_money(r['evsi'])} vs pilot cost {fmt_money(r['pilot_net_cost'])} → "
+              f"{'PILOT' if r['pilot_worth_it'] else 'no pilot'}   means: "
+              + ", ".join(f"{k}={fmt_money(v)}" for k, v in r["mean_net"].items() if k in ("net_a", "net_c5", "net_c12", "net_c25")))
+
     print(f"\nTotal trials simulated this run: {TRIAL_COUNT['n']:,}")
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, "spec.json"), "w") as f:
@@ -569,6 +604,7 @@ def main(argv=None):
                              "median_diff": med, "trials_per_cell": args.sweep_trials},
                    "mix_gates": {"fixed": {"b_review": 0.3, "p_hours_mult": MULT_MEAN},
                                  "by_error": {str(e): g for e, g in gates.items()}},
+                   "error_prior_sensitivity": sens,
                    "total_trials": TRIAL_COUNT["n"]}, f, indent=2)
     if not args.no_charts:
         for p in charts(report, out_s, p_tab, med, k_best, mix, voi, pil):
