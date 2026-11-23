@@ -1,0 +1,3656 @@
+{
+  "report": {
+    "trials": 20000,
+    "seed": 42,
+    "variables": {
+      "wage": {
+        "mean": 73.30275013750202,
+        "median": 71.71652484051123,
+        "stddev": 13.58570015998439,
+        "min": 45.12298447859784,
+        "max": 109.53108474863927,
+        "p5": 53.09141662221217,
+        "p25": 63.02367307301885,
+        "p50": 71.71652484051123,
+        "p75": 82.91194652806591,
+        "p95": 97.9018876044417
+      },
+      "value_capture": {
+        "mean": 0.6006025691214416,
+        "median": 0.6064924089952499,
+        "stddev": 0.14705273967948632,
+        "min": 0.08645587477429505,
+        "max": 0.9782434276849565,
+        "p5": 0.3457756853259793,
+        "p25": 0.4997649711672821,
+        "p50": 0.6064924089952499,
+        "p75": 0.709872580058036,
+        "p95": 0.8314682720842638
+      },
+      "a_seat": {
+        "mean": 25.968209657741454,
+        "median": 25.73483370694451,
+        "stddev": 3.492719831119623,
+        "min": 18.057236871057167,
+        "max": 34.884334352750386,
+        "p5": 20.41548561019033,
+        "p25": 23.423054401782874,
+        "p50": 25.73483370694451,
+        "p75": 28.43864836734755,
+        "p95": 32.05419603216606
+      },
+      "a_overage": {
+        "mean": 2.5296106399732583,
+        "median": 2.5418113469196446,
+        "stddev": 1.444219412145303,
+        "min": 7.88537301715797e-05,
+        "max": 4.9999469241310734,
+        "p5": 0.28027946227019185,
+        "p25": 1.269571338513364,
+        "p50": 2.5418113469196446,
+        "p75": 3.7881710936696127,
+        "p95": 4.765972745657024
+      },
+      "a_setup": {
+        "mean": 4003.193292113155,
+        "median": 3814.4931346392864,
+        "stddev": 1471.3013026167685,
+        "min": 1009.5920783164112,
+        "max": 7936.611535923704,
+        "p5": 1846.829561772559,
+        "p25": 2876.120704039778,
+        "p50": 3814.4931346392864,
+        "p75": 5030.736626132548,
+        "p95": 6672.994873985403
+      },
+      "a_hours": {
+        "mean": 2.3372450761704355,
+        "median": 2.268074717263331,
+        "stddev": 0.8260235358006631,
+        "min": 0.5053545919526033,
+        "max": 4.486955741691844,
+        "p5": 1.0378460941295364,
+        "p25": 1.7365774321801561,
+        "p50": 2.268074717263331,
+        "p75": 2.9136909453863096,
+        "p95": 3.812136431635533
+      },
+      "a_rework": {
+        "mean": 0.33188919552347473,
+        "median": 0.3164063587257847,
+        "stddev": 0.135819397782673,
+        "min": 0.052515373257755515,
+        "max": 0.6974502244221413,
+        "p5": 0.13162169972259893,
+        "p25": 0.22715077617131813,
+        "p50": 0.3164063587257847,
+        "p75": 0.4288712982839594,
+        "p95": 0.5764404386892257
+      },
+      "a_ramp": {
+        "mean": 2.344784215918703,
+        "median": 2.2814678726642277,
+        "stddev": 0.6267365594285009,
+        "min": 1.004095904667652,
+        "max": 3.988845113709863,
+        "p5": 1.396063283685871,
+        "p25": 1.872582457054182,
+        "p50": 2.2814678726642277,
+        "p75": 2.786757816810658,
+        "p95": 3.466011065215503
+      },
+      "a_util": {
+        "mean": 0.6014798471180312,
+        "median": 0.608588585867859,
+        "stddev": 0.14829906100587073,
+        "min": 0.08006711763013537,
+        "max": 0.9908998766864159,
+        "p5": 0.3433305287033088,
+        "p25": 0.49998910422159587,
+        "p50": 0.608588585867859,
+        "p75": 0.708919594555259,
+        "p95": 0.8337732530636599
+      },
+      "b_seat": {
+        "mean": 130.13906516046129,
+        "median": 124.5528948136353,
+        "stddev": 44.05599766090237,
+        "min": 40.482133896637244,
+        "max": 249.58792181490978,
+        "p5": 65.34800917640818,
+        "p25": 95.99030668228312,
+        "p50": 124.5528948136353,
+        "p75": 161.17095815152032,
+        "p95": 210.22503532594357
+      },
+      "b_overage": {
+        "mean": 54.534762240308595,
+        "median": 39.77104571000221,
+        "stddev": 50.7066149290472,
+        "min": 1.421174421603223,
+        "max": 950.0748563509691,
+        "p5": 10.714891245413384,
+        "p25": 23.043771202023247,
+        "p50": 39.77104571000221,
+        "p75": 68.4804879660925,
+        "p95": 147.02665047540467
+      },
+      "b_setup": {
+        "mean": 28275.395212473308,
+        "median": 26756.40372959504,
+        "stddev": 11642.847190942335,
+        "min": 5221.817484522682,
+        "max": 59802.55065617825,
+        "p5": 11275.766657895922,
+        "p25": 19295.360500974362,
+        "p50": 26756.40372959504,
+        "p75": 36565.36622176001,
+        "p95": 49323.36160683376
+      },
+      "b_hours": {
+        "mean": 5.996455507612221,
+        "median": 5.804724808236768,
+        "stddev": 2.2800196469325544,
+        "min": 1.041926348526599,
+        "max": 11.964915222074438,
+        "p5": 2.4434003378629527,
+        "p25": 4.322595156779656,
+        "p50": 5.804724808236768,
+        "p75": 7.617060799703728,
+        "p95": 10.0313736162604
+      },
+      "b_task_hours": {
+        "mean": 0.5004234874012639,
+        "median": 0.4767159756869796,
+        "stddev": 0.18046787091349795,
+        "min": 0.1536968589067243,
+        "max": 0.9942987854930172,
+        "p5": 0.24206913997365231,
+        "p25": 0.3580152045114372,
+        "p50": 0.4767159756869796,
+        "p75": 0.6278987322151394,
+        "p95": 0.8311972329287989
+      },
+      "b_review": {
+        "mean": 0.3009417553331106,
+        "median": 0.28645065471183634,
+        "stddev": 0.1395408601759969,
+        "min": 0.014930043977346598,
+        "max": 0.9294040967241511,
+        "p5": 0.09595169197893265,
+        "p25": 0.1956215310060958,
+        "p50": 0.28645065471183634,
+        "p75": 0.39248033313127245,
+        "p95": 0.5523469233504165
+      },
+      "b_error": {
+        "mean": 0.04976061515006031,
+        "median": 0.04235712879787775,
+        "stddev": 0.03397903425767529,
+        "min": 0.00024863689552643913,
+        "max": 0.2983711691130891,
+        "p5": 0.009090412360170212,
+        "p25": 0.024415687388974483,
+        "p50": 0.04235712879787775,
+        "p75": 0.06747618001014845,
+        "p95": 0.11597125279318486
+      },
+      "b_reliab": {
+        "mean": 0.35032136085670434,
+        "median": 0.3493145763781157,
+        "stddev": 0.14419267474882558,
+        "min": 0.10005647715740643,
+        "max": 0.5999922890748958,
+        "p5": 0.12600326466609962,
+        "p25": 0.22685415202558523,
+        "p50": 0.3493145763781157,
+        "p75": 0.4757234715270282,
+        "p95": 0.5756947803405155
+      },
+      "b_escape": {
+        "mean": 0.19897218226135652,
+        "median": 0.17998905835436355,
+        "stddev": 0.1201486332919985,
+        "min": 0.001865552108435592,
+        "max": 0.7854629351015645,
+        "p5": 0.039676425184115884,
+        "p25": 0.10742822343180403,
+        "p50": 0.17998905835436355,
+        "p75": 0.2708540252854005,
+        "p95": 0.4264420086236155
+      },
+      "b_fix_hours": {
+        "mean": 0.9121450437963076,
+        "median": 0.8481482352485586,
+        "stddev": 0.3875132366746069,
+        "min": 0.25642877961653565,
+        "max": 1.9948850755068266,
+        "p5": 0.39413433142564136,
+        "p25": 0.5917006056854972,
+        "p50": 0.8481482352485586,
+        "p75": 1.1829473572591678,
+        "p95": 1.636257792344953
+      },
+      "b_bad_cost": {
+        "mean": 204.15614811256515,
+        "median": 148.31530249051397,
+        "stddev": 194.07836392179615,
+        "min": 5.534378106908812,
+        "max": 3397.799481195615,
+        "p5": 39.813861791014276,
+        "p25": 86.7116376525189,
+        "p50": 148.31530249051397,
+        "p75": 254.1350378100415,
+        "p95": 550.4256960381693
+      },
+      "b_incidents": {
+        "mean": 0.3004,
+        "median": 0.0,
+        "stddev": 0.5467722011953424,
+        "min": 0.0,
+        "max": 4.0,
+        "p5": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 1.0,
+        "p95": 1.0
+      },
+      "b_incident_cost": {
+        "mean": 24464.2340315601,
+        "median": 14932.580502495824,
+        "stddev": 32327.71443747934,
+        "min": 346.59112727514605,
+        "max": 991049.3339645022,
+        "p5": 2836.087831274794,
+        "p25": 7666.188078432489,
+        "p50": 14932.580502495824,
+        "p75": 29065.862878940745,
+        "p95": 76348.16290786427
+      },
+      "b_ramp": {
+        "mean": 5.005395739644192,
+        "median": 4.844350537983676,
+        "stddev": 1.4630635315573726,
+        "min": 2.0145510068073635,
+        "max": 8.95572147669886,
+        "p5": 2.859958041676342,
+        "p25": 3.88068435360376,
+        "p50": 4.844350537983676,
+        "p75": 6.034503593073118,
+        "p95": 7.659131344809505
+      },
+      "b_util": {
+        "mean": 0.5545123421130637,
+        "median": 0.5573884282439898,
+        "stddev": 0.15694531929699201,
+        "min": 0.05347591845044321,
+        "max": 0.9778678763802157,
+        "p5": 0.28883733502060516,
+        "p25": 0.44431944929049205,
+        "p50": 0.5573884282439898,
+        "p75": 0.6690373463142893,
+        "p95": 0.8054213209873028
+      }
+    },
+    "outcomes": {
+      "a_adopt": {
+        "stats": {
+          "mean": 0.951150328835027,
+          "median": 0.9524694193194952,
+          "stddev": 0.013057011654760435,
+          "min": 0.9168990601310445,
+          "max": 0.9790813353194239,
+          "p5": 0.9277914361413436,
+          "p25": 0.9419425454831113,
+          "p50": 0.9524694193194952,
+          "p75": 0.9609878654780378,
+          "p95": 0.9709153482565444
+        },
+        "tornado": [
+          {
+            "variable": "a_ramp",
+            "correlation": -1.0,
+            "impact": "high"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0271,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0156,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0123,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0122,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0114,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0068,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.0064,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": -0.0055,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0045,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0042,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0036,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0031,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0026,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0023,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0013,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0007,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0002,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "a_hours_net": {
+        "stats": {
+          "mean": 2638.6024010491947,
+          "median": 2463.3433735780277,
+          "stddev": 1307.9025254922542,
+          "min": 0.0,
+          "max": 8378.747424684092,
+          "p5": 792.175880728028,
+          "p25": 1655.5396899391899,
+          "p50": 2463.3433735780277,
+          "p75": 3467.086751570462,
+          "p95": 5060.833143583779
+        },
+        "tornado": [
+          {
+            "variable": "a_hours",
+            "correlation": 0.8315,
+            "impact": "high"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.494,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.1431,
+            "impact": "low"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0205,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0123,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.011,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0108,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": -0.0098,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0069,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0067,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0056,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0022,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0017,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.0013,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "a_cost": {
+        "stats": {
+          "mean": 21101.885470741985,
+          "median": 21016.721662612727,
+          "stddev": 2698.9174451865106,
+          "min": 12945.050431753962,
+          "max": 30216.472249432998,
+          "p5": 16787.77356437557,
+          "p25": 19195.58720729221,
+          "p50": 21016.721662612727,
+          "p75": 22949.92652228341,
+          "p95": 25674.37868265291
+        },
+        "tornado": [
+          {
+            "variable": "a_seat",
+            "correlation": 0.7736,
+            "impact": "high"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.5414,
+            "impact": "high"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.3246,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": 0.0147,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0118,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": 0.0115,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0104,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0082,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0081,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.0077,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0069,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0068,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0068,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0045,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.0022,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": 0.0006,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "a_value": {
+        "stats": {
+          "mean": 116101.07558091944,
+          "median": 102430.3090208831,
+          "stddev": 69928.34508678371,
+          "min": 0.0,
+          "max": 507244.9312893123,
+          "p5": 29063.68930186654,
+          "p25": 64642.22987248467,
+          "p50": 102430.3090208831,
+          "p75": 153331.5201037203,
+          "p95": 249819.7572786807
+        },
+        "tornado": [
+          {
+            "variable": "a_hours",
+            "correlation": 0.6842,
+            "impact": "high"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.4027,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.4004,
+            "impact": "medium"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.3057,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.1172,
+            "impact": "low"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0176,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0121,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0112,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0097,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": -0.0089,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0085,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0069,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0058,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0052,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0046,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0035,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0018,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.0016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0013,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0006,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "net_a": {
+        "stats": {
+          "mean": 94999.19011017747,
+          "median": 81380.26630754254,
+          "stddev": 69988.56937994149,
+          "min": -24909.73291118238,
+          "max": 485441.26706393546,
+          "p5": 7766.096574283159,
+          "p25": 43679.23466494159,
+          "p50": 81380.26630754254,
+          "p75": 132214.83759728586,
+          "p95": 228521.252865563
+        },
+        "tornado": [
+          {
+            "variable": "a_hours",
+            "correlation": 0.6837,
+            "impact": "high"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.4027,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.4,
+            "impact": "medium"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.3054,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.117,
+            "impact": "low"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0286,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0244,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.019,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0176,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0123,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0109,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0097,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": -0.0092,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0089,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0072,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0064,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0053,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0048,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0032,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0012,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0003,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_adopt": {
+        "stats": {
+          "mean": 0.8957209220907462,
+          "median": 0.8990760304586733,
+          "stddev": 0.030480490240778594,
+          "min": 0.8134224692354404,
+          "max": 0.9580301873581799,
+          "p5": 0.840434763649802,
+          "p25": 0.87428117514431,
+          "p50": 0.8990760304586733,
+          "p75": 0.9191524092999217,
+          "p95": 0.9404175407984096
+        },
+        "tornado": [
+          {
+            "variable": "b_ramp",
+            "correlation": -1.0,
+            "impact": "high"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0145,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0109,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": 0.0089,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0081,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0078,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0074,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0069,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0067,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0064,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0061,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0046,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0045,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0033,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0017,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": 0.0011,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0011,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0003,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_active": {
+        "stats": {
+          "mean": 1142.3999143961246,
+          "median": 1146.3630287315311,
+          "stddev": 325.74396980422074,
+          "min": 108.23284922244588,
+          "max": 2109.143566499327,
+          "p5": 593.164113947052,
+          "p25": 913.2600885089373,
+          "p50": 1146.3630287315311,
+          "p75": 1379.7729589517696,
+          "p95": 1665.4923331805398
+        },
+        "tornado": [
+          {
+            "variable": "b_util",
+            "correlation": 0.9923,
+            "impact": "high"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.1205,
+            "impact": "low"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0091,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0087,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0072,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0071,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.007,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0066,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0063,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0055,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0052,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0052,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.0046,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0039,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0014,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": 0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_usage": {
+        "stats": {
+          "mean": 0.49669561495483666,
+          "median": 0.49841870814414396,
+          "stddev": 0.14162781295835683,
+          "min": 0.04705776053149821,
+          "max": 0.9170189419562291,
+          "p5": 0.25789744084654437,
+          "p25": 0.397069603699538,
+          "p50": 0.49841870814414396,
+          "p75": 0.5999012865007695,
+          "p95": 0.7241271013828435
+        },
+        "tornado": [
+          {
+            "variable": "b_util",
+            "correlation": 0.9923,
+            "impact": "high"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.1205,
+            "impact": "low"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0091,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0087,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0072,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0071,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.007,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0066,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0063,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0055,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0052,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0052,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.0046,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0039,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0014,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": 0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_err_avg": {
+        "stats": {
+          "mean": 0.04103024356763323,
+          "median": 0.034853464120700464,
+          "stddev": 0.02831788582526032,
+          "min": 0.00017581875718121934,
+          "max": 0.27077485219799174,
+          "p5": 0.007428526900453456,
+          "p25": 0.02003528261419161,
+          "p50": 0.034853464120700464,
+          "p75": 0.05538588832337006,
+          "p95": 0.09588827503517877
+        },
+        "tornado": [
+          {
+            "variable": "b_error",
+            "correlation": 0.9881,
+            "impact": "high"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.1212,
+            "impact": "low"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.0172,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0116,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0094,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0088,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0088,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": 0.0073,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0061,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.006,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": 0.0058,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0054,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0042,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0041,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.0036,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0034,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0029,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": 0.0026,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0024,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0003,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_gross_hours": {
+        "stats": {
+          "mean": 6845.646920665961,
+          "median": 6381.8957686568065,
+          "stddev": 3322.3104486104385,
+          "min": 223.96756369283722,
+          "max": 21581.182811744282,
+          "p5": 2272.188734270314,
+          "p25": 4335.063262624804,
+          "p50": 6381.8957686568065,
+          "p75": 8878.344942540098,
+          "p95": 13058.972875879082
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.777,
+            "impact": "high"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.5797,
+            "impact": "high"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0628,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.021,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0155,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0131,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0066,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0048,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0037,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0037,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0034,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0024,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.0023,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0019,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.0018,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0012,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": 0.0001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_tasks_total": {
+        "stats": {
+          "mean": 15759.947564433358,
+          "median": 13222.157751052324,
+          "stddev": 10406.75387187262,
+          "min": 695.0743602356266,
+          "max": 102606.21567454889,
+          "p5": 4169.533805963385,
+          "p25": 8426.024508448165,
+          "p50": 13222.157751052324,
+          "p75": 20235.085226623054,
+          "p95": 36025.88911881265
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.5687,
+            "impact": "high"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.5543,
+            "impact": "high"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.4289,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0435,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.018,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0124,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0106,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0093,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0093,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0087,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0086,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.006,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": 0.0056,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0053,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0047,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.0039,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0031,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0031,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0027,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0013,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0011,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_bad_actions": {
+        "stats": {
+          "mean": 645.6972194219094,
+          "median": 435.80426826213716,
+          "stddev": 685.6884780848565,
+          "min": 1.5318244366326,
+          "max": 10200.575790623785,
+          "p5": 67.03797656999797,
+          "p25": 213.2857266600605,
+          "p50": 435.80426826213716,
+          "p75": 834.4661720164083,
+          "p95": 1928.1478588071889
+        },
+        "tornado": [
+          {
+            "variable": "b_error",
+            "correlation": 0.6454,
+            "impact": "high"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": 0.3517,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.3392,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2723,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0777,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0287,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0183,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.012,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0098,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0085,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0078,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0074,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0068,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0067,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0064,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0051,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0039,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0034,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.0014,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": 0.0006,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0001,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_escaped": {
+        "stats": {
+          "mean": 128.48945560834773,
+          "median": 71.01910029133977,
+          "stddev": 179.43421989347425,
+          "min": 0.08798098546028014,
+          "max": 3943.262429469075,
+          "p5": 7.256217921937093,
+          "p25": 29.032456342135593,
+          "p50": 71.01910029133977,
+          "p75": 156.25938295368223,
+          "p95": 438.6831825521643
+        },
+        "tornado": [
+          {
+            "variable": "b_error",
+            "correlation": 0.4914,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.434,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": 0.2697,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.2614,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2076,
+            "impact": "low"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0628,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0194,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0139,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0126,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0096,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0086,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0072,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0056,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": 0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": 0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0043,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.0041,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.0037,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0036,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0022,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0013,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_hours_net": {
+        "stats": {
+          "mean": 4030.5371474134163,
+          "median": 3625.399772267853,
+          "stddev": 2320.9700289484417,
+          "min": -5075.576962410207,
+          "max": 16722.743839288953,
+          "p5": 1050.6968510726285,
+          "p25": 2315.1253471876557,
+          "p50": 3625.399772267853,
+          "p75": 5312.869670652647,
+          "p95": 8416.166540568893
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.6553,
+            "impact": "high"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.4829,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.4047,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.212,
+            "impact": "low"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0812,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0772,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0499,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0323,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.025,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0163,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0128,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0099,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0088,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0078,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.0051,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0049,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0041,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0037,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0032,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.003,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0007,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_incident_n": {
+        "stats": {
+          "mean": 0.29677101724360083,
+          "median": 0.0,
+          "stddev": 0.7215208679713503,
+          "min": 0.0,
+          "max": 11.507405135631862,
+          "p5": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.15469810777720705,
+          "p95": 1.7074123643303667
+        },
+        "tornado": [
+          {
+            "variable": "b_incidents",
+            "correlation": 0.7518,
+            "impact": "high"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.28,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.1188,
+            "impact": "low"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0189,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0131,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0125,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0096,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": 0.0094,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0081,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0064,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0061,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0057,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0045,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0043,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0037,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": 0.0035,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0031,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.0027,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": 0.002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0012,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0008,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_cost": {
+        "stats": {
+          "mean": 156182.79193717943,
+          "median": 143175.32439867238,
+          "stddev": 71809.04313275433,
+          "min": 47102.85453690245,
+          "max": 1658051.121878273,
+          "p5": 86143.2394629559,
+          "p25": 115318.99889278371,
+          "p50": 143175.32439867238,
+          "p75": 176759.81907334088,
+          "p95": 266391.3282664373
+        },
+        "tornado": [
+          {
+            "variable": "b_seat",
+            "correlation": 0.3653,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.3399,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": 0.3116,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.2133,
+            "impact": "low"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.2086,
+            "impact": "low"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.2018,
+            "impact": "low"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.1988,
+            "impact": "low"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.1614,
+            "impact": "low"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.1358,
+            "impact": "low"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": 0.1341,
+            "impact": "low"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": 0.1081,
+            "impact": "low"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0279,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0224,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0104,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0088,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0065,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": -0.0061,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": 0.0044,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0038,
+            "impact": "negligible"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": -0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0024,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0023,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": -0.002,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.002,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_value": {
+        "stats": {
+          "mean": 177352.68889610213,
+          "median": 150039.76342257252,
+          "stddev": 119790.35622790837,
+          "min": -227901.8735354969,
+          "max": 1191263.950481701,
+          "p5": 38692.97970418345,
+          "p25": 90565.82232867059,
+          "p50": 150039.76342257252,
+          "p75": 235027.86299159986,
+          "p95": 407325.2344030186
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.5556,
+            "impact": "high"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.4137,
+            "impact": "medium"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.3585,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.3431,
+            "impact": "medium"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.2715,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.1815,
+            "impact": "low"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0717,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0647,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0424,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0285,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0205,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0138,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0096,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.008,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.0074,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.0061,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": 0.0056,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0048,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0035,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0034,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0023,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0022,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": 0.0005,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0004,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "net_b": {
+        "stats": {
+          "mean": 21169.896958922756,
+          "median": 4022.9884340921853,
+          "stddev": 134329.6297360971,
+          "min": -1484797.3554329886,
+          "max": 1021385.2513032702,
+          "p5": -145440.4808434383,
+          "p25": -60295.31983697886,
+          "p50": 4022.9884340921853,
+          "p75": 87654.27731303626,
+          "p95": 255952.14823402828
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.4238,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.3284,
+            "impact": "medium"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.3212,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.3072,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2626,
+            "impact": "medium"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.2432,
+            "impact": "low"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.2007,
+            "impact": "low"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.1883,
+            "impact": "low"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.1303,
+            "impact": "low"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.1122,
+            "impact": "low"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.111,
+            "impact": "low"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0887,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0813,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0619,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0597,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0332,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0259,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0095,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0089,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0072,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0063,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.0035,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.0014,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "diff_b_minus_a": {
+        "stats": {
+          "mean": -73829.29315125471,
+          "median": -80855.59593817152,
+          "stddev": 138387.44618414162,
+          "min": -1743188.5392581334,
+          "max": 886073.2260631945,
+          "p5": -274143.0555629847,
+          "p25": -153237.88848962542,
+          "p50": -80855.59593817152,
+          "p75": -132.86585727558486,
+          "p95": 154671.05173075525
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.4163,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.355,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.318,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.2984,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2595,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.2036,
+            "impact": "low"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.1942,
+            "impact": "low"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.1821,
+            "impact": "low"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.131,
+            "impact": "low"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.1082,
+            "impact": "low"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.1072,
+            "impact": "low"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.1051,
+            "impact": "low"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0885,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0816,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0727,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0678,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0572,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0545,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0286,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0219,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0215,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.0158,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.015,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0111,
+            "impact": "negligible"
+          }
+        ]
+      },
+      "b_beats_a": {
+        "stats": {
+          "mean": 0.24975,
+          "median": 0.0,
+          "stddev": 0.4328682680677806,
+          "min": 0.0,
+          "max": 1.0,
+          "p5": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 1.0
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.4076,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2614,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.2482,
+            "impact": "low"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.2457,
+            "impact": "low"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.1924,
+            "impact": "low"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.1585,
+            "impact": "low"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.1438,
+            "impact": "low"
+          },
+          {
+            "variable": "a_util",
+            "correlation": -0.1301,
+            "impact": "low"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.1214,
+            "impact": "low"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.0829,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.081,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.0722,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.0573,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0569,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0489,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0465,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0269,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.026,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0201,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0124,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0085,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": 0.0051,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.0047,
+            "impact": "negligible"
+          }
+        ],
+        "probability_true": 0.24975
+      },
+      "a_positive": {
+        "stats": {
+          "mean": 0.97495,
+          "median": 1.0,
+          "stddev": 0.15627698966898484,
+          "min": 0.0,
+          "max": 1.0,
+          "p5": 1.0,
+          "p25": 1.0,
+          "p50": 1.0,
+          "p75": 1.0,
+          "p95": 1.0
+        },
+        "tornado": [
+          {
+            "variable": "a_hours",
+            "correlation": 0.2611,
+            "impact": "medium"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.1281,
+            "impact": "low"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.1225,
+            "impact": "low"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": -0.0943,
+            "impact": "negligible"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.0604,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": -0.0314,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": -0.0302,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0186,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0116,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_hours",
+            "correlation": -0.0112,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0111,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": 0.0083,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0081,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": -0.0078,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0074,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0048,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_util",
+            "correlation": -0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": 0.0026,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": 0.0025,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.0025,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_review",
+            "correlation": 0.0016,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.001,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": -0.0007,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": 0.0003,
+            "impact": "negligible"
+          }
+        ],
+        "probability_true": 0.97495
+      },
+      "b_positive": {
+        "stats": {
+          "mean": 0.5154,
+          "median": 1.0,
+          "stddev": 0.4997627837284405,
+          "min": 0.0,
+          "max": 1.0,
+          "p5": 0.0,
+          "p25": 0.0,
+          "p50": 1.0,
+          "p75": 1.0,
+          "p95": 1.0
+        },
+        "tornado": [
+          {
+            "variable": "b_hours",
+            "correlation": 0.3992,
+            "impact": "medium"
+          },
+          {
+            "variable": "value_capture",
+            "correlation": 0.2887,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_review",
+            "correlation": -0.2771,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_error",
+            "correlation": -0.2549,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_util",
+            "correlation": 0.2501,
+            "impact": "medium"
+          },
+          {
+            "variable": "b_seat",
+            "correlation": -0.2065,
+            "impact": "low"
+          },
+          {
+            "variable": "wage",
+            "correlation": 0.1987,
+            "impact": "low"
+          },
+          {
+            "variable": "b_bad_cost",
+            "correlation": -0.1247,
+            "impact": "low"
+          },
+          {
+            "variable": "b_overage",
+            "correlation": -0.1069,
+            "impact": "low"
+          },
+          {
+            "variable": "b_task_hours",
+            "correlation": 0.0961,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incidents",
+            "correlation": -0.0898,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_setup",
+            "correlation": -0.0807,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_escape",
+            "correlation": -0.0736,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_fix_hours",
+            "correlation": -0.0519,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_incident_cost",
+            "correlation": -0.0283,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_ramp",
+            "correlation": -0.0239,
+            "impact": "negligible"
+          },
+          {
+            "variable": "b_reliab",
+            "correlation": 0.0215,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_rework",
+            "correlation": 0.019,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_setup",
+            "correlation": 0.009,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_hours",
+            "correlation": -0.0076,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_overage",
+            "correlation": -0.0046,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_seat",
+            "correlation": 0.0045,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_ramp",
+            "correlation": 0.0028,
+            "impact": "negligible"
+          },
+          {
+            "variable": "a_util",
+            "correlation": 0.0011,
+            "impact": "negligible"
+          }
+        ],
+        "probability_true": 0.5154
+      }
+    }
+  },
+  "sweep": {
+    "error_grid": [
+      0.0,
+      0.02,
+      0.05,
+      0.08,
+      0.12,
+      0.18,
+      0.25
+    ],
+    "hours_grid": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      10,
+      14
+    ],
+    "p_b_beats_a": [
+      [
+        0.0001,
+        0.0086,
+        0.0593,
+        0.3065,
+        0.5725,
+        0.8012,
+        0.9245
+      ],
+      [
+        0.0001,
+        0.0048,
+        0.038,
+        0.2224,
+        0.464,
+        0.7116,
+        0.8657
+      ],
+      [
+        0.0001,
+        0.0024,
+        0.0169,
+        0.1325,
+        0.3133,
+        0.547,
+        0.7286
+      ],
+      [
+        0.0001,
+        0.001,
+        0.0098,
+        0.0784,
+        0.2024,
+        0.397,
+        0.569
+      ],
+      [
+        0.0,
+        0.0005,
+        0.0037,
+        0.0353,
+        0.1099,
+        0.2392,
+        0.3852
+      ],
+      [
+        0.0,
+        0.0003,
+        0.001,
+        0.0106,
+        0.0373,
+        0.1023,
+        0.1871
+      ],
+      [
+        0.0,
+        0.0001,
+        0.0004,
+        0.003,
+        0.0092,
+        0.0316,
+        0.0693
+      ]
+    ],
+    "median_diff": [
+      [
+        -171477.27042633173,
+        -138934.22260808747,
+        -106728.67628273006,
+        -43332.971988336765,
+        19787.209562094984,
+        115897.07258830176,
+        244684.24450523278
+      ],
+      [
+        -178065.34257661903,
+        -149091.8171771393,
+        -120908.9629524372,
+        -65242.090798358455,
+        -9276.495023810017,
+        74120.30980853346,
+        186992.10938901393
+      ],
+      [
+        -187886.4234686914,
+        -164008.85619397112,
+        -140861.31004868608,
+        -95469.00190670691,
+        -50849.04498054851,
+        16205.524669356339,
+        107161.01902114518
+      ],
+      [
+        -196392.98741713172,
+        -177823.29682766186,
+        -159353.67179215053,
+        -124501.0066901203,
+        -89312.89491505623,
+        -37529.723307490705,
+        33808.84664091856
+      ],
+      [
+        -207195.03483322408,
+        -195449.8660753532,
+        -184075.5076759466,
+        -161346.25533193082,
+        -138470.18500849744,
+        -102526.02118310076,
+        -57512.02272148057
+      ],
+      [
+        -222505.03540491965,
+        -221225.0162296272,
+        -220076.49264047865,
+        -214834.2558260152,
+        -207566.54593206174,
+        -196491.8471402927,
+        -183549.39245884033
+      ],
+      [
+        -238994.17135091987,
+        -250407.41765117456,
+        -260437.78773934848,
+        -276186.71483126614,
+        -289748.40614013514,
+        -310753.00482839835,
+        -336250.77975590003
+      ]
+    ],
+    "trials_per_cell": 10000
+  },
+  "gates": {
+    "fixed": {
+      "b_util": 0.7,
+      "b_review": 0.3
+    },
+    "by_error": {
+      "0.02": {
+        "curve": [
+          [
+            3,
+            0.0495
+          ],
+          [
+            4,
+            0.1666
+          ],
+          [
+            5,
+            0.3531
+          ],
+          [
+            6,
+            0.5436
+          ],
+          [
+            7,
+            0.7028
+          ],
+          [
+            8,
+            0.8169
+          ],
+          [
+            9,
+            0.8878
+          ],
+          [
+            10,
+            0.9319
+          ],
+          [
+            11,
+            0.9549
+          ],
+          [
+            12,
+            0.9716
+          ],
+          [
+            14,
+            0.9853
+          ],
+          [
+            16,
+            0.9904
+          ]
+        ],
+        "hours_for_p70": 7
+      },
+      "0.05": {
+        "curve": [
+          [
+            3,
+            0.0216
+          ],
+          [
+            4,
+            0.0833
+          ],
+          [
+            5,
+            0.1921
+          ],
+          [
+            6,
+            0.3337
+          ],
+          [
+            7,
+            0.4781
+          ],
+          [
+            8,
+            0.5992
+          ],
+          [
+            9,
+            0.6933
+          ],
+          [
+            10,
+            0.7666
+          ],
+          [
+            11,
+            0.8201
+          ],
+          [
+            12,
+            0.8573
+          ],
+          [
+            14,
+            0.902
+          ],
+          [
+            16,
+            0.9279
+          ]
+        ],
+        "hours_for_p70": 10
+      },
+      "0.1": {
+        "curve": [
+          [
+            3,
+            0.0055
+          ],
+          [
+            4,
+            0.0239
+          ],
+          [
+            5,
+            0.0667
+          ],
+          [
+            6,
+            0.1277
+          ],
+          [
+            7,
+            0.2065
+          ],
+          [
+            8,
+            0.2859
+          ],
+          [
+            9,
+            0.3659
+          ],
+          [
+            10,
+            0.4336
+          ],
+          [
+            11,
+            0.4956
+          ],
+          [
+            12,
+            0.5502
+          ],
+          [
+            14,
+            0.6284
+          ],
+          [
+            16,
+            0.6829
+          ]
+        ],
+        "hours_for_p70": null
+      }
+    }
+  },
+  "pilot_5x3": {
+    "team": 5,
+    "months": 3,
+    "b_cost": {
+      "mean": 30726.382111629664,
+      "median": 29197.251711131765,
+      "stddev": 11683.607137005727,
+      "min": 6870.044268936634,
+      "max": 66187.22182773039,
+      "p5": 13699.72522675781,
+      "p25": 21711.903195930507,
+      "p50": 29197.251711131765,
+      "p75": 39038.347772657326,
+      "p95": 51881.832224720616
+    },
+    "net_b": {
+      "mean": -29166.97942113006,
+      "median": -27666.270396202654,
+      "stddev": 11734.186493448773,
+      "min": -63881.27976187765,
+      "max": 629.2959263280854,
+      "p5": -50408.77866623505,
+      "p25": -37482.84588637753,
+      "p50": -27666.270396202654,
+      "p75": -20190.782386177325,
+      "p95": -12078.756788822926
+    },
+    "p_b_positive": 5e-05
+  },
+  "small_team_5x24": {
+    "p_b_beats_a": 0.10875,
+    "p_b_positive": 0.2214,
+    "net_b": {
+      "mean": -18386.336778194094,
+      "median": -20397.19541926133,
+      "stddev": 29141.332119815466,
+      "min": -314878.7029273691,
+      "max": 187852.0199337199,
+      "p5": -59531.247663474984,
+      "p25": -36127.27612378607,
+      "p50": -20397.19541926133,
+      "p75": -2616.4109971007383,
+      "p95": 31003.365742686885
+    }
+  }
+}
