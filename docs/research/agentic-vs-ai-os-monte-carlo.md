@@ -1,232 +1,278 @@
-# Agentic OS vs AI OS — Monte Carlo trade-off (25 people × 24 months)
+# Agentic OS vs AI OS — Monte Carlo trade-off (25 people × 24 months) · v3
 
-**Bottom line:** under the stated assumptions, **the AI OS path (A) beats the Agentic OS path (B) about 75% of the time.** A is cheap and almost never loses money (P(net > 0) = 97.5%). B has the higher ceiling (P95 +$256k vs +$229k) but a real downside (P5 −$145k). It is a coin-flip to make any money at all (P(net > 0) = 51.5%). **If the rollout hits 70% seat use and keeps review at 30% of delegated time**, B becomes a *better than 70% bet* at **≥ 7 hrs/person/week delegated at a ~2% bad-action rate**, or ≥ 10 hrs/week at ~5%. At 10% errors it needs higher use and lighter review (≥ 12 hrs/wk at 80% use and 20% review ≈ 74%). Under the default, less disciplined assumptions, 7 hrs at 2% is only 46%.
+**Bottom line:** on today's published evidence, **give everyone the AI OS assistant (A) and don't buy agent seats yet.**
 
-> Produced by `skills/monte-carlo-predictor/examples/agentic_vs_ai_os.py` using this repo's engine (`engine.simulate_with_samples`): 20,000 trials, seed 42. Additional runs: a 7×7 sensitivity sweep and a 36-cell gate table at 10,000 trials per cell, plus a pilot scenario — about 0.9M trials in total. The router (`prediction-toolkit`: `python -m engine router recommend`) picked **Simulation (Monte Carlo)** as its top method. Its match was weak (score 0.053, matched only on "uncertainty"), so treat the routing as a confirmation, not strong evidence.
+- A pays back in **99.9%** of trials (median **+$86k** over 24 months).
+- **Agents for everyone (B)** loses money in 86% of trials and beats A only **3.8%** of the time.
+- **Adding agent seats on top of A (C)** never beats A more than 13% of the time, for any seat count from 1 to 25.
+- **A paid pilot isn't worth it at today's evidence:** what a 3-month pilot would actually learn is worth about **$1.5k**, while it costs about **$8k** net.
+- **The verdict hinges on one belief: how often agents make mistakes.** Today's evidence implies about 20%. **If you believe it is ≤ 10%, a pilot becomes worth running. At ~5%, adding agent seats wins outright** (section 2b).
+
+> Produced by `skills/monte-carlo-predictor/examples/agentic_vs_ai_os.py` through the repo engine (`engine.simulate_with_samples`): 20,000 paired trials (seed 42) plus sweeps, gates, a prior-sensitivity run and checks, for **1,085,000 trials in total**. The router (`prediction-toolkit`) picked Simulation (Monte Carlo) as the top method, though with a weak match score (0.053).
 >
-> **Revision note:** two rounds of independent cold review drove this version. Round 1 found that the error rate barely mattered, the controls never tested it, calendar weeks were used instead of working weeks, and the pilot and gate claims went beyond what the model had run. Round 2 found horizon bugs in the short-pilot formulas and gate claims missing their conditions. All important findings are fixed; section 5 lists each one.
+> **v3 changes from v2:** inputs anchored to published trials, benchmarks and vendor prices (section 4). Added the Mix option with a limited pool of real power users, and value of information that includes what a noisy pilot actually learns (EVSI). Two cold-review rounds on v3 (section 8): the first found 3 critical defects, all fixed here, and fixing them reversed the pilot verdict. The second showed that verdict depends on the error-rate belief, which section 2b now reports explicitly.
 
 ---
 
 ## 1. Results
 
-### Headline (24-month totals, USD, 25 people, 46 working weeks/year)
+### Three strategies (24-month net benefit, USD, 25 people)
 
-| Outcome | P5 | P50 | Mean | P95 |
+| Strategy | P5 | P50 | Mean | P95 | P(beats A) |
+|---|---:|---:|---:|---:|---:|
+| **A: AI OS for everyone** | **$27k** | **$86k** | **$95k** | **$190k** | — (P(net > 0) = 0.999) |
+| B: Agentic for everyone | −$537k | −$116k | −$160k | $84k | 0.038 (P(net > 0) = 0.142) |
+| C: A + 1 agent seat | −$0.7k | $67k | $74k | $173k | 0.051 |
+| C: A + 2 agent seats | −$24k | $60k | $64k | $172k | 0.103 |
+| C: A + 3 agent seats | −$52k | $54k | $55k | $174k | 0.125 |
+| C: A + 5 agent seats | −$100k | $43k | $40k | $173k | 0.126 |
+| C: A + 8 agent seats | −$155k | $27k | $18k | $170k | 0.113 |
+| C: A + 12 agent seats | −$234k | $6k | −$10k | $168k | 0.103 |
+| C: A + 18 agent seats | −$354k | −$25k | −$52k | $167k | 0.097 |
+| C: A + 25 agent seats (everyone keeps both) | −$496k | −$62k | −$101k | $170k | 0.092 |
+
+**Choosing by expected value, A is best** (mean $95k). Every agent seat lowers the expected result: −$21k mean for 1 seat, −$104k for 12, −$196k for 25.
+
+![Three strategies](agentic-vs-ai-os-mc/overlay_net_a_vs_b.png)
+![Mix seats](agentic-vs-ai-os-mc/mix_seats.png)
+
+| A vs B detail | P5 | P50 | Mean | P95 |
 |---|---:|---:|---:|---:|
-| A cost | $17k | $21k | $21k | $26k |
-| A productivity value | $29k | $102k | $116k | $250k |
-| **A net benefit** | **$8k** | **$81k** | **$95k** | **$229k** |
-| B cost | $86k | $143k | $156k | $266k |
-| B productivity value | $39k | $150k | $177k | $407k |
-| **B net benefit** | **−$145k** | **$4k** | **$21k** | **$256k** |
-| **B − A** (paired) | −$274k | −$81k | −$74k | +$155k |
+| A cost | $16k | $20k | $20k | $24k |
+| A value | $47k | $106k | $114k | $209k |
+| B cost | $110k | $181k | $236k | $534k |
+| B value | −$88k | $67k | $75k | $264k |
+| B − A (paired) | −$642k | −$207k | −$255k | −$17k |
 
-| Probability | Value |
-|---|---:|
-| **P(B beats A)** | **0.250** |
-| P(A net > 0) | 0.975 |
-| P(B net > 0) | 0.515 |
+B's value can go negative: at high error rates, failed tasks plus review take more hours than the agent saves.
 
-**Stability.** P(B beats A) came out at 0.250 (seed 42, 20k trials), 0.246 (seed 7, 20k), 0.247 (seed 123, 50k) and 0.247 (seed 2026, 100k). The median of B − A ranged from −$80.3k to −$81.9k across those runs. Sampling error (~±0.3 pts) is negligible next to the **assumption** uncertainty in section 4.
+**Stability.** P(B beats A) = 0.038 / 0.039 / 0.039 / 0.040 and P(C₁ beats A) = 0.051–0.053, for seeds 42 (20k trials), 7 (20k), 123 (50k) and 2026 (100k). **A was the best option in every run.**
 
-![Net benefit A vs B](agentic-vs-ai-os-mc/overlay_net_a_vs_b.png)
+### What drives B − A
 
-![B minus A distribution](agentic-vs-ai-os-mc/histogram_diff_b_minus_a.png)
+| Rank | Variable | Corr. |
+|---:|---|---:|
+| 1 | `b_error`: agent bad-action rate | **−0.45** |
+| 2 | `b_bad_cost`: $ per escaped bad action | **−0.42** |
+| 3 | `b_task_hours`: task size (per-task costs are fixed, so this flatters big tasks; see caveats) | +0.29 |
+| 4 | `b_escape`: share of errors that get past review | −0.21 |
+| 5 | `b_review`: review share | −0.17 |
+| 6 | `b_fix_hours`: hours to fix a caught error | −0.16 |
+| 7 | `a_hours`: assistant hours saved | −0.15 |
+| 8 | `b_reliab`: agent reliability gain | +0.08 |
+| 9 | `b_overage`: usage overage | −0.06 |
+| 10 | `b_hours`: hours delegated | −0.06 |
 
-### Tornado — what drives B − A
+**Agent reliability, not time saved, decides this.** Hours delegated barely matters at today's error rates, because more delegation produces more bad actions.
 
-Pearson correlation of each input with (B − A), from the engine's tornado:
+![Tornado](agentic-vs-ai-os-mc/tornado_diff_b_minus_a.png)
 
-| Rank | Variable | Corr. | Reading |
-|---:|---|---:|---|
-| 1 | `b_hours`: work delegated to the agent per person per week | **+0.42** | The main driver |
-| 2 | `a_hours`: ambient-assistant hours saved per person per week | −0.35 | The better A works, the less B adds |
-| 3 | `b_error`: starting bad-action rate per task | **−0.32** | Failed tasks deliver nothing and cost fixes or damage |
-| 4 | `b_review`: review time as a share of delegated hours | −0.30 | Review overhead is a real tax |
-| 5 | `b_util`: share of agent seats actually used | +0.26 | Idle agent seats are expensive |
-| 6 | `a_util` | −0.20 | |
-| 7 | `b_seat`: agent seat price | −0.19 | Price matters less than how much the agent is used |
-| 8 | `b_bad_cost`: $ cost per bad action that slips past review | −0.18 | |
-| 9 | `b_task_hours`: size of each delegated task | +0.13 | Partly a modelling artefact: fix time and escape cost are per task, regardless of task size |
-| 10 | `value_capture` | +0.11 | |
+Per-path charts: [net A](agentic-vs-ai-os-mc/histogram_net_a.png) · [net B](agentic-vs-ai-os-mc/histogram_net_b.png) · [B − A](agentic-vs-ai-os-mc/histogram_diff_b_minus_a.png) · [A drivers](agentic-vs-ai-os-mc/tornado_net_a.png) · [B drivers](agentic-vs-ai-os-mc/tornado_net_b.png)
 
-![Tornado B minus A](agentic-vs-ai-os-mc/tornado_diff_b_minus_a.png)
-
-Per-path charts: [net A histogram](agentic-vs-ai-os-mc/histogram_net_a.png) · [net A tornado](agentic-vs-ai-os-mc/tornado_net_a.png) · [net B histogram](agentic-vs-ai-os-mc/histogram_net_b.png) · [net B tornado](agentic-vs-ai-os-mc/tornado_net_b.png)
-
-### Sensitivity sweep — agent error rate × hours delegated
-
-Both variables are pinned to each grid value. Everything else, including seat use and review share, stays uncertain at its default prior.
-
-**P(B beats A)**
+### Sensitivity sweep: P(B beats A) by agent error rate × ordinary-user hours delegated
 
 | error \ hrs/wk | 1 | 2 | 3 | 5 | 7 | 10 | 14 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 0% | 0% | 1% | 6% | 31% | 57% | 80% | 92% |
-| 2% | 0% | 0% | 4% | 22% | 46% | 71% | 87% |
-| 5% | 0% | 0% | 2% | 13% | 31% | 55% | 73% |
-| 8% | 0% | 0% | 1% | 8% | 20% | 40% | 57% |
-| 12% | 0% | 0% | 0% | 4% | 11% | 24% | 39% |
-| 18% | 0% | 0% | 0% | 1% | 4% | 10% | 19% |
-| 25% | 0% | 0% | 0% | 0% | 1% | 3% | 7% |
+| 0% | 0% | 0% | 6% | 42% | 73% | 92% | 98% |
+| 2% | 0% | 0% | 3% | 31% | 61% | 84% | 94% |
+| 5% | 0% | 0% | 1% | 18% | 44% | 68% | 83% |
+| 8% | 0% | 0% | 1% | 10% | 29% | 52% | 68% |
+| 12% | 0% | 0% | 0% | 5% | 16% | 32% | 48% |
+| 18% | 0% | 0% | 0% | 1% | 6% | 14% | 25% |
+| 25% | 0% | 0% | 0% | 0% | 1% | 5% | 10% |
 
-![Sweep P(B wins)](agentic-vs-ai-os-mc/sweep_p_b_wins.png)
-![Sweep median difference](agentic-vs-ai-os-mc/sweep_median_diff.png)
-
-**Reading it:** at 3 hrs/week or less, B wins at most ~6% of the time. Above a ~12% error rate, B stays below 40% across the grid. Error rate and hours delegated matter about equally, and you need both.
-
-### Scale-up gates (what the pilot must show)
-
-This table pins seat use at **70%** and review at **30%**, the targets a well-run rollout should hit, and varies hours delegated and error rate.
-
-| Error rate | Hours/person/wk for P(B beats A) ≥ 70% | P at 7 hrs | P at 10 hrs |
-|---|---:|---:|---:|
-| 2% | **7** | 71% | 93% |
-| 5% | **10** (9 h = 69%) | 48% | 77% |
-| 10% | **not reached by 16 h** (16 h = 68%) | 21% | 43% |
-
-### Pilot economics
-
-| Scenario | B cost P50 | B net P5 / P50 / P95 | P(B net > 0) |
-|---|---:|---:|---:|
-| Pilot: 5 people × 3 months, full setup-cost range | $29k | −$50k / −$28k / −$12k | 0.000 |
-| 5 people × 24 months (never scaled up) | — | median −$20k | 0.221 (P(B beats A) = 0.109) |
-
-**A pilot does not pay for itself.** It is an **information purchase: cash outlay P50 ≈ $29k, net cost P50 ≈ $28k (P5–P95 $12k–$50k)**. Most of that is the fixed setup cost. Staying small permanently is the worst option: B at 5 seats loses money ~78% of the time.
+![Sweep](agentic-vs-ai-os-mc/sweep_p_b_wins.png)
+![Sweep median](agentic-vs-ai-os-mc/sweep_median_diff.png)
 
 ---
 
-## 2. Model
+## 2. Is a pilot worth paying for?
 
-Both paths sit in **one spec**, so every trial uses the same draw of the shared inputs (`wage`, `value_capture`). That makes it a paired comparison, and P(B beats A) is a genuine head-to-head.
+| Quantity | Value | Meaning |
+|---|---:|---|
+| EVPI (expected value of perfect information) | $7.2k | Ceiling: knowing every input perfectly before deciding |
+| EVPPI (expected value of partial perfect information) | $2.1k | Ceiling: perfect measurement of the four inputs a pilot can see (error rate, power-user hours, review share, power-user seat use) |
+| **EVSI (expected value of sample information)** | **$1.5k** | What *this* pilot actually learns: 3 power users × 3 months, about 132 agent tasks observed, with noisy measurements |
+| **Pilot net cost** | **$8.3k mean** (P5–P95 $4k–$14k) | Lean setup (15% of rollout setup) plus seats and displaced assistant value, minus the value produced during the pilot |
 
-```
-weeks  = 24/12 × 46 = 92 working weeks        adoption avg = 1 − R/(2T) if R ≤ T else T/(2R)
-A value = 25·92·adoptA·utilA·max(hoursA − reworkA, 0) · wage · value_capture
-A cost  = 25·24·(seatA + overageA) + setupA
+**Verdict at today's evidence: no.** Even a *perfect* pilot is worth only $2.1k, against a ~$8k cost. The reason is that A wins so clearly that almost no plausible pilot result changes the decision: after the pilot, the model still picks A 95% of the time. The low EVPI ($7k) says the same thing. Uncertainty is large, but it barely affects *which option to choose* **given the 20% error belief**; section 2b shows how that changes.
 
-usageB  = adoptB·utilB          gross = 25·92·usageB·hoursB          tasks = gross / task_hours
-err     = errorB·(1 − gain·min(T/24,1)/2)       bad = tasks·err        escaped = bad·escape
-B hours = gross·(1 − err)  − gross·review  − (bad − escaped)·fix_hours
-          (bad tasks deliver nothing; all delegated work is reviewed; caught bad tasks cost fix time)
-incidents = poisson(0.3) · min(T/24,1) · (team/25) · (usageB/0.5) · (errorB/0.05)
-B cost  = 25·24·seatB + 25·24·usageB·overageB + setupB + escaped·bad_cost + incidents·incident_cost
-B value = B hours · wage · value_capture
-```
+All three values were stable across 4 seeds (EVPI $7.2–7.5k, EVPPI $1.9–2.1k, EVSI $1.3–1.5k; pilot net cost $8.3k).
 
-### Assumptions (every input is an assumption — none measured for a specific team)
+**Exception: a free pilot.** If one or two staff already have a Claude/ChatGPT/Devin seat, or a vendor trial is free, the cost falls close to zero, and a short informal trial is reasonable.
 
-| Variable | Distribution | Range / mean | Rationale |
+![Value of information](agentic-vs-ai-os-mc/value_of_information.png)
+
+### 2b. How the verdict depends on what you believe about agent errors
+
+The agent bad-action rate is the #1 driver and a judgement call (section 4). Re-running the whole decision with different beliefs (beta(4, 4/m − 4), mean m):
+
+| Believed bad-action rate (mean) | Best option now | EVSI | Pilot net cost | Pilot? |
+|---:|---|---:|---:|---|
+| 5% | **C: A + 5 agent seats** (mean $100k vs A $95k) | $18.1k | $6.0k | **Yes** |
+| 8% | A | $12.1k | $6.5k | **Yes** |
+| 10% | A | $8.2k | $6.8k | **Yes** (narrowly) |
+| 12% | A | $5.9k | $7.1k | No |
+| 15% | A | $2.9k | $7.5k | No |
+| **20% (evidence-based prior)** | **A** | **$1.5k** | **$8.3k** | **No** |
+
+**The pilot-worth-it line sits at a believed error rate of about 10–11%.** Below that, a cheap pilot pays for itself, because its result could reasonably switch you to C.
+
+**Method.**
+- The decision is to pick the option with the highest mean net.
+- EVPI = E[max over options] − max over options of E[net].
+- EVPPI and EVSI use regression-based estimation (Strong, Oakley & Brennan 2014; Strong et al. 2015): a quadratic fit on the true inputs for EVPPI, and on the noisy pilot signals for EVSI.
+- The pilot's noise model:
+  - bad-action rate: Binomial(tasks observed, true rate) ÷ tasks;
+  - power-user hours: true value × lognormal noise (σ = 0.25);
+  - review share: true value + N(0, 0.05);
+  - seat use: true value + N(0, 0.08).
+
+---
+
+## 3. When to revisit: gates in pilot-observable units
+
+These cells say when adding agent seats beats A with ≥ 70% confidence. Review is pinned at 30%. For each cell, the seat count is chosen by expected value (the same rule as the main decision). "Hours" are what you would measure: **hours delegated per power user per week**.
+
+| Agent bad-action rate | Gate | Seats then | P(C beats A) |
+|---|---|---:|---:|
+| 2% | **≥ 10 h/wk** per power user | 25 (everyone, keeping A) | 80% |
+| 5% | **≥ 12 h/wk** | 25 (everyone, keeping A) | 74% |
+| 10% | not reached by 16 h/wk | — | best 61% |
+| 20% (today's evidence) | not reached | — | best 21% |
+
+**Read the seat count with care.** Each gate cell assumes ordinary users delegate in proportion to power users (power-user hours ÷ 1.67), and a power-user pilot cannot see ordinary users' hours. The review found that with power users at 10 h/wk and 2% errors, the best seat count is about 5 if ordinary users delegate only 2 h/wk, versus everyone if they delegate 6 h/wk. **Roll out in steps:** add seats in batches and measure ordinary users before going wide.
+
+---
+
+## 4. Evidence behind the inputs (retrieved 2026-11-23)
+
+| Input | v3 prior | Evidence | Source |
 |---|---|---|---|
-| Working weeks | constant | 46 / yr | 52 less holidays, PTO, sick days |
-| `wage` (loaded $/hr) | triangular | 45 / 65 / 110 | Houston-type professional services, fully loaded |
-| `value_capture` | beta(6,4) | mean 0.60 | Saved hours don't all become value; shared by A and B |
-| `a_seat` $/seat/mo | triangular | 18 / 25 / 35 | Ambient-assistant tier list prices, **not verified this session** |
-| `a_overage` | uniform | 0–5 | Ambient tools rarely meter usage |
-| `a_setup` | triangular | 1k / 3k / 8k | Licensing, light training |
-| `a_hours` hrs/person/wk | triangular | 0.5 / 2 / 4.5 | Drafting, summarising, search; the human still executes |
-| `a_rework` | triangular | 0.05 / 0.25 / 0.7 | The human catches most assistant errors inline |
-| `a_ramp` months | triangular | 1 / 2 / 4 | Bundled into tools people already use |
-| `a_util` | beta(6,4) | mean 0.60 | Many ambient seats go lightly used |
-| `b_seat` $/seat/mo | triangular | 40 / 100 / 250 | Pro/Max/agent tiers up to Devin-class, **not verified this session** |
-| `b_overage` $/active seat/mo | lognormal(μ=3.69, σ=0.8) | median ≈ $40, P95 ≈ $150 | Token/usage overage, long tail |
-| `b_setup` | triangular | 5k / 20k / 60k | Integrations, guardrails, permissions, training |
-| `b_hours` hrs/person/wk | triangular | 1 / 5 / 12 | Gross work delegated once adopted |
-| `b_task_hours` | triangular | 0.15 / 0.35 / 1.0 | Human-hours of work in one delegated task |
-| `b_review` | beta(3,7) | mean 0.30 | Review time as a share of delegated hours |
-| `b_error` per task | beta(2,38) | mean 0.05 | Starting bad-action rate |
-| `b_reliab` | uniform | 0.1–0.6 | Error-rate reduction by month 24 |
-| `b_escape` | beta(2,8) | mean 0.20 | Share of bad actions that get past review |
-| `b_fix_hours` | triangular | 0.25 / 0.5 / 2 | Fixing a bad action that review caught |
-| `b_bad_cost` | lognormal(μ=5.0, σ=0.8) | median ≈ $150 | Team-average $ per escaped bad action |
-| `b_incidents` | poisson(λ=0.3) | baseline per 24 mo | Major incident; scaled by team, usage and error rate |
-| `b_incident_cost` | lognormal(μ=9.6, σ=1.0) | median ≈ $15k | Fat tail |
-| `b_ramp` months | triangular | 2 / 4 / 9 | Workflow redesign takes longer |
-| `b_util` | beta(5,4) | mean 0.56 | Agent use tends to be uneven across a team |
+| Assistant hours saved (`a_hours`): **net hours per licence holder** per week | triangular 0.5 / 1.1 / 2.2 | HMRC randomised trial over 3,000 licences: ~60 min/wk. The report states that self-reported savings "were reduced by approximately 20% to reflect that not all license holders used Copilot and that survey respondents were more likely to be active users". DWP (3,549 staff, regression): 19 min/day (~1.6 h/wk). GDS (20,000 staff): 26 min/day (~2.2 h/wk), self-reported. No extra seat-use discount is applied, because these are already averages over licence holders | [HMRC](https://www.gov.uk/government/publications/evaluation-report-phase-3-trial-of-microsoft-copilot/evaluating-the-impact-of-microsoft-copilot-in-hmrc) (2026-07-09) · [DWP](https://www.gov.uk/government/publications/an-evaluation-of-dwps-microsoft-copilot-365-trial/an-evaluation-of-dwps-microsoft-365-copilot-trial) (2026-01-29) · [GDS](https://www.gov.uk/government/publications/microsoft-365-copilot-experiment-cross-government-findings-report/microsoft-365-copilot-experiment-cross-government-findings-report-html) (2025-06-02) |
+| Agent bad-action rate (`b_error`) | beta(4,16), **mean 20%** | TheAgentCompany: best agent completes 30% of workplace tasks unsupervised. OfficeEval (68.8%) and Workspace-Bench (45.1% vs 80.7% for human + tool) report **rubric scores, not task success**. Halving the 30–70% failure range for human-chosen, scoped tasks gives 15–35%; the prior is centred between the 15% floor and the 25% midpoint | [TheAgentCompany](https://proceedings.neurips.cc/paper_files/paper/2025/file/0d744742f6fac4d1134c019b7cef3c8a-Paper-Datasets_and_Benchmarks_Track.pdf) · [OfficeEval](https://arxiv.org/abs/2606.10956v1) · [Workspace-Bench](https://arxiv.org/html/2605.03596v2) |
+| Agent hours delegated (`b_hours`) | triangular 1 / 4 / 10 h/wk for an **ordinary** user — **assumption** | **No reliable measurement.** METR's randomised trial found developers 19% *slower* with AI while believing they were 20% faster. METR's 2026 follow-up has confidence intervals spanning zero | [METR 2025](https://arxiv.org/abs/2507.09089) · [METR 2026](https://metr.org/blog/2026-02-24-uplift-update/) |
+| Assistant seat price | triangular $18 / 21 / 32 | Copilot Business add-on $21 ($18 promo); bundles up to $32 | [microsoft.com](https://www.microsoft.com/en-us/copilot/pricing/business) |
+| Agent seat price | triangular $80 / 100 / 200 | Claude Team premium $100 (annual) / $125 (monthly); Devin Teams $80 minimum + usage; Claude Max $100–200 | [Claude Team](https://support.claude.com/en/articles/9266767-what-is-the-team-plan) · [Devin](https://devin.ai/pricing) · [Claude pricing](https://claude.com/pricing) |
+
+**Stated assumptions (not evidence-anchored):**
+- **Costs and value:** wage $45/65/110 per hour; value capture beta(6,4), mean 0.60; setup costs (rollout 40% fixed + 60% per seat; pilot 15%).
+- **Agent work:** review mean 30%; escape rate mean 20%; cost per escaped bad action, median ~$150.
+- **Incidents:** Poisson 0.3 per 24 months for 25 seats at usage 0.5 and **20%** error, scaled by horizon, seats, usage and error; incident cost median ~$15k.
+- **Adoption:** ramps.
+- **Power users:** 1–6 per 25, mean 3.3; seat use mean 80%; hours ×1.0–2.5 (mean 1.67); assistant overlap 30–80%.
+
+Only abstracts and key excerpts of these sources were read. Vendor prices change: Microsoft changed bundle prices on 2026-07-01, and Devin replaced its plans on 2026-04-14.
+
+---
+
+## 5. Model
+
+All options sit in **one spec**, so every trial shares the same draws and every comparison is paired.
+
+```
+weeks = 92 (46/yr)        adoption avg = 1 − R/(2T) if R ≤ T else T/(2R)
+A:  value = 25·weeks·adoptA·max(hoursA − reworkA, 0)·wage·value_capture
+    cost  = 25·24·(seatA + overageA) + setupA
+Agent block, S seats over T months:
+    pu = min(S, p_count)   ou = max(S − p_count, 0)        (power users get seats first)
+    usage = adoptB·(pu·p_util + ou·b_util)/S
+    gross = weeks·adoptB·b_hours·(pu·p_util·p_hours_mult + ou·b_util)
+    err = b_error·(1 − gain·min(T/24,1)/2)    bad = gross/task_hours·err    escaped = bad·escape
+    hours = gross·(1 − err) − gross·review − (bad − escaped)·fix_hours
+    cost = S·T·seatB + S·T·usage·overageB + setupB·share + escaped·bad_cost + incidents·incident_cost
+B  = agent block with S = 25 (replaces A)
+C_k = A + agent block with S = k − k·A_hours_pp·overlap·usage·wage·value_capture
+pilot = agent block with S = 3, T = 3, setup share 0.15
+```
 
 ### Negative controls (run on every invocation; the script exits non-zero on failure)
 
-All pinned values sit inside the priors. In the two error-rate controls, hours, seat use and review are held at favourable values, so only the error rate can change the outcome.
-
-| Known input | Required | Result |
+| Check | Required | Result |
 |---|---|---:|
-| 12 hrs/wk, 80% use, 20% review, **0% errors** | B must win (P > 0.95) | 0.999 ✅ |
-| Same, but **40% bad-action rate** | B must lose (P < 0.05) | 0.011 ✅ |
-| Agent saves 0 hours | B must lose (P < 0.01) | 0.000 ✅ |
-| 7 hrs/wk, 80% use, 20% review; error 0% → 5% → 12% → 25% | P falls strictly, by > 30 pts | 0.96 → 0.73 → 0.33 → 0.04 ✅ |
+| 10 h/wk, 80% use, 20% review, 0% errors | B must win (P > 0.95) | 0.999 ✅ |
+| Same, but 40% bad-action rate (prior tail) | B must lose (P < 0.05) | 0.005 ✅ |
+| 6 h/wk; error 0 → 5 → 12 → 25% | P falls strictly, by > 30 pts | 0.96 → 0.73 → 0.30 → 0.02 ✅ |
+| Overlap 0 → 1 (same draws) | C falls by the displaced A value, recomputed independently from inputs, and P(C > A) falls | −$9.6k; 0.722 → 0.571 ✅ |
+| 2 power users: marginal gain per seat | Power-user seat > 3× ordinary seat | $7.9k vs $0.4k ✅ |
+| Mix with an excellent agent (0% error, 20% review) | C must beat A (P > 0.9) | 0.983 ✅ |
+| Value-of-information ordering on **raw** estimates | EVPI ≥ EVPPI ≥ EVSI ≥ 0 | $2.2k ≥ $0.7k ≥ $0.5k ✅ |
 
-In v1, the second control would have **failed**: B still won 59% of trials at a 40% error rate. That was the evidence the error mechanics were wrong, and it drove the restructure. **Limit:** if every error-cost input is pinned at its mildest prior bound (every error caught, 0.25 h fixes, 1-hour tasks, no incidents), even a 40%-wrong agent wins ~87%. The control proves the error rate matters under typical costs, not under every combination.
-
----
-
-## 3. Recommendation (plain language)
-
-1. **Roll out the AI OS path to all 25 people.** It costs ~$21k over 24 months and pays back in ~97% of trials.
-2. **Only run an Agentic pilot if the team has real, delegable multi-step work.** Budget it as an **information purchase: ~$29k outlay, ~$28k net cost** (5 people × 3 months; P5–P95 net −$50k to −$12k). Keep setup lean, because setup is most of the pilot's cost.
-3. **Do not stop at a small permanent agent group.** At 5 seats for 24 months, B loses money 78% of the time. Either scale on evidence or shut it down.
-4. **Scale to the team only if the pilot measures all of these:**
-   - **seat use ≥ 70%** and **review ≤ 30%** of delegated time. The hour gates below assume both; without them, the gates do not hold;
-   - **≥ 7 hrs/person/week delegated at ≤ 2% bad-action rate**, or ≥ 10 hrs/week at ≤ 5% (each gives ≈ 70% chance B beats A);
-   - at **~10% bad actions**, scaling needs ≥ 12 hrs/week **and** ≥ 80% use with ≤ 20% review (≈ 74%); at 12% that drops to ≈ 64%. Treat 10%+ as a stop unless usage is exceptional.
-5. **Re-run this script with the pilot's measured values** in place of the priors before committing to 25 seats.
+(The value-of-information check runs on a 5,000-trial, 3-option subset, so its numbers differ from section 2.)
 
 ---
 
-## 4. Caveats (honest limits)
+## 6. Recommendation
 
-- **Every input is an assumption.** No input is fitted to data from a real team. Vendor prices are ranges as understood, **not verified against vendor pages in this session**. The intervals above describe *the model under these assumptions*, not reality.
-- **Inputs are sampled independently.** In reality several move together:
-  - `a_hours` and `b_hours` both depend on how delegable the work is. Linking them would probably narrow the B − A spread.
-  - `b_hours`, `b_util` and `b_review` probably move together, because teams that use agents more also learn to review faster.
-  - The net effect on P(B beats A) was **not tested**. The engine has no correlated sampling.
-- **`value_capture` is the softest number.** It scales both paths. If saved hours don't become billable or higher-value work, both shrink, and A's low cost matters even more.
-- **Linear ramps and a linear reliability gain** are simplifications. The error-rate average ignores that usage rises later in the horizon, when errors are lower, so it slightly overstates errors. A step change in agent reliability is not modelled.
-- **Fix time and escape cost are per task**, whatever the task's size. That flatters large tasks (task size correlates +0.13 with B − A).
-- **`b_bad_cost` is a team-average cost per escaped action**, drawn once per trial. It represents uncertainty about that average, not the spread between individual actions.
-- **Incident scaling is linear in expectation.** The Poisson count is multiplied by horizon, team, usage and starting-error ratios. That gets the expected count right, but ~74% of trials still have zero incidents whatever the error rate.
-- **Setup cost is fixed regardless of team size.** That is why small deployments look so bad. A lighter setup for a pilot would lower its cost.
+1. **Roll out the AI OS assistant to all 25 people** (~$20k over 24 months; median +$86k; positive in 99.9% of trials).
+2. **Don't buy agent seats yet**, for everyone or for power users. Every seat count lowers the expected result.
+3. **Don't pay for a pilot at today's evidence.** It would learn about $1.5k of decision value for about $8k. A free, informal trial by someone who already has a seat is fine.
+4. **Revisit when you can credibly believe agent bad-action rates on delegated work are ≤ 10%.** By this model's mapping (bad-action rate ≈ half the benchmark failure rate), that means independent benchmarks showing agents fail ≤ ~20% of realistic office tasks. At that point, run a lean 3-person, 3-month pilot and measure:
+   - bad-action rate per task;
+   - hours delegated per power user per week;
+   - review share.
+5. **Scale only on measured results.** At ≤ 2% bad actions and ≥ 10 h/wk per power user, or ≤ 5% and ≥ 12 h/wk, adding agent seats beats A with ≥ 74% confidence. Add seats in batches.
+6. **Measure time; don't survey it.** Self-reports misjudge AI speedups by about 40 points (METR).
+
+---
+
+## 7. Caveats
+
+- Every input not marked as evidence-anchored in section 4 is an assumption. The intervals describe the model under these assumptions, not reality.
+- **Agent hours delegated (`b_hours`) is unmeasured** for knowledge work.
+- **The benchmark-to-bad-action mapping is a judgement call**, and it is the #1 driver. Benchmarks score unsupervised agents on fixed tasks; real delegation is chosen and scoped by people. Check the sweep and gate tables at your own assumed error rate.
+- **Inputs are sampled independently.** Assistant and agent hours both depend on how delegable the work is, and use, review and hours probably move together. The engine has no correlated sampling, and this was not tested.
+- **Fix time and escape cost are charged per task, whatever the task's size**, which flatters large tasks (correlation +0.29).
+- **Incidents scale linearly in expectation**, but most trials have zero incidents.
+- **Value-of-information estimates are regression-based** and can be biased. A pure-noise signal gives EVSI ≈ 0, so there is no upward bias here. The pilot verdict holds even at the EVPI ceiling ($7k < $8k), **at the 20% error belief only** (section 2b).
+- **The pilot's hours signal assumes all 3 pilot seats are power users.** In ~40% of trials there are fewer, which biases the signal by about +4%.
 - **Not modelled:**
-  - running A and B together (the realistic end state);
-  - compounding skill gains, attrition and hiring effects;
-  - vendor lock-in;
-  - regulatory or confidentiality exposure from agents acting on client data, which can dominate in legal and CPA work.
-- **The tornado measures linear correlation.** It ranks influence well here but understates interactions. That is why the sweep and gate table exist.
+  - the 21 months left after a pilot (the value of information uses the full 24-month horizon, which slightly overstates it);
+  - compounding skill gains; attrition; vendor lock-in;
+  - regulatory or confidentiality exposure from agents acting on client data (material in legal and CPA work);
+  - Microsoft Copilot's own usage-billed agent features.
 
 ---
 
-## 5. Review log
+## 8. Review log
 
-Two independent cold reviews were run by a separate Claude agent, given only the files and asked what was wrong. Round 2 also spot-checked 30 numbers in this document against `results.json`; all matched. It is the **same model family**, so this is not a cross-family check. Findings and what changed:
+**v1 → v2:** two cold-review rounds (same model family) fixed the error mechanics, negative controls, working weeks, pilot horizon bugs, and gate conditions. Details are in PR #4.
 
-| # | Finding (severity) | Resolution |
+**v3 review (cold, same model family): 3 critical, 9 important and 7 nit findings on the first v3 draft.**
+
+| # | Finding (severity) | Fix |
 |---|---|---|
-| 1 | Error rate barely mattered: task count wasn't tied to hours, and failed tasks still counted as saved (important) | Tasks = hours ÷ task size; bad tasks deliver nothing; incidents scale with usage and error rate. Error rate is now the #3 driver (corr −0.31) |
-| 2 | Negative controls never tested the error rate; the "known-good" control pinned 15 hrs, above the prior (important) | Added a 40%-error control and an error-monotonicity control, both with error as the only adverse input; all pins are within the priors |
-| 3 | Counted 104 calendar weeks, not working weeks (important) | 46 working weeks/yr → 92 weeks. P(B beats A) went 0.297 → 0.252 |
-| 4 | Recommended a 3–5 person pilot the model never ran (important) | Pilot simulated explicitly and reframed as a ~$27k information purchase |
-| 5 | "Scale" gates were break-even points (P ≈ 50%), not wins (important) | Gate table with use 70% and review 30% pinned; gates set at P ≥ 70% |
-| 6 | Overage ignored the adoption ramp (nit) | Overage scaled by adoption × use |
-| 7–10 | Error averaging, correlation caveat, wording, sweep pairing (nits) | Caveats rewritten; wording fixed; sweep pairing noted below |
-| **Round 2** | | |
-| N1 | Adoption formula wrong when the ramp outlasts the horizon; 3-month pilot adoption inflated ~1.5× (important) | Exact piecewise average; verified against the closed form to 0.0 max error at 3 and 24 months |
-| N2 | Pilot incident rate not scaled to the horizon, ~8× too high (important) | × min(T/24, 1) |
-| N3 | Pilot got the full 24-month reliability gain (nit) | Gain × min(T/24, 1) |
-| N4 | Gate claims stated without the 70%-use/30%-review conditions; "10% = stop at any usage" contradicted by in-prior probes (important) | Conditions stated in the bottom line and the recommendation; 10% claim replaced with the probed numbers (74% / 64%) |
-| N5 | Per-task fix and escape cost don't scale with task size (nit) | Caveat added; tornado reading corrected |
-| N6 | Incident reference compared against the reliability-reduced rate (nit) | Now scales by the starting error rate |
-| N7 | Pilot cost quoted as both $27k and $30k (nit) | Outlay and net cost quoted separately |
-| — | Round 2 verdicts on v1 findings | 1, 2, 3, 6, 8, 9, 10 FIXED; 4, 5 PARTIAL until N1–N4 fixed; 7 accepted as a caveat |
+| 1 | The "$24k pilot value" came entirely from the 12-seat option, which the draft never recommended (critical) | Value of information now uses a realistic power-user model and reports EVSI; the verdict flipped to "no pilot" |
+| 2 | At every gate, the model's best choice was 12 seats: unlimited power users, no diminishing returns (critical) | A limited pool of real power users (1–6) gets seats first; the gates report the seat count chosen by expected value |
+| 3 | The pilot claim was overstated: EVPPI is only a ceiling, and a noisy 3-month pilot learns less (critical) | EVSI from simulated noisy pilot measurements |
+| 4 | The pilot used average users, and its inputs didn't match what a pilot can observe (important) | The pilot is a power-user agent block; value of information uses the observable signals |
+| 5 | Gate hours were translated using the mode, not the mean (important) | Gates are stated directly as hours per power user per week |
+| 6 | The error prior sat at the floor of its own stated rule, and rubric scores were treated as failure rates (important) | Mean 20%; the rubric-vs-task distinction is stated |
+| 7 | The effective incident rate was ~3× the stated rate (important) | Re-centred on the 20% prior mean |
+| 8 | A's time savings were discounted twice; `a_rework` read like a fraction (important) | Seat-use discount removed from A; `a_rework` stated in hours |
+| 9 | Two controls passed by construction (important) | Replaced with an exact overlap test and a diminishing-returns test |
+| 10 | The "EVPPI ≥ 0" check could never fail, because the value was clipped (important) | The check now uses raw estimates |
+| 11 | The option and the gates used different decision rules (important) | Gates now pick the seat count by expected value, the same rule as the main decision |
+| 12 | Pilot setup was charged at 52% of full setup (important) | Lean pilot setup set to 15% |
+| 13–19 | Median vs mean pilot cost; trial count; wording; inside-prior claims; post-pilot horizon; sweep stream; mode vs mean (nits) | Mean used; true trial count printed; wording fixed; horizon noted in caveats |
 
-The sweep and gate cells share a seed with each other but are **not** draw-for-draw paired with the base run, because pinning variables shifts the random stream. Cells are comparable with each other; compare them with the base case only loosely.
+**v3 re-review:** 12 findings fixed, 6 partly fixed, 1 accepted (the stream shift from pinned inputs causes no bias). New findings:
+
+| # | Finding (severity) | Fix |
+|---|---|---|
+| N1 | The gate seat count was capped by the grid (12); the gain keeps rising to 25. The seat count also depends on ordinary users' hours, which a pilot can't see (important) | Grid extended to 25; staged rollout and the dependency stated in section 3 |
+| N2 | "No pilot" holds only when the believed error rate is ≥ ~12% (important) | Section 2b: the verdict reported as a function of the error belief |
+| N3 | The "revisit at 2–5%" trigger was too late; a pilot pays at ~10% (important) | Trigger moved to ≤ 10%, stated in benchmark terms |
+| N4 | The trigger was phrased in benchmark units that don't exist (nit) | Restated through the stated mapping |
+| — | The overlap check couldn't catch a units error; the pilot ignored displaced assistant value; the 20% gate row showed a fake 0%; the HMRC claim was unconfirmed (nits) | Independent first-principles recomputation; `pilot_net` now subtracts overlap; real best probability reported; HMRC claim quoted from the primary source |
+
+**One check failed during the fix and was corrected:** the first diminishing-returns test compared *average* gain per seat, which also reflects fixed setup cost being spread over more seats (1 seat looks bad for that reason). It now compares *marginal* gain per seat, which is the property that matters.
 
 ## Reproduce
 
 ```bash
 cd skills/monte-carlo-predictor
-python3 examples/agentic_vs_ai_os.py              # ~14 s; writes charts + spec.json + results.json
-python3 examples/agentic_vs_ai_os.py --selfcheck  # negative controls only
-python3 -m engine.tests.test_engine               # engine tests (15/15 passing)
+python3 examples/agentic_vs_ai_os.py              # ~45 s; charts + spec.json + results.json
+python3 examples/agentic_vs_ai_os.py --selfcheck  # 7 negative controls
+python3 -m engine.tests.test_engine               # engine tests (15/15)
 ```
-
-The full spec is in [`agentic-vs-ai-os-mc/spec.json`](agentic-vs-ai-os-mc/spec.json) and the raw report, sweep, gate table and pilot runs are in [`agentic-vs-ai-os-mc/results.json`](agentic-vs-ai-os-mc/results.json).

@@ -460,10 +460,10 @@
                 <h2>Scoreboard — what success looks like</h2>
                 <div class="bottom-line" id="bottom-line"></div>
                 <div class="stat-row">
-                    <div class="stat"><div class="v">25%</div><div class="k">P(Agentic beats AI OS)</div></div>
-                    <div class="stat"><div class="v">+$81k</div><div class="k">AI OS net, median</div></div>
-                    <div class="stat"><div class="v">+$4k</div><div class="k">Agentic net, median</div></div>
-                    <div class="stat"><div class="v">≥ 7 hrs/wk</div><div class="k">Agentic 70% gate (≤2% errors)</div></div>
+                    <div class="stat"><div class="v">4%</div><div class="k">P(Agentic for all beats AI OS)</div></div>
+                    <div class="stat"><div class="v">+$86k</div><div class="k">AI OS for all, median (best)</div></div>
+                    <div class="stat"><div class="v">≤13%</div><div class="k">P(any 1–25 agent-seat mix beats AI OS)</div></div>
+                    <div class="stat"><div class="v">≈10%</div><div class="k">Agent error belief where a pilot starts paying</div></div>
                 </div>
                 <div class="table-wrap">
                     <table class="goals">
@@ -475,17 +475,19 @@
             </div>
 
             <div class="panel">
-                <h2>Goal 4 — every chart in the write-up</h2>
+                <h2>Goal 4 — every chart in the write-up (v3)</h2>
                 <div class="legend">From <code>agentic_vs_ai_os.py</code>: 20,000-trial base case, seed 42; sweep at 10,000 trials per cell. Click a chart to open it full size.</div>
                 <div class="gallery">
-                    <figure><img src="overlay_net_a_vs_b.png" alt="Net benefit A vs B overlay"><figcaption><b>A vs B net benefit.</b> A median +$81k; B wider, −$145k (P5) to +$256k (P95).</figcaption></figure>
-                    <figure><img src="histogram_diff_b_minus_a.png" alt="B minus A histogram"><figcaption><b>B − A, paired.</b> Median −$81k; B wins 25.0% of trials.</figcaption></figure>
-                    <figure><img src="tornado_diff_b_minus_a.png" alt="Tornado B minus A"><figcaption><b>What drives B − A.</b> Agent hours (+0.42), ambient hours (−0.35), error rate (−0.32), review (−0.30), seat use (+0.26).</figcaption></figure>
-                    <figure><img src="sweep_p_b_wins.png" alt="Sweep probability B wins"><figcaption><b>Sweep: P(B wins).</b> Error rate × hours saved. At ≤3 hrs/wk B wins ≤6%; above ~12% errors it stays under 40%.</figcaption></figure>
+                    <figure><img src="overlay_net_a_vs_b.png" alt="Three strategies"><figcaption><b>Three strategies.</b> A median +$86k; B −$116k (loses money 86% of trials); best mix (A + 1 agent seat) +$67k.</figcaption></figure>
+                    <figure><img src="mix_seats.png" alt="Mix seats"><figcaption><b>Option C: how many agent seats.</b> Every seat count lowers the expected result; P(beat A) never exceeds 13%.</figcaption></figure>
+                    <figure><img src="value_of_information.png" alt="Value of information"><figcaption><b>Is a pilot worth it?</b> At today’s ~20% error evidence, EVSI ≈ $1.5k vs ≈ $8.3k cost → no; at ≤10% believed errors → yes.</figcaption></figure>
+                    <figure><img src="tornado_diff_b_minus_a.png" alt="Tornado B minus A"><figcaption><b>What drives B − A.</b> Agent error rate (−0.45) and cost per escaped error (−0.42); hours delegated barely matter.</figcaption></figure>
+                    <figure><img src="sweep_p_b_wins.png" alt="Sweep probability B wins"><figcaption><b>Sweep: P(B wins).</b> Error rate × hours delegated. Above ~12% errors B stays under 50% even at 14 h/wk.</figcaption></figure>
                     <figure><img src="sweep_median_diff.png" alt="Sweep median difference"><figcaption><b>Sweep: median B − A ($k).</b> Where the green starts is the scale-up gate.</figcaption></figure>
-                    <figure><img src="histogram_net_a.png" alt="Net A histogram"><figcaption><b>Net A.</b> 97.5% of trials positive.</figcaption></figure>
+                    <figure><img src="histogram_diff_b_minus_a.png" alt="B minus A histogram"><figcaption><b>B − A, paired.</b> Median −$207k; B wins 3.8% of trials.</figcaption></figure>
+                    <figure><img src="histogram_net_a.png" alt="Net A histogram"><figcaption><b>Net A.</b> 99.9% of trials positive.</figcaption></figure>
+                    <figure><img src="histogram_net_b.png" alt="Net B histogram"><figcaption><b>Net B.</b> 14.2% of trials positive.</figcaption></figure>
                     <figure><img src="tornado_net_a.png" alt="Net A tornado"><figcaption><b>Net A drivers.</b></figcaption></figure>
-                    <figure><img src="histogram_net_b.png" alt="Net B histogram"><figcaption><b>Net B.</b> 51.5% of trials positive.</figcaption></figure>
                     <figure><img src="tornado_net_b.png" alt="Net B tornado"><figcaption><b>Net B drivers.</b></figcaption></figure>
                 </div>
             </div>
@@ -503,27 +505,27 @@
               status: 'verified' },
             { n: '2', name: 'Reproducible model',
               success: 'agentic_vs_ai_os.py runs end-to-end via the repo engine, ≥10k trials, all negative controls pass (incl. error-rate controls), result stable across seeds.',
-              evidence: '20k trials, exit 0; 4/4 controls PASS incl. 40%-error and monotonicity; P(B>A) 0.246–0.250 across 4 seeds up to 100k trials; adoption formula matches closed form exactly.',
+              evidence: 'v3: 20k paired trials, 3 strategies; 7/7 controls PASS (incl. exact overlap test, diminishing returns, raw VOI ordering); P(B>A) 0.038–0.040 across 4 seeds; inputs anchored to gov Copilot trials, agent benchmarks, vendor prices.',
               status: 'verified' },
             { n: '3', name: 'Charts generated',
-              success: 'Histogram + tornado for net A, net B, B−A; overlay; 2 sweep heatmaps — saved and visually checked.',
-              evidence: '9 PNGs in docs/research/agentic-vs-ai-os-mc/; overlay, tornado and sweep opened and inspected.',
+              success: 'Histogram + tornado for net A, net B, B−A; 3-strategy overlay; Mix seats; value of information; 2 sweep heatmaps — saved and visually checked.',
+              evidence: '11 PNGs; overlay, Mix and value-of-information charts opened and inspected.',
               status: 'verified' },
             { n: '4', name: 'Write-up',
-              success: 'Results tables match results.json; all 9 charts embedded/linked; assumptions table; honest CIs + caveats; plain recommendation; independent review finds no critical defect.',
-              evidence: 'Two cold review rounds (same model family): 0 critical; 8 important defects found and fixed. Every headline, tornado and sweep number machine-checked against results.json: 0 mismatches.',
+              success: 'Results tables match results.json; all 11 charts embedded/linked; assumptions table; honest CIs + caveats; plain recommendation; independent review finds no critical defect.',
+              evidence: 'v3 cold review: 3 critical + 9 important found, all fixed (pilot verdict reversed). Re-review: 12 fixed, 4 new findings fixed (incl. verdict-vs-error-belief table). All tables machine-checked: 0 mismatches.',
               status: 'verified' },
             { n: '5', name: 'Engine intact',
               success: 'python3 -m engine.tests.test_engine passes with no engine files changed.',
               evidence: '15 passed, 0 failed (before and after).',
               status: 'verified' },
             { n: '6', name: 'Shipped',
-              success: 'Branch claude/agentic-vs-ai-os-monte-carlo pushed; draft PR open.',
-              evidence: 'Pushed to origin; draft PR #4 open (github.com/whd4/expert-ai-skills/pull/4); validate_skills.py: 240 skills pass.',
+              success: 'v3 branch pushed, PR opened and merged to main.',
+              evidence: 'v1/v2 merged as PR #4; v3 merged as PR #5 (github.com/whd4/expert-ai-skills/pull/5); validate_skills.py passes.',
               status: 'verified' },
             { n: '★', name: 'MASTER: a decision you can act on',
-              success: 'P(Agentic beats AI OS) seed-stable; sweep on the two drivers; 70%-confidence scale gates; pilot cost quantified; goals 1–6 all verified.',
-              evidence: 'Decision: AI OS for all 25 (wins ~75%). Agentic pilot only as a ~$28k-net information purchase; scale only if the pilot shows ≥70% seat use and ≤30% review AND ≥7 hrs/wk delegated at ≤2% errors (≥10 at ≤5%); 10%+ errors = stop unless usage is exceptional.',
+              success: 'Evidence-anchored inputs; 3 strategies compared (A, B, Mix); scale-up gates; pilot priced against its information value; goals 1–6 all verified.',
+              evidence: 'Decision: AI OS for all 25 (median +$86k, positive 99.9%). No agent seats yet: every mix lowers expected value. No paid pilot at today’s evidence (learns ≈$1.5k for ≈$8k). Run a lean pilot once agent bad-action rates are credibly ≤10%.',
               status: 'master' },
         ];
 
